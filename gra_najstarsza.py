@@ -224,13 +224,13 @@ class Gra:
                 elif self.wybrana[0][1]==BLUE:
                   pygame.draw.circle(self.okno_gry,BLUE,(pygame.mouse.get_pos()[0],pygame.mouse.get_pos()[1]),100,1)
 
-              pygame.display.set_caption(f'Inwazja {1//(time.time()-self.czas)} FPS')
+              #pygame.display.set_caption(f'Inwazja {1//(time.time()-self.czas)} FPS')
               pygame.display.update()
             self.minelo=time.time()-czas
 
       self.przebieg()
       self.drawing()
-      pygame.display.set_caption(f'Inwazja {1//(time.time()-self.czas)} FPS')
+      #pygame.display.set_caption(f'Inwazja {1//(time.time()-self.czas)} FPS')
       pygame.display.update()
 
   def przebieg(self):
