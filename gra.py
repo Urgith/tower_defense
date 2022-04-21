@@ -184,51 +184,79 @@ for row in range(MAPHEIGHT):
     obszar[row] = tuple(obszar[row])
 obszar = tuple(obszar)
 
+
 class Gracz:
-  def __init__(self):
-    self.obiekt=        pygame.Rect(100, 100, 30, 30)
-    self.doswiadczenie= 0
-    self.poziom=        0
-    self.max_zdrowie= 1000
-    self.zdrowie=     1000
-    self.predkosc=  1
-    self.rodzaj=    'gracz'
-    self.x, self.y= 100, 100
 
-  def ruch(self):
-    self.klikniete= pygame.key.get_pressed()
-    x, y= 0, 0
+    def __init__(self):
+        self.obiekt = pygame.Rect(100, 100, 30, 30)
 
-    if self.klikniete[pygame.K_w]: self.y-= self.predkosc; y= -1
-    if self.klikniete[pygame.K_a]: self.x-= self.predkosc; x= -1
-    if self.klikniete[pygame.K_s]: self.y+= self.predkosc; y= 1
-    if self.klikniete[pygame.K_d]: self.x+= self.predkosc; x= 1
+        self.doswiadczenie = 0
+        self.poziom = 0
 
-    if self.x<0                      : self.x= 0
-    if self.y<0                      : self.y= 0
-    if self.x>GAME_WIDTH-MENUSIZE-30 : self.x= GAME_WIDTH-MENUSIZE-30
-    if self.y>GAME_HEIGHT-MENUSIZE-30: self.y= GAME_HEIGHT-MENUSIZE-30
+        self.max_zdrowie = 1000
+        self.zdrowie = 1000
 
-    if x and y:
-      if x==1: self.x= self.x-self.predkosc+self.predkosc/(2**(1/2))
-      else   : self.x= self.x+self.predkosc-self.predkosc/(2**(1/2))
+        self.predkosc = 1
+        self.rodzaj = 'gracz'
 
-      if y==1: self.y= self.y-self.predkosc+self.predkosc/(2**(1/2))
-      else   : self.y= self.y+self.predkosc-self.predkosc/(2**(1/2))
+        self.x, self.y = 100, 100
 
-    self.obiekt.x= self.x
-    self.obiekt.y= self.y
+    def ruch(self):
+        self.klikniete = pygame.key.get_pressed()
+        x, y = 0, 0
 
-  def strzal(self, gra):
-    gra.lista_pociskow.append(Pocisk(self,gra))
+        if self.klikniete[pygame.K_w]:
+            self.y -= self.predkosc
+            y = -1
 
-  def awansowanie(self):
-    poziom= int((self.doswiadczenie//100)**(1/2))
-    if poziom!=self.poziom:
-      self.poziom=      poziom
-      self.predkosc=    1+poziom/10
-      self.max_zdrowie= int(1000*(1+poziom/10))
-      self.zdrowie=     self.max_zdrowie
+        if self.klikniete[pygame.K_a]:
+            self.x -= self.predkosc
+            x = -1
+
+        if self.klikniete[pygame.K_s]:
+            self.y += self.predkosc
+            y = 1
+
+        if self.klikniete[pygame.K_d]:
+            self.x += self.predkosc
+            x = 1
+
+        if self.x < 0: self.x = 0
+        if self.y < 0: self.y = 0
+
+        if self.x > GAME_WIDTH - MENUSIZE - 30:
+            self.x = GAME_WIDTH - MENUSIZE - 30
+
+        if self.y > GAME_HEIGHT - MENUSIZE - 30:
+            self.y = GAME_HEIGHT - MENUSIZE - 30
+
+        if x and y:
+            if x == 1:
+                self.x = self.x - self.predkosc + (self.predkosc / (2**0.5))
+            else:
+                self.x = self.x + self.predkosc - (self.predkosc / (2**0.5))
+
+            if y == 1:
+                self.y = self.y - self.predkosc + (self.predkosc / (2**0.5))
+            else:
+                self.y = self.y + self.predkosc - (self.predkosc / (2**0.5))
+
+        self.obiekt.x = self.x
+        self.obiekt.y = self.y
+
+    def strzal(self, gra):
+        gra.lista_pociskow.append(Pocisk(self, gra))
+
+    def awansowanie(self):
+        poziom = int((self.doswiadczenie // 100)**0.5)
+
+        if poziom != self.poziom:
+            self.poziom = poziom
+
+            self.predkosc = 1 + (poziom / 10)
+            self.max_zdrowie = int(1000 * (1 + (poziom / 10)))
+            self.zdrowie = self.max_zdrowie
+
 
 class Pocisk:
   def __init__(self, rodzaj, gra):
