@@ -1,188 +1,6 @@
-import pygame
 import random
 
-
-def image_load(name, transparency=False):
-    image = pygame.image.load(name).convert()
-
-    if transparency: 
-        image.set_colorkey(image.get_at((0, 0)))
-
-    return image
-
-
-def quit():
-    import sys
-
-    pygame.quit()
-    sys.exit(0)
-
-
-pygame.font.init()
-pygame.display.set_mode()
-pygame.display.set_caption('Inwazja')
-
-poziomo = image_load('dane/poziomo.jpg')
-pionowo = image_load('dane/pionowo.jpg')
-lg = image_load('dane/lg.jpg')
-ld = image_load('dane/ld.jpg')
-pg = image_load('dane/pg.jpg')
-pd = image_load('dane/pd.jpg')
-
-las = image_load('dane/las.jpg')
-trawa = image_load('dane/trawa.jpg')
-domek = image_load('dane/domek.jpg')
-zacznij = image_load('dane/zacznij.jpg')
-zielony = image_load('dane/zielony.jpg')
-niebieski = image_load('dane/niebieski.jpg')
-zolty = image_load('dane/zolty.jpg')
-
-atak_zielony = image_load('dane/atak_zielony.jpg')
-atak_niebieski = image_load('dane/atak_niebieski.jpg')
-atak_zolty = image_load('dane/atak_zolty.jpg')
-
-zasieg_zielony = image_load('dane/zasieg_zielony.jpg')
-zasieg_niebieski = image_load('dane/zasieg_niebieski.jpg')
-zasieg_zolty = image_load('dane/zasieg_zolty.jpg')
-
-predkosc_zielony = image_load('dane/predkosc_zielony.jpg')
-przebicie_niebieski = image_load('dane/przebicie_niebieski.jpg')
-elektryzacja_zolty = image_load('dane/elektryzacja_zolty.jpg')
-
-dolar_zielony = image_load('dane/dolar_zielony.jpg')
-dolar_niebieski = image_load('dane/dolar_niebieski.jpg')
-dolar_zolty = image_load('dane/dolar_zolty.jpg')
-
-kula_mocy = image_load('dane/kula_mocy.png', True)
-druid = image_load(    'dane/druid.png', True)
-
-MYSZ = image_load('dane/mysz.png', True)
-SZCZUR = image_load('dane/szczur.png', True)
-PAJAK = image_load('dane/pajak.png', True)
-WAZ = image_load('dane/waz.png', True)
-
-wieze = (
-    (image_load('dane/zielony.jpg'), (0,255,0), 10, 10, 100, 10, 200, 4),
-    (image_load('dane/niebieski.jpg'), (0,0,255), 30, 40, 150, 15,  75, 5),
-    (image_load('dane/zolty.jpg'), (255,255,0), 50,  2,  75,  0,  25, 2),
-    (image_load('dane/zielony2.jpg'), 0),
-    (image_load('dane/niebieski2.jpg'), 0),
-    (image_load('dane/zolty2.jpg'), 0),
-    (image_load('dane/zielony3.jpg'), 0),
-    (image_load('dane/niebieski3.jpg'), 0),
-    (image_load('dane/zolty3.jpg'), 0),
-    (image_load('dane/zielony4.jpg'), 0),
-    (image_load('dane/niebieski4.jpg'), 0),
-    (image_load('dane/zolty4.jpg'), 0),
-    (image_load('dane/zielony5.jpg'), 0),
-    (image_load('dane/niebieski5.jpg'), 0),
-    (image_load('dane/zolty5.jpg'), 0),
-    (image_load('dane/zielony6.jpg'), 0),
-    (image_load('dane/niebieski6.jpg'), 0),
-    (image_load('dane/zolty6.jpg'), 0)
-)
-
-teren = {
-    0:  poziomo,
-    10: pionowo,
-    3:  las,
-    5:  lg,
-    50: ld,
-    6:  pg,
-    60: pd,
-    7:  pd,
-    70: ld,
-    8:  pg,
-    80: lg
-}
-
-mapa = (
-    ( 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-    (10, 1, 1, 1, 1, 1, 1, 5, 0, 0, 8, 1, 1, 1, 5, 0, 8, 1, 1, 1, 1, 1, 1, 1, 1, 5, 0, 0, 8, 1, 1, 1, 1, 1, 1),
-    (50, 0, 0, 8, 1, 1, 1,10, 1, 1,10, 1, 1, 5, 7, 1,10, 1, 1, 5, 0, 0, 0, 0, 0, 7, 1, 1,10, 1,80, 0, 0, 6, 1),
-    ( 1, 1, 1,10, 1, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1, 1,10, 1),
-    ( 1, 5, 0,10, 0, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0, 0, 0, 0, 8, 1, 1,10, 1,10, 1, 1,10, 1),
-    ( 1,10, 1,10, 1, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1, 1, 1, 1,10, 1, 1,50, 0, 0, 0, 0, 7, 1),
-    ( 1,70, 0,10, 0, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 6, 1, 1, 1,10, 1, 1, 1, 1,10, 1, 1, 1, 1),
-    ( 1, 1, 1,10, 1, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1,10, 1, 5, 0,10, 0, 8, 1, 1,10, 1, 1, 1, 1),
-    ( 1, 1, 1,10, 1, 1, 5, 7, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1,10, 1,10, 1,10, 1,10, 1, 1,10, 1, 1, 1, 1),
-    ( 1, 1, 1,10, 1, 1,10, 1, 1, 1,10, 1, 1,10, 1, 1,50, 0, 0, 7, 1,10, 1,10, 1,10, 1,10, 1, 1,50, 8, 1, 1, 1),
-    ( 1, 1, 1,10, 1, 1,70, 6, 1, 1,50, 0, 0, 7, 1, 1, 1, 1, 1, 1, 1,10, 1,70, 0,60, 1,10, 1, 1, 1,10, 1, 1, 1),
-    ( 1, 1, 1,10, 1, 1, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1, 1, 1, 1, 1,10, 1, 1, 1,10, 1, 1, 1),
-    ( 1, 1, 1,10, 1,80, 0,10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,10, 0, 6, 1),
-    ( 1, 1, 1,10, 1,10, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1, 1, 1, 1, 1,10, 1, 1, 1,10, 1,10, 1),
-    ( 1, 1, 1,10, 1,50, 0,10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 1, 1, 1, 1,10, 1, 5, 0,10, 0, 7, 1),
-    ( 1, 1, 1,10, 1, 1, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1,10, 1, 1, 1),
-    ( 1,80, 0,60, 1, 1, 1,70, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1,10, 1, 1, 1),
-    ( 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1,10, 1, 1, 1),
-    ( 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 0, 8, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1,50, 0, 8, 1),
-    ( 1,50, 8, 1, 1, 5, 0, 0, 0, 8, 1, 1,10, 1,10, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1, 1, 1,10, 1),
-    ( 1, 1,10, 1, 1,10, 1, 1, 1,10, 1, 1,10, 1,10, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,70, 6, 1, 1,10, 1),
-    ( 1, 1,50, 8, 1,10, 1, 1, 1,10, 1, 1,10, 1,10, 1,10, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1,10, 1, 1,10, 1, 1,10, 1),
-    ( 1, 1, 1,10, 1,10, 1, 1, 1,50, 0, 0, 7, 1,10, 1,10, 1, 3, 3, 3, 0, 0, 0, 0, 0, 0,60, 1, 1,70, 0, 0,60, 1),
-    ( 1, 1, 1,50, 0, 7, 1, 1, 1, 1, 1, 1, 1, 1,50, 0, 7, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
-    ( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
-)
-
-enemies = {
-    MYSZ:   (100, 1  , 1, 5 , 1, 15),
-    SZCZUR: (200, 0.8, 3, 8 , 2, 17),
-    PAJAK:  (250, 1.2, 2, 12, 2, 19),
-    WAZ:    (350, 1.3, 3, 15, 3, 21)
-}
-
-waves = (
-    (MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ),
-    (MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ),
-    (MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR),
-    (MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR),
-    (MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR),
-    (MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK),
-    (MYSZ,MYSZ,MYSZ,MYSZ,MYSZ,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK),
-    (SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK),
-    (SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,WAZ,WAZ,WAZ,WAZ,WAZ),
-    (SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ)
-)
-
-TILESIZE = 25
-MENUSIZE = 150
-MAPWIDTH = len(mapa[0])
-MAPHEIGHT = len(mapa)
-GAME_WIDTH = (TILESIZE * MAPWIDTH) + MENUSIZE
-GAME_HEIGHT = (TILESIZE * MAPHEIGHT) + MENUSIZE
-
-tekstury = (
-    (zacznij, pygame.Rect(GAME_WIDTH - 180, GAME_HEIGHT - 65, 50, 50)),
-    (domek, pygame.Rect(GAME_WIDTH - 85, GAME_HEIGHT - 85, 70, 70)),
-    (zielony, pygame.Rect(GAME_WIDTH - 80, 10, 40, 40)),
-    (niebieski, pygame.Rect(GAME_WIDTH - 80, 60, 40, 40)),
-    (zolty, pygame.Rect(GAME_WIDTH - 80, 110, 40, 40))
-)
-
-tekstury_interfejsu_wiezy = (
-    (atak_zielony, pygame.Rect(400, GAME_HEIGHT - 140, 70, 70)),
-    (zasieg_zielony, pygame.Rect(480, GAME_HEIGHT - 140, 70, 70)),
-    (predkosc_zielony, pygame.Rect(560, GAME_HEIGHT - 140, 70, 70)),
-    (dolar_zielony, pygame.Rect(640, GAME_HEIGHT - 140, 70,70)),
-    (atak_niebieski, pygame.Rect(400, GAME_HEIGHT - 140, 70, 70)),
-    (zasieg_niebieski, pygame.Rect(480, GAME_HEIGHT - 140, 70, 70)),
-    (przebicie_niebieski, pygame.Rect(560, GAME_HEIGHT - 140, 70, 70)),
-    (dolar_niebieski, pygame.Rect(640, GAME_HEIGHT - 140, 70, 70)),
-    (atak_zolty, pygame.Rect(400, GAME_HEIGHT - 140, 70, 70)),
-    (zasieg_zolty, pygame.Rect(480, GAME_HEIGHT - 140, 70, 70)),
-    (elektryzacja_zolty, pygame.Rect(560, GAME_HEIGHT - 140, 70, 70)),
-    (dolar_zolty, pygame.Rect(640, GAME_HEIGHT - 140, 70, 70))
-)
-
-obszar = []
-for row in range(MAPHEIGHT):
-    obszar.append([])
-
-    for column in range(MAPWIDTH):
-        obszar[row].append((pygame.Rect(TILESIZE * column, TILESIZE * row, TILESIZE, TILESIZE), row, column))
-
-    obszar[row] = tuple(obszar[row])
-obszar = tuple(obszar)
+from STALE import *
 
 
 class Gracz:
@@ -284,7 +102,7 @@ class Pocisk:
             self.dlugosc_zycia = rodzaj.dlugosc_zycia
             self.x, self.y = rodzaj.pole
             self.obiekt = pygame.Rect(self.x, self.y, rodzaj.rozmiar_pocisku, rodzaj.rozmiar_pocisku)
-            self.kolor = wieze[self.rodzaj - 1][1]
+            self.kolor = WIEZE[self.rodzaj - 1][1]
             self.obrazenia = rodzaj.obrazenia
             x, y = gra.celowany_przeciwnik.x + (gra.celowany_przeciwnik.rozmiar / 2) - self.x, gra.celowany_przeciwnik.y + (gra.celowany_przeciwnik.rozmiar / 2) - self.y
 
@@ -300,29 +118,29 @@ class Pocisk:
 class Przeciwnik:
 
     def __init__(self, gra):
-        self.rodzaj = waves[gra.runda][gra.numer_przeciwnika]
+        self.rodzaj = WAVES[gra.runda][gra.numer_przeciwnika]
 
-        self.rozmiar = enemies[self.rodzaj][5]
+        self.rozmiar = ENEMIES[self.rodzaj][5]
         self.x, self.y = 5, 5
         self.obiekt = pygame.Rect((self.x, self.y, self.rozmiar, self.rozmiar))
 
-        self.pole = mapa[0][0]
-        self.startowe_zdrowie = int(enemies[self.rodzaj][0] * (1.1**gra.runda))
-        self.zdrowie = int(enemies[self.rodzaj][0] * (1.1**gra.runda))
-        self.predkosc = enemies[self.rodzaj][1]
-        self.atak = enemies[self.rodzaj][2]
-        self.punkty = enemies[self.rodzaj][3]
-        self.monety = enemies[self.rodzaj][4]
+        self.pole = MAPA[0][0]
+        self.startowe_zdrowie = int(ENEMIES[self.rodzaj][0] * (1.1**gra.runda))
+        self.zdrowie = int(ENEMIES[self.rodzaj][0] * (1.1**gra.runda))
+        self.predkosc = ENEMIES[self.rodzaj][1]
+        self.atak = ENEMIES[self.rodzaj][2]
+        self.punkty = ENEMIES[self.rodzaj][3]
+        self.monety = ENEMIES[self.rodzaj][4]
 
         self.ids = []
 
     def ruch(self):
-        pole = mapa[int((self.y - 5) / TILESIZE)][int((self.x - 5) / TILESIZE)]
+        pole = MAPA[int((self.y - 5) / TILESIZE)][int((self.x - 5) / TILESIZE)]
 
         if (self.pole == 6 or self.pole == 60) and self.pole != pole:
-            pole = mapa[int((self.y - 5) / TILESIZE)][int((self.x + 20 - self.predkosc) / TILESIZE)]
+            pole = MAPA[int((self.y - 5) / TILESIZE)][int((self.x + 20 - self.predkosc) / TILESIZE)]
         elif (self.pole == 7 or self.pole == 70) and self.pole != pole:
-            pole = mapa[int((self.y + 20 - self.predkosc) / TILESIZE)][int((self.x + 20 - self.predkosc) / TILESIZE)]
+            pole = MAPA[int((self.y + 20 - self.predkosc) / TILESIZE)][int((self.x + 20 - self.predkosc) / TILESIZE)]
 
         if pole == 0 or pole == 10:
             pole = self.pole
@@ -349,7 +167,7 @@ class Wieza:
         self.poziom_atak, self.poziom_zasieg, self.poziom_reszta, self.poziom = (0, 0, 0, 0)
 
         (self.typ, self.kolor, self.koszt, self.obrazenia, self.zasieg,
-            self.przeladowanie,self.dlugosc_zycia, self.rozmiar_pocisku) = wieze[self.rodzaj-1]
+            self.przeladowanie,self.dlugosc_zycia, self.rozmiar_pocisku) = WIEZE[self.rodzaj - 1]
 
         self.cena_calkowita = self.koszt
         if self.rodzaj == 1: 
@@ -467,7 +285,7 @@ class Wieza:
                 gra.lista_wiez.pop(gra.wybrana_wieza)
 
         self.poziom = (self.poziom_atak + self.poziom_zasieg + self.poziom_reszta) // 3
-        self.typ = wieze[self.rodzaj - 1 + (self.poziom * 3)][0]
+        self.typ = WIEZE[self.rodzaj - 1 + (self.poziom * 3)][0]
 
 
 class Gra:
@@ -503,14 +321,14 @@ class Gra:
             if self.start:
                 self.licznik += 1
 
-                if (self.licznik % self.predkosc_wychodzenia) == 0 and (self.runda != (len(waves) - 1) or self.numer_przeciwnika != (len(waves[-1]) - 1)):
+                if (self.licznik % self.predkosc_wychodzenia) == 0 and (self.runda != (len(WAVES) - 1) or self.numer_przeciwnika != (len(WAVES[-1]) - 1)):
                     try:
                         self.lista_przeciwnikow.append(Przeciwnik(self))
                         self.numer_przeciwnika += 1
                     except:
                         pass
 
-                    if self.numer_przeciwnika == len(waves[self.runda]) and self.kliknieto_w_kolejna_runde:
+                    if self.numer_przeciwnika == len(WAVES[self.runda]) and self.kliknieto_w_kolejna_runde:
                         self.kliknieto_w_kolejna_runde = False
                         self.numer_przeciwnika = 0
                         self.runda += 1
@@ -541,22 +359,22 @@ class Gra:
 
                     elif event.key == pygame.K_1:
                         self.wybrano_wieze_do_kupienia = True
-                        self.zasieg_wybranej_wiezy = wieze[0][4]
-                        self.kolor_wybranej_wiezy = wieze[0][1]
+                        self.zasieg_wybranej_wiezy = WIEZE[0][4]
+                        self.kolor_wybranej_wiezy = WIEZE[0][1]
                         self.rodzaj_wybranej_wiezy = 1
                         self.wybrano_wieze = False
 
                     elif event.key == pygame.K_2:
                         self.wybrano_wieze_do_kupienia = True
-                        self.zasieg_wybranej_wiezy = wieze[1][4]
-                        self.kolor_wybranej_wiezy = wieze[1][1]
+                        self.zasieg_wybranej_wiezy = WIEZE[1][4]
+                        self.kolor_wybranej_wiezy = WIEZE[1][1]
                         self.rodzaj_wybranej_wiezy = 2
                         self.wybrano_wieze = False
 
                     elif event.key == pygame.K_3:
                         self.wybrano_wieze_do_kupienia = True
-                        self.zasieg_wybranej_wiezy = wieze[2][4]
-                        self.kolor_wybranej_wiezy = wieze[2][1]
+                        self.zasieg_wybranej_wiezy = WIEZE[2][4]
+                        self.kolor_wybranej_wiezy = WIEZE[2][1]
                         self.rodzaj_wybranej_wiezy = 3
                         self.wybrano_wieze= False
 
@@ -589,26 +407,26 @@ class Gra:
 
                             Gracz.strzal(self.gracz, self)
 
-                    elif tekstury[0][1].collidepoint(self.pozycja_myszy):
+                    elif TEKSTURY[0][1].collidepoint(self.pozycja_myszy):
                         if self.licznik:
                             self.kliknieto_w_kolejna_runde = True
                         self.start = True
 
-                    elif tekstury[1][1].collidepoint(self.pozycja_myszy):
+                    elif TEKSTURY[1][1].collidepoint(self.pozycja_myszy):
                         quit()
 
                     else:
-                        for i, tekstura in enumerate(tekstury):
+                        for i, tekstura in enumerate(TEKSTURY):
                             if i >= 2 and tekstura[1].collidepoint(self.pozycja_myszy):
                                 self.wybrano_wieze_do_kupienia = True
-                                self.zasieg_wybranej_wiezy = wieze[i - 2][4]
-                                self.kolor_wybranej_wiezy = wieze[i - 2][1]
+                                self.zasieg_wybranej_wiezy = WIEZE[i - 2][4]
+                                self.kolor_wybranej_wiezy = WIEZE[i - 2][1]
                                 self.rodzaj_wybranej_wiezy = i - 1
                                 break
 
                         if self.mozliwosc_polepszenia:
                             for i in range((self.lista_wiez[self.wybrana_wieza].rodzaj - 1) * 4, self.lista_wiez[self.wybrana_wieza].rodzaj * 4):
-                                if tekstury_interfejsu_wiezy[i][1].collidepoint(self.pozycja_myszy):
+                                if TEKSTURY_INTERFEJSU_WIEZY[i][1].collidepoint(self.pozycja_myszy):
                                     self.polepszenie = i
                                     Wieza.polepszenie(self.lista_wiez[self.wybrana_wieza], self)
 
@@ -680,23 +498,23 @@ class Gra:
                 self.gracz.zdrowie -= przeciwnik.atak
 
             przeciwnik.ruch()
-            if przeciwnik.obiekt.colliderect(obszar[22][20][0]):
+            if przeciwnik.obiekt.colliderect(OBSZAR[22][20][0]):
                 self.zdrowie_lasu -= przeciwnik.atak
                 self.lista_przeciwnikow.pop(i)
 
         if self.wybrano_wieze_do_kupienia: 
             self.pozycja_myszy = pygame.mouse.get_pos()
 
-        if self.gracz.zdrowie <=0 or self.zdrowie_lasu <= 0:
+        if self.gracz.zdrowie <= 0 or self.zdrowie_lasu <= 0:
             quit()
 
     def rysowanie(self):
-        self.okno_gry.blit(trawa, (0, 0))
+        self.okno_gry.blit(TRAWA, (0, 0))
 
         for row in range(MAPHEIGHT):
             for column in range(MAPWIDTH):
-                if mapa[row][column] != 1:
-                    self.okno_gry.blit(teren[mapa[row][column]], (column * TILESIZE, row * TILESIZE))
+                if MAPA[row][column] != 1:
+                    self.okno_gry.blit(TEREN[MAPA[row][column]], (column * TILESIZE, row * TILESIZE))
 
         for wieza in self.lista_wiez:
             self.okno_gry.blit(wieza.typ, (wieza.obiekt[0], wieza.obiekt[1]))
@@ -710,7 +528,7 @@ class Gra:
                 if przeciwnik.startowe_zdrowie > przeciwnik.zdrowie:
                     pygame.draw.rect(self.okno_gry, (255,0,0), pygame.Rect(przeciwnik.obiekt.x - 5 + (25 * przeciwnik.zdrowie) // przeciwnik.startowe_zdrowie, przeciwnik.obiekt.y - 10, (25 * (przeciwnik.startowe_zdrowie - przeciwnik.zdrowie)) // przeciwnik.startowe_zdrowie, 3))
 
-        self.okno_gry.blit(druid, (self.gracz.obiekt.x, self.gracz.obiekt.y))
+        self.okno_gry.blit(DRUID, (self.gracz.obiekt.x, self.gracz.obiekt.y))
 
         stan = int((self.gracz.zdrowie / (self.gracz.max_zdrowie + 1)) * 3)
         if stan == 2:
@@ -727,7 +545,7 @@ class Gra:
 
         for pocisk in self.lista_pociskow:
             if pocisk.rodzaj == 'gracz':
-                self.okno_gry.blit(kula_mocy, (pocisk.obiekt.x, pocisk.obiekt.y))
+                self.okno_gry.blit(KULA_MOCY, (pocisk.obiekt.x, pocisk.obiekt.y))
             else:
                 pygame.draw.rect(self.okno_gry, pocisk.kolor, pocisk.obiekt)
 
@@ -739,17 +557,17 @@ class Gra:
 
         if self.wybrano_wieze:
             for i in range((self.lista_wiez[self.wybrana_wieza].rodzaj - 1) * 4, self.lista_wiez[self.wybrana_wieza].rodzaj * 4):
-                self.okno_gry.blit(tekstury_interfejsu_wiezy[i][0], tekstury_interfejsu_wiezy[i][1])
+                self.okno_gry.blit(TEKSTURY_INTERFEJSU_WIEZY[i][0], TEKSTURY_INTERFEJSU_WIEZY[i][1])
 
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_atak}$'    , True, (255,0,0)), (tekstury_interfejsu_wiezy[0][1][0] + 5, tekstury_interfejsu_wiezy[0][1][1] + 50))
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_zasieg}$'  , True, (255,0,0)), (tekstury_interfejsu_wiezy[1][1][0] + 5, tekstury_interfejsu_wiezy[1][1][1] + 50))
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_reszta}$'  , True, (255,0,0)), (tekstury_interfejsu_wiezy[2][1][0] + 5, tekstury_interfejsu_wiezy[2][1][1] + 50))
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].cena_calkowita}$', True, (255,0,0)), (tekstury_interfejsu_wiezy[3][1][0] + 5, tekstury_interfejsu_wiezy[3][1][1] + 50))
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_atak}'    , True, (255,0,255)), (tekstury_interfejsu_wiezy[0][1][0] + 5, tekstury_interfejsu_wiezy[0][1][1] + 5))
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_zasieg}'  , True, (255,0,255)), (tekstury_interfejsu_wiezy[1][1][0] + 5, tekstury_interfejsu_wiezy[1][1][1] + 5))
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_reszta}'  , True, (255,0,255)), (tekstury_interfejsu_wiezy[2][1][0] + 5, tekstury_interfejsu_wiezy[2][1][1] + 5))
+            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_atak}$'    , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 50))
+            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_zasieg}$'  , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 50))
+            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_reszta}$'  , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 50))
+            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].cena_calkowita}$', True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[3][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[3][1][1] + 50))
+            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_atak}'    , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 5))
+            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_zasieg}'  , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 5))
+            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_reszta}'  , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 5))
 
-        for tekstura in tekstury:
+        for tekstura in TEKSTURY:
             self.okno_gry.blit(tekstura[0], (tekstura[1].x, tekstura[1].y))
 
         self.okno_gry.blit(self.font30.render(f'Doświadczenie:{self.gracz.doswiadczenie}/{((self.gracz.poziom + 1) * 10)**2}', True, (255,255,255)), (5, GAME_HEIGHT - 145))
@@ -779,9 +597,9 @@ class Gra:
             pygame.draw.circle(self.okno_gry, self.kolor_wybranej_wiezy, self.pozycja_myszy, self.zasieg_wybranej_wiezy, 1)
 
     def postawienie_wiezy(self):
-        for row in obszar:
+        for row in OBSZAR:
             for column in row:
-                if column[0].colliderect(pygame.Rect(self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20)) and (mapa[column[1]][column[2]] == 0 or mapa[column[1]][column[2]] == 10 or mapa[column[1]][column[2]] == 3 or mapa[column[1]][column[2]] == 5 or mapa[column[1]][column[2]] == 50 or mapa[column[1]][column[2]] == 6 or mapa[column[1]][column[2]] == 60 or mapa[column[1]][column[2]] == 7 or mapa[column[1]][column[2]] == 70 or mapa[column[1]][column[2]] == 8 or mapa[column[1]][column[2]] == 80) or self.pozycja_myszy[0] - 10 < 0 or self.pozycja_myszy[1] - 10 < 0 or self.pozycja_myszy[0] + 10 > GAME_WIDTH - MENUSIZE or self.pozycja_myszy[1] + 10 > GAME_HEIGHT - MENUSIZE:
+                if column[0].colliderect(pygame.Rect(self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20)) and (MAPA[column[1]][column[2]] == 0 or MAPA[column[1]][column[2]] == 10 or MAPA[column[1]][column[2]] == 3 or MAPA[column[1]][column[2]] == 5 or MAPA[column[1]][column[2]] == 50 or MAPA[column[1]][column[2]] == 6 or MAPA[column[1]][column[2]] == 60 or MAPA[column[1]][column[2]] == 7 or MAPA[column[1]][column[2]] == 70 or MAPA[column[1]][column[2]] == 8 or MAPA[column[1]][column[2]] == 80) or self.pozycja_myszy[0] - 10 < 0 or self.pozycja_myszy[1] - 10 < 0 or self.pozycja_myszy[0] + 10 > GAME_WIDTH - MENUSIZE or self.pozycja_myszy[1] + 10 > GAME_HEIGHT - MENUSIZE:
                     return False
 
         for wieza in self.lista_wiez:
