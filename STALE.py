@@ -40,7 +40,7 @@ MAP_TILES_H = len(MAPA)
 MAP_WIDTH = (TILESIZE * MAP_TILES_W)
 MAP_HEIGHT = (TILESIZE * MAP_TILES_H)
 
-os.environ['SDL_VIDEO_WINDOW_POS'] = '400, 150'
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.display.set_mode((MAP_WIDTH, MAP_HEIGHT + MENUSIZE))
 pygame.display.set_caption('Inwazja')
 
