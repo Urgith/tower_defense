@@ -559,13 +559,13 @@ class Gra:
         self.okno_gry.blit(FONT30.render(f'Obrażenia: {5 + self.gracz.poziom}', True, (255,255,255)), (2, MAP_HEIGHT + 40))
         self.okno_gry.blit(FONT30.render(f'Szybkość: {self.gracz.predkosc}', True, (255,255,255)), (2, MAP_HEIGHT + 65))
         self.okno_gry.blit(FONT30.render(f'Zdrowie: {self.gracz.zdrowie}', True, (255,255,255)), (2, MAP_HEIGHT + 5))
-        self.okno_gry.blit(FONT30.render(f'Pieniądze: {self.pieniadze}', True, (255,255,255)), (150, MAP_HEIGHT + 78))
-        self.okno_gry.blit(FONT30.render(f'Punkty: {self.punkty}', True, (255,255,255)), (150, MAP_HEIGHT + 100))
+        self.okno_gry.blit(FONT30.render(f'Pieniądze: {self.pieniadze}', True, (255,255,255)), (140, MAP_HEIGHT + 78))
+        self.okno_gry.blit(FONT30.render(f'Punkty: {self.punkty}', True, (255,255,255)), (140, MAP_HEIGHT + 100))
 
         if self.start:
-            self.okno_gry.blit(FONT30.render(f'Runda:{self.runda + 1}', True, (255,255,255)), (MAP_WIDTH - 570, MAP_HEIGHT + 76))
+            self.okno_gry.blit(FONT30.render(f'Runda:{self.runda + 1}', True, (255,255,255)), (MAP_WIDTH - 575, MAP_HEIGHT + 76))
         else:
-            self.okno_gry.blit(FONT30.render(f'Runda:{self.runda}', True, (255,255,255)), (MAP_WIDTH - 570, MAP_HEIGHT + 76))
+            self.okno_gry.blit(FONT30.render(f'Runda:{self.runda}', True, (255,255,255)), (MAP_WIDTH - 575, MAP_HEIGHT + 76))
 
         self.okno_gry.blit(FONT30.render('10$', True, (255,255,255)), (515, MAP_HEIGHT + 20))
         self.okno_gry.blit(FONT30.render('30$', True, (255,255,255)), (515, MAP_HEIGHT + 70))
