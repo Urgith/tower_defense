@@ -431,7 +431,7 @@ class Gra:
 
             self.przebieg()
             self.rysowanie()
-            pygame.display.flip()
+            pygame.display.update()
 
     def przebieg(self):
         Gracz.ruch(self.gracz)
@@ -527,21 +527,6 @@ class Gra:
                 if przeciwnik.startowe_zdrowie > przeciwnik.zdrowie:
                     pygame.draw.rect(self.okno_gry, (255,0,0), pygame.Rect(przeciwnik.obiekt.x - 5 + (25 * przeciwnik.zdrowie) // przeciwnik.startowe_zdrowie, przeciwnik.obiekt.y - 10, (25 * (przeciwnik.startowe_zdrowie - przeciwnik.zdrowie)) // przeciwnik.startowe_zdrowie, 3))
 
-        self.okno_gry.blit(DRUID, (self.gracz.obiekt.x, self.gracz.obiekt.y))
-
-        stan = int((self.gracz.zdrowie / (self.gracz.max_zdrowie + 1)) * 3)
-        if stan == 2:
-            color = int((self.gracz.max_zdrowie - self.gracz.zdrowie) / self.gracz.max_zdrowie * 3 * 255)
-            pygame.draw.rect(self.okno_gry, (color,255,0), (self.gracz.x - 5, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * 40, 5))
-
-        elif stan == 1:
-            color = int((self.gracz.zdrowie - self.gracz.max_zdrowie / 3) / self.gracz.max_zdrowie * 3 * 255)
-            pygame.draw.rect(self.okno_gry, (255,color,0), (self.gracz.x - 5, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * 40, 5))
-
-        elif stan == 0:
-            color = int(self.gracz.zdrowie / self.gracz.max_zdrowie * 3 * 255)
-            pygame.draw.rect(self.okno_gry, (color,0,0), (self.gracz.x - 5, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * 40, 5))
-
         for pocisk in self.lista_pociskow:
             if pocisk.rodzaj == 'gracz':
                 self.okno_gry.blit(KULA_MOCY, (pocisk.obiekt.x, pocisk.obiekt.y))
@@ -590,6 +575,21 @@ class Gra:
         self.okno_gry.blit(FONT30.render('3.', True, (255,255,255)), (GAME_WIDTH - 30, 120))
 
         self.okno_gry.blit(FONT40.render(f'{self.zdrowie_lasu}', True, (255,255,255)), (465, 550))
+
+        self.okno_gry.blit(DRUID, (self.gracz.obiekt.x, self.gracz.obiekt.y))
+
+        stan = int((self.gracz.zdrowie / (self.gracz.max_zdrowie + 1)) * 3)
+        if stan == 2:
+            color = int((self.gracz.max_zdrowie - self.gracz.zdrowie) / self.gracz.max_zdrowie * 3 * 255)
+            pygame.draw.rect(self.okno_gry, (color,255,0), (self.gracz.x - 5, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * 40, 5))
+
+        elif stan == 1:
+            color = int((self.gracz.zdrowie - self.gracz.max_zdrowie / 3) / self.gracz.max_zdrowie * 3 * 255)
+            pygame.draw.rect(self.okno_gry, (255,color,0), (self.gracz.x - 5, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * 40, 5))
+
+        elif stan == 0:
+            color = int(self.gracz.zdrowie / self.gracz.max_zdrowie * 3 * 255)
+            pygame.draw.rect(self.okno_gry, (color,0,0), (self.gracz.x - 5, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * 40, 5))
 
         if self.wybrano_wieze_do_kupienia:
             pygame.draw.rect(self.okno_gry, self.kolor_wybranej_wiezy, (self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20))
