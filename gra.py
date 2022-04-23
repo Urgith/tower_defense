@@ -315,7 +315,7 @@ class Gra:
 
         self.clock = pygame.time.Clock()
         while True:
-            self.clock.tick(FPS)
+            self.clock.tick(FPS_MAX)
 
             if self.start:
                 self.licznik += 1
