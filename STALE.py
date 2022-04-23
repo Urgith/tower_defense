@@ -1,8 +1,47 @@
 from funkcje import *
 
+import os
 
-pygame.font.init()
-pygame.display.set_mode()
+
+MAPA = (
+    ( 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    (10, 1, 1, 1, 1, 1, 1, 5, 0, 0, 8, 1, 1, 1, 5, 0, 8, 1, 1, 1, 1, 1, 1, 1, 1, 5, 0, 0, 8, 1, 1, 1, 1, 1, 1),
+    (50, 0, 0, 8, 1, 1, 1,10, 1, 1,10, 1, 1, 5, 7, 1,10, 1, 1, 5, 0, 0, 0, 0, 0, 7, 1, 1,10, 1,80, 0, 0, 6, 1),
+    ( 1, 1, 1,10, 1, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1, 1,10, 1),
+    ( 1, 5, 0,10, 0, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0, 0, 0, 0, 8, 1, 1,10, 1,10, 1, 1,10, 1),
+    ( 1,10, 1,10, 1, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1, 1, 1, 1,10, 1, 1,50, 0, 0, 0, 0, 7, 1),
+    ( 1,70, 0,10, 0, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 6, 1, 1, 1,10, 1, 1, 1, 1,10, 1, 1, 1, 1),
+    ( 1, 1, 1,10, 1, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1,10, 1, 5, 0,10, 0, 8, 1, 1,10, 1, 1, 1, 1),
+    ( 1, 1, 1,10, 1, 1, 5, 7, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1,10, 1,10, 1,10, 1,10, 1, 1,10, 1, 1, 1, 1),
+    ( 1, 1, 1,10, 1, 1,10, 1, 1, 1,10, 1, 1,10, 1, 1,50, 0, 0, 7, 1,10, 1,10, 1,10, 1,10, 1, 1,50, 8, 1, 1, 1),
+    ( 1, 1, 1,10, 1, 1,70, 6, 1, 1,50, 0, 0, 7, 1, 1, 1, 1, 1, 1, 1,10, 1,70, 0,60, 1,10, 1, 1, 1,10, 1, 1, 1),
+    ( 1, 1, 1,10, 1, 1, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1, 1, 1, 1, 1,10, 1, 1, 1,10, 1, 1, 1),
+    ( 1, 1, 1,10, 1,80, 0,10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,10, 0, 6, 1),
+    ( 1, 1, 1,10, 1,10, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1, 1, 1, 1, 1,10, 1, 1, 1,10, 1,10, 1),
+    ( 1, 1, 1,10, 1,50, 0,10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 1, 1, 1, 1,10, 1, 5, 0,10, 0, 7, 1),
+    ( 1, 1, 1,10, 1, 1, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1,10, 1, 1, 1),
+    ( 1,80, 0,60, 1, 1, 1,70, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1,10, 1, 1, 1),
+    ( 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1,10, 1, 1, 1),
+    ( 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 0, 8, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1,50, 0, 8, 1),
+    ( 1,50, 8, 1, 1, 5, 0, 0, 0, 8, 1, 1,10, 1,10, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1, 1, 1,10, 1),
+    ( 1, 1,10, 1, 1,10, 1, 1, 1,10, 1, 1,10, 1,10, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,70, 6, 1, 1,10, 1),
+    ( 1, 1,50, 8, 1,10, 1, 1, 1,10, 1, 1,10, 1,10, 1,10, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1,10, 1, 1,10, 1, 1,10, 1),
+    ( 1, 1, 1,10, 1,10, 1, 1, 1,50, 0, 0, 7, 1,10, 1,10, 1, 3, 3, 3, 0, 0, 0, 0, 0, 0,60, 1, 1,70, 0, 0,60, 1),
+    ( 1, 1, 1,50, 0, 7, 1, 1, 1, 1, 1, 1, 1, 1,50, 0, 7, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+    ( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+)
+
+TILESIZE = 25
+MENUSIZE = 150
+
+MAP_TILES_W = len(MAPA[0])
+MAP_TILES_H = len(MAPA)
+
+MAP_WIDTH = (TILESIZE * MAP_TILES_W)
+MAP_HEIGHT = (TILESIZE * MAP_TILES_H)
+
+os.environ['SDL_VIDEO_WINDOW_POS'] = '400, 150'
+pygame.display.set_mode((MAP_WIDTH, MAP_HEIGHT + MENUSIZE))
 pygame.display.set_caption('Inwazja')
 
 TRAWA = image_load('dane/trawa.jpg')
@@ -54,34 +93,6 @@ TEREN = {
     80: lg
 }
 
-MAPA = [
-    [ 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [10, 1, 1, 1, 1, 1, 1, 5, 0, 0, 8, 1, 1, 1, 5, 0, 8, 1, 1, 1, 1, 1, 1, 1, 1, 5, 0, 0, 8, 1, 1, 1, 1, 1, 1],
-    [50, 0, 0, 8, 1, 1, 1,10, 1, 1,10, 1, 1, 5, 7, 1,10, 1, 1, 5, 0, 0, 0, 0, 0, 7, 1, 1,10, 1,80, 0, 0, 6, 1],
-    [ 1, 1, 1,10, 1, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1, 1,10, 1],
-    [ 1, 5, 0,10, 0, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0, 0, 0, 0, 8, 1, 1,10, 1,10, 1, 1,10, 1],
-    [ 1,10, 1,10, 1, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1, 1, 1, 1,10, 1, 1,50, 0, 0, 0, 0, 7, 1],
-    [ 1,70, 0,10, 0, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 0,10, 0, 6, 1, 1, 1,10, 1, 1, 1, 1,10, 1, 1, 1, 1],
-    [ 1, 1, 1,10, 1, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1,10, 1, 5, 0,10, 0, 8, 1, 1,10, 1, 1, 1, 1],
-    [ 1, 1, 1,10, 1, 1, 5, 7, 1, 1,10, 1, 1,10, 1, 1,10, 1, 1,10, 1,10, 1,10, 1,10, 1,10, 1, 1,10, 1, 1, 1, 1],
-    [ 1, 1, 1,10, 1, 1,10, 1, 1, 1,10, 1, 1,10, 1, 1,50, 0, 0, 7, 1,10, 1,10, 1,10, 1,10, 1, 1,50, 8, 1, 1, 1],
-    [ 1, 1, 1,10, 1, 1,70, 6, 1, 1,50, 0, 0, 7, 1, 1, 1, 1, 1, 1, 1,10, 1,70, 0,60, 1,10, 1, 1, 1,10, 1, 1, 1],
-    [ 1, 1, 1,10, 1, 1, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1, 1, 1, 1, 1,10, 1, 1, 1,10, 1, 1, 1],
-    [ 1, 1, 1,10, 1,80, 0,10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,10, 0, 6, 1],
-    [ 1, 1, 1,10, 1,10, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1, 1, 1, 1, 1,10, 1, 1, 1,10, 1,10, 1],
-    [ 1, 1, 1,10, 1,50, 0,10, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 1, 1, 1, 1, 1,10, 1, 5, 0,10, 0, 7, 1],
-    [ 1, 1, 1,10, 1, 1, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1,10, 1, 1, 1],
-    [ 1,80, 0,60, 1, 1, 1,70, 0, 0, 0, 0, 0, 0, 0, 0, 6, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1,10, 1, 1, 1],
-    [ 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1,10, 1, 1, 1],
-    [ 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 0, 8, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1,50, 0, 8, 1],
-    [ 1,50, 8, 1, 1, 5, 0, 0, 0, 8, 1, 1,10, 1,10, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,10, 1, 1, 1,10, 1],
-    [ 1, 1,10, 1, 1,10, 1, 1, 1,10, 1, 1,10, 1,10, 1,10, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,10, 1,70, 6, 1, 1,10, 1],
-    [ 1, 1,50, 8, 1,10, 1, 1, 1,10, 1, 1,10, 1,10, 1,10, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1,10, 1, 1,10, 1, 1,10, 1],
-    [ 1, 1, 1,10, 1,10, 1, 1, 1,50, 0, 0, 7, 1,10, 1,10, 1, 3, 3, 3, 0, 0, 0, 0, 0, 0,60, 1, 1,70, 0, 0,60, 1],
-    [ 1, 1, 1,50, 0, 7, 1, 1, 1, 1, 1, 1, 1, 1,50, 0, 7, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-]
-
 MYSZ = image_load('dane/mysz.png', (0, 0))
 SZCZUR = image_load('dane/szczur.png', (0, 0))
 PAJAK = image_load('dane/pajak.png', (0, 0))
@@ -107,43 +118,42 @@ WAVES = (
     (SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,SZCZUR,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,PAJAK,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ,WAZ)
 )
 
-TILESIZE = 25
-MENUSIZE = 150
-MAPWIDTH = len(MAPA[0])
-MAPHEIGHT = len(MAPA)
-GAME_WIDTH = (TILESIZE * MAPWIDTH) + MENUSIZE
-GAME_HEIGHT = (TILESIZE * MAPHEIGHT) + MENUSIZE
-
-TEKSTURY = (
-    (image_load('dane/zacznij.jpg'), pygame.Rect(GAME_WIDTH - 180, GAME_HEIGHT - 65, 50, 50)),
-    (image_load('dane/domek.jpg'), pygame.Rect(GAME_WIDTH - 85, GAME_HEIGHT - 85, 70, 70)),
-    (zielony, pygame.Rect(GAME_WIDTH - 80, 10, 40, 40)),
-    (niebieski, pygame.Rect(GAME_WIDTH - 80, 60, 40, 40)),
-    (zolty, pygame.Rect(GAME_WIDTH - 80, 110, 40, 40))
-)
-
-TEKSTURY_INTERFEJSU_WIEZY = (
-    (image_load('dane/atak_zielony.jpg'), pygame.Rect(400, GAME_HEIGHT - 140, 70, 70)),
-    (image_load('dane/zasieg_zielony.jpg'), pygame.Rect(480, GAME_HEIGHT - 140, 70, 70)),
-    (image_load('dane/predkosc_zielony.jpg'), pygame.Rect(560, GAME_HEIGHT - 140, 70, 70)),
-    (image_load('dane/dolar_zielony.jpg'), pygame.Rect(640, GAME_HEIGHT - 140, 70,70)),
-    (image_load('dane/atak_niebieski.jpg'), pygame.Rect(400, GAME_HEIGHT - 140, 70, 70)),
-    (image_load('dane/zasieg_niebieski.jpg'), pygame.Rect(480, GAME_HEIGHT - 140, 70, 70)),
-    (image_load('dane/przebicie_niebieski.jpg'), pygame.Rect(560, GAME_HEIGHT - 140, 70, 70)),
-    (image_load('dane/dolar_niebieski.jpg'), pygame.Rect(640, GAME_HEIGHT - 140, 70, 70)),
-    (image_load('dane/atak_zolty.jpg'), pygame.Rect(400, GAME_HEIGHT - 140, 70, 70)),
-    (image_load('dane/zasieg_zolty.jpg'), pygame.Rect(480, GAME_HEIGHT - 140, 70, 70)),
-    (image_load('dane/elektryzacja_zolty.jpg'), pygame.Rect(560, GAME_HEIGHT - 140, 70, 70)),
-    (image_load('dane/dolar_zolty.jpg'), pygame.Rect(640, GAME_HEIGHT - 140, 70, 70))
+TO_UPDATE = (
+    pygame.Rect(0, 0, MAP_WIDTH, MAP_HEIGHT),   # mapa
+    pygame.Rect(0, MAP_HEIGHT, 550, MENUSIZE)   # interfejs
 )
 
 OBSZAR = []
-for row in range(MAPHEIGHT):
+for row in range(MAP_TILES_W):
     OBSZAR.append([])
 
-    for column in range(MAPWIDTH):
+    for column in range(MAP_TILES_H):
         OBSZAR[row].append((pygame.Rect(TILESIZE * column, TILESIZE * row, TILESIZE, TILESIZE), row, column))
 
+TEKSTURY = (
+    (image_load('dane/zacznij.jpg'), pygame.Rect(MAP_WIDTH - 555, MAP_HEIGHT + 97, 50, 50)),
+    (image_load('dane/domek.jpg'), pygame.Rect(MAP_WIDTH - 480, MAP_HEIGHT + 78, 70, 70)),
+    (zielony, pygame.Rect(490, MAP_HEIGHT + 18, 40, 40)),
+    (niebieski, pygame.Rect(490, MAP_HEIGHT + 68, 40, 40)),
+    (zolty, pygame.Rect(490, MAP_HEIGHT + 118, 40, 40))
+)
+
+TEKSTURY_INTERFEJSU_WIEZY = (
+    (image_load('dane/atak_zielony.jpg'), pygame.Rect(155, MAP_HEIGHT + 3, 70, 70)),
+    (image_load('dane/zasieg_zielony.jpg'), pygame.Rect(235, MAP_HEIGHT + 3, 70, 70)),
+    (image_load('dane/predkosc_zielony.jpg'), pygame.Rect(315, MAP_HEIGHT  + 3, 70, 70)),
+    (image_load('dane/dolar_zielony.jpg'), pygame.Rect(395, MAP_HEIGHT + 3, 70,70)),
+    (image_load('dane/atak_niebieski.jpg'), pygame.Rect(155, MAP_HEIGHT + 3, 70, 70)),
+    (image_load('dane/zasieg_niebieski.jpg'), pygame.Rect(235, MAP_HEIGHT + 3, 70, 70)),
+    (image_load('dane/przebicie_niebieski.jpg'), pygame.Rect(315, MAP_HEIGHT + 3, 70, 70)),
+    (image_load('dane/dolar_niebieski.jpg'), pygame.Rect(395, MAP_HEIGHT + 3, 70, 70)),
+    (image_load('dane/atak_zolty.jpg'), pygame.Rect(155, MAP_HEIGHT + 3, 70, 70)),
+    (image_load('dane/zasieg_zolty.jpg'), pygame.Rect(235, MAP_HEIGHT + 3, 70, 70)),
+    (image_load('dane/elektryzacja_zolty.jpg'), pygame.Rect(315, MAP_HEIGHT + 3, 70, 70)),
+    (image_load('dane/dolar_zolty.jpg'), pygame.Rect(395, MAP_HEIGHT + 3, 70, 70))
+)
+
+pygame.font.init()
 FONT30 = pygame.font.SysFont(None, 30)
 FONT40 = pygame.font.SysFont(None, 40)
 

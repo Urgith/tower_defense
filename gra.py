@@ -42,11 +42,11 @@ class Gracz:
         if self.x < 0: self.x = 0
         if self.y < 0: self.y = 0
 
-        if self.x > GAME_WIDTH - MENUSIZE - 30:
-            self.x = GAME_WIDTH - MENUSIZE - 30
+        if self.x > MAP_WIDTH - 30:
+            self.x = MAP_WIDTH - 30
 
-        if self.y > GAME_HEIGHT - MENUSIZE - 30:
-            self.y = GAME_HEIGHT - MENUSIZE - 30
+        if self.y > MAP_HEIGHT - 30:
+            self.y = MAP_HEIGHT - 30
 
         if x and y:
             if x == 1:
@@ -291,7 +291,7 @@ class Wieza:
 class Gra:
 
     def __init__(self):
-        self.okno_gry = pygame.display.set_mode((GAME_WIDTH, GAME_HEIGHT))
+        self.okno_gry = pygame.display.set_mode((MAP_WIDTH, MAP_HEIGHT + MENUSIZE))
         self.gracz = Gracz()
 
         self.lista_przeciwnikow = []
@@ -385,7 +385,7 @@ class Gra:
                         self.mozliwosc_polepszenia = True
                     self.wybrano_wieze = False
 
-                    if self.pozycja_myszy[0] < GAME_WIDTH - MENUSIZE and self.pozycja_myszy[1] < GAME_HEIGHT - MENUSIZE:
+                    if self.pozycja_myszy[0] < MAP_WIDTH and self.pozycja_myszy[1] < MAP_HEIGHT:
                         if self.wybrano_wieze_do_kupienia:
                             if self.postawienie_wiezy():
                                 self.lista_wiez.append(Wieza(self))
@@ -431,7 +431,7 @@ class Gra:
 
             self.przebieg()
             self.rysowanie()
-            pygame.display.update()
+            pygame.display.update(TO_UPDATE)
 
     def przebieg(self):
         Gracz.ruch(self.gracz)
@@ -461,7 +461,7 @@ class Gra:
                     self.lista_pociskow.pop(i)
                     continue
 
-            if pocisk.obiekt.x < 0 or pocisk.obiekt.y < 0 or pocisk.obiekt.x > GAME_WIDTH - MENUSIZE - 8 or pocisk.obiekt.y > GAME_HEIGHT - MENUSIZE - 8:
+            if pocisk.obiekt.x < 0 or pocisk.obiekt.y < 0 or pocisk.obiekt.x > MAP_WIDTH - 8 or pocisk.obiekt.y > MAP_HEIGHT - 8:
                 self.lista_pociskow.pop(i)
                 continue
 
@@ -510,8 +510,8 @@ class Gra:
     def rysowanie(self):
         self.okno_gry.blit(TRAWA, (0, 0))
 
-        for row in range(MAPHEIGHT):
-            for column in range(MAPWIDTH):
+        for row in range(MAP_TILES_H):
+            for column in range(MAP_TILES_W):
                 if MAPA[row][column] != 1:
                     self.okno_gry.blit(TEREN[MAPA[row][column]], (column * TILESIZE, row * TILESIZE))
 
@@ -536,8 +536,8 @@ class Gra:
         if self.wybrano_wieze:
             pygame.draw.circle(self.okno_gry, self.lista_wiez[self.wybrana_wieza].kolor, self.lista_wiez[self.wybrana_wieza].pole, self.lista_wiez[self.wybrana_wieza].zasieg, 1)
 
-        pygame.draw.rect(self.okno_gry, (0,0,0), (GAME_WIDTH - MENUSIZE, 0, MENUSIZE, GAME_HEIGHT))
-        pygame.draw.rect(self.okno_gry, (0,0,0), (0, GAME_HEIGHT - MENUSIZE, GAME_WIDTH, MENUSIZE))
+        pygame.draw.rect(self.okno_gry, (0,0,0), (MAP_WIDTH, 0, MENUSIZE, MAP_HEIGHT + MENUSIZE))
+        pygame.draw.rect(self.okno_gry, (0,0,0), (0, MAP_HEIGHT, MAP_WIDTH + MENUSIZE, MENUSIZE))
 
         if self.wybrano_wieze:
             for i in range((self.lista_wiez[self.wybrana_wieza].rodzaj - 1) * 4, self.lista_wiez[self.wybrana_wieza].rodzaj * 4):
@@ -554,25 +554,25 @@ class Gra:
         for tekstura in TEKSTURY:
             self.okno_gry.blit(tekstura[0], (tekstura[1].x, tekstura[1].y))
 
-        self.okno_gry.blit(FONT30.render(f'Doświadczenie:{self.gracz.doswiadczenie}/{((self.gracz.poziom + 1) * 10)**2}', True, (255,255,255)), (5, GAME_HEIGHT - 145))
-        self.okno_gry.blit(FONT30.render(f'Poziom:{self.gracz.poziom}', True, (255,255,255)), (5, GAME_HEIGHT - 115))
-        self.okno_gry.blit(FONT30.render(f'Obrażenia:{5 + self.gracz.poziom}', True, (255,255,255)), (5, GAME_HEIGHT - 85))
-        self.okno_gry.blit(FONT30.render(f'Szybkość:{self.gracz.predkosc}', True, (255,255,255)), (5, GAME_HEIGHT - 55))
-        self.okno_gry.blit(FONT30.render(f'Zdrowie:{self.gracz.zdrowie}', True, (255,255,255)), (5, GAME_HEIGHT - 25))
-        self.okno_gry.blit(FONT30.render(f'Pieniądze:{self.pieniadze}', True, (255,255,255)), (200, GAME_HEIGHT - 25))
-        self.okno_gry.blit(FONT30.render(f'Punkty:{self.punkty}', True, (255,255,255)), (200, GAME_HEIGHT - 55))
+        self.okno_gry.blit(FONT30.render(f'Doświadczenie: {self.gracz.doswiadczenie}/{((self.gracz.poziom + 1) * 10)**2}', True, (255,255,255)), (2, MAP_HEIGHT + 130))
+        self.okno_gry.blit(FONT30.render(f'Poziom: {self.gracz.poziom}', True, (255,255,255)), (2, MAP_HEIGHT + 105))
+        self.okno_gry.blit(FONT30.render(f'Obrażenia: {5 + self.gracz.poziom}', True, (255,255,255)), (2, MAP_HEIGHT + 40))
+        self.okno_gry.blit(FONT30.render(f'Szybkość: {self.gracz.predkosc}', True, (255,255,255)), (2, MAP_HEIGHT + 65))
+        self.okno_gry.blit(FONT30.render(f'Zdrowie: {self.gracz.zdrowie}', True, (255,255,255)), (2, MAP_HEIGHT + 5))
+        self.okno_gry.blit(FONT30.render(f'Pieniądze: {self.pieniadze}', True, (255,255,255)), (150, MAP_HEIGHT + 78))
+        self.okno_gry.blit(FONT30.render(f'Punkty: {self.punkty}', True, (255,255,255)), (150, MAP_HEIGHT + 100))
 
         if self.start:
-            self.okno_gry.blit(FONT30.render(f'Runda:{self.runda + 1}', True, (255,255,255)),(GAME_WIDTH - 195, GAME_HEIGHT - 85))
+            self.okno_gry.blit(FONT30.render(f'Runda:{self.runda + 1}', True, (255,255,255)), (MAP_WIDTH - 570, MAP_HEIGHT + 76))
         else:
-            self.okno_gry.blit(FONT30.render(f'Runda:{self.runda}', True, (255,255,255)), (GAME_WIDTH - 195, GAME_HEIGHT -85))
+            self.okno_gry.blit(FONT30.render(f'Runda:{self.runda}', True, (255,255,255)), (MAP_WIDTH - 570, MAP_HEIGHT + 76))
 
-        self.okno_gry.blit(FONT30.render('10$', True, (255,255,255)), (GAME_WIDTH - 130, 20))
-        self.okno_gry.blit(FONT30.render('30$', True, (255,255,255)), (GAME_WIDTH - 130, 70))
-        self.okno_gry.blit(FONT30.render('50$', True, (255,255,255)), (GAME_WIDTH - 130, 120))
-        self.okno_gry.blit(FONT30.render('1.', True, (255,255,255)), (GAME_WIDTH - 30, 20))
-        self.okno_gry.blit(FONT30.render('2.', True, (255,255,255)), (GAME_WIDTH - 30, 70))
-        self.okno_gry.blit(FONT30.render('3.', True, (255,255,255)), (GAME_WIDTH - 30, 120))
+        self.okno_gry.blit(FONT30.render('10$', True, (255,255,255)), (515, MAP_HEIGHT + 20))
+        self.okno_gry.blit(FONT30.render('30$', True, (255,255,255)), (515, MAP_HEIGHT + 70))
+        self.okno_gry.blit(FONT30.render('50$', True, (255,255,255)), (515, MAP_HEIGHT + 120))
+        self.okno_gry.blit(FONT30.render('1.', True, (255,255,255)), (470, MAP_HEIGHT + 20))
+        self.okno_gry.blit(FONT30.render('2.', True, (255,255,255)), (470, MAP_HEIGHT + 70))
+        self.okno_gry.blit(FONT30.render('3.', True, (255,255,255)), (470, MAP_HEIGHT + 120))
 
         self.okno_gry.blit(FONT40.render(f'{self.zdrowie_lasu}', True, (255,255,255)), (465, 550))
 
@@ -598,7 +598,7 @@ class Gra:
     def postawienie_wiezy(self):
         for row in OBSZAR:
             for column in row:
-                if column[0].colliderect(pygame.Rect(self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20)) and (MAPA[column[1]][column[2]] == 0 or MAPA[column[1]][column[2]] == 10 or MAPA[column[1]][column[2]] == 3 or MAPA[column[1]][column[2]] == 5 or MAPA[column[1]][column[2]] == 50 or MAPA[column[1]][column[2]] == 6 or MAPA[column[1]][column[2]] == 60 or MAPA[column[1]][column[2]] == 7 or MAPA[column[1]][column[2]] == 70 or MAPA[column[1]][column[2]] == 8 or MAPA[column[1]][column[2]] == 80) or self.pozycja_myszy[0] - 10 < 0 or self.pozycja_myszy[1] - 10 < 0 or self.pozycja_myszy[0] + 10 > GAME_WIDTH - MENUSIZE or self.pozycja_myszy[1] + 10 > GAME_HEIGHT - MENUSIZE:
+                if column[0].colliderect(pygame.Rect(self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20)) and (MAPA[column[1]][column[2]] == 0 or MAPA[column[1]][column[2]] == 10 or MAPA[column[1]][column[2]] == 3 or MAPA[column[1]][column[2]] == 5 or MAPA[column[1]][column[2]] == 50 or MAPA[column[1]][column[2]] == 6 or MAPA[column[1]][column[2]] == 60 or MAPA[column[1]][column[2]] == 7 or MAPA[column[1]][column[2]] == 70 or MAPA[column[1]][column[2]] == 8 or MAPA[column[1]][column[2]] == 80) or self.pozycja_myszy[0] - 10 < 0 or self.pozycja_myszy[1] - 10 < 0 or self.pozycja_myszy[0] + 10 > MAP_WIDTH or self.pozycja_myszy[1] + 10 > MAP_HEIGHT:
                     return False
 
         for wieza in self.lista_wiez:
