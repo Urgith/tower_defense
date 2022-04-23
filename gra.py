@@ -309,19 +309,18 @@ class Gra:
         self.wybrano_wieze = False
         self.start = False
 
-        self.predkosc_wychodzenia = 10
         self.zdrowie_lasu = 100
         self.pieniadze = 50
         self.punkty = 0
 
-        self.font30 = pygame.font.SysFont(None, 30)
-        self.font40 = pygame.font.SysFont(None, 40)
-
+        self.clock = pygame.time.Clock()
         while True:
+            self.clock.tick(FPS)
+
             if self.start:
                 self.licznik += 1
 
-                if (self.licznik % self.predkosc_wychodzenia) == 0 and (self.runda != (len(WAVES) - 1) or self.numer_przeciwnika != (len(WAVES[-1]) - 1)):
+                if (self.licznik % PREDKOSC_WYCHODZENIA) == 0 and (self.runda != (len(WAVES) - 1) or self.numer_przeciwnika != (len(WAVES[-1]) - 1)):
                     try:
                         self.lista_przeciwnikow.append(Przeciwnik(self))
                         self.numer_przeciwnika += 1
@@ -559,38 +558,38 @@ class Gra:
             for i in range((self.lista_wiez[self.wybrana_wieza].rodzaj - 1) * 4, self.lista_wiez[self.wybrana_wieza].rodzaj * 4):
                 self.okno_gry.blit(TEKSTURY_INTERFEJSU_WIEZY[i][0], TEKSTURY_INTERFEJSU_WIEZY[i][1])
 
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_atak}$'    , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 50))
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_zasieg}$'  , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 50))
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_reszta}$'  , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 50))
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].cena_calkowita}$', True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[3][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[3][1][1] + 50))
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_atak}'    , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 5))
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_zasieg}'  , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 5))
-            self.okno_gry.blit(self.font30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_reszta}'  , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 5))
+            self.okno_gry.blit(FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_atak}$'    , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 50))
+            self.okno_gry.blit(FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_zasieg}$'  , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 50))
+            self.okno_gry.blit(FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_reszta}$'  , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 50))
+            self.okno_gry.blit(FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].cena_calkowita}$', True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[3][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[3][1][1] + 50))
+            self.okno_gry.blit(FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_atak}'    , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 5))
+            self.okno_gry.blit(FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_zasieg}'  , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 5))
+            self.okno_gry.blit(FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_reszta}'  , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 5))
 
         for tekstura in TEKSTURY:
             self.okno_gry.blit(tekstura[0], (tekstura[1].x, tekstura[1].y))
 
-        self.okno_gry.blit(self.font30.render(f'Doświadczenie:{self.gracz.doswiadczenie}/{((self.gracz.poziom + 1) * 10)**2}', True, (255,255,255)), (5, GAME_HEIGHT - 145))
-        self.okno_gry.blit(self.font30.render(f'Poziom:{self.gracz.poziom}', True, (255,255,255)), (5, GAME_HEIGHT - 115))
-        self.okno_gry.blit(self.font30.render(f'Obrażenia:{5 + self.gracz.poziom}', True, (255,255,255)), (5, GAME_HEIGHT - 85))
-        self.okno_gry.blit(self.font30.render(f'Szybkość:{self.gracz.predkosc}', True, (255,255,255)), (5, GAME_HEIGHT - 55))
-        self.okno_gry.blit(self.font30.render(f'Zdrowie:{self.gracz.zdrowie}', True, (255,255,255)), (5, GAME_HEIGHT - 25))
-        self.okno_gry.blit(self.font30.render(f'Pieniądze:{self.pieniadze}', True, (255,255,255)), (200, GAME_HEIGHT - 25))
-        self.okno_gry.blit(self.font30.render(f'Punkty:{self.punkty}', True, (255,255,255)), (200, GAME_HEIGHT - 55))
+        self.okno_gry.blit(FONT30.render(f'Doświadczenie:{self.gracz.doswiadczenie}/{((self.gracz.poziom + 1) * 10)**2}', True, (255,255,255)), (5, GAME_HEIGHT - 145))
+        self.okno_gry.blit(FONT30.render(f'Poziom:{self.gracz.poziom}', True, (255,255,255)), (5, GAME_HEIGHT - 115))
+        self.okno_gry.blit(FONT30.render(f'Obrażenia:{5 + self.gracz.poziom}', True, (255,255,255)), (5, GAME_HEIGHT - 85))
+        self.okno_gry.blit(FONT30.render(f'Szybkość:{self.gracz.predkosc}', True, (255,255,255)), (5, GAME_HEIGHT - 55))
+        self.okno_gry.blit(FONT30.render(f'Zdrowie:{self.gracz.zdrowie}', True, (255,255,255)), (5, GAME_HEIGHT - 25))
+        self.okno_gry.blit(FONT30.render(f'Pieniądze:{self.pieniadze}', True, (255,255,255)), (200, GAME_HEIGHT - 25))
+        self.okno_gry.blit(FONT30.render(f'Punkty:{self.punkty}', True, (255,255,255)), (200, GAME_HEIGHT - 55))
 
         if self.start:
-            self.okno_gry.blit(self.font30.render(f'Runda:{self.runda + 1}', True, (255,255,255)),(GAME_WIDTH - 195, GAME_HEIGHT - 85))
+            self.okno_gry.blit(FONT30.render(f'Runda:{self.runda + 1}', True, (255,255,255)),(GAME_WIDTH - 195, GAME_HEIGHT - 85))
         else:
-            self.okno_gry.blit(self.font30.render(f'Runda:{self.runda}', True, (255,255,255)), (GAME_WIDTH - 195, GAME_HEIGHT -85))
+            self.okno_gry.blit(FONT30.render(f'Runda:{self.runda}', True, (255,255,255)), (GAME_WIDTH - 195, GAME_HEIGHT -85))
 
-        self.okno_gry.blit(self.font30.render('10$', True, (255,255,255)), (GAME_WIDTH - 130, 20))
-        self.okno_gry.blit(self.font30.render('30$', True, (255,255,255)), (GAME_WIDTH - 130, 70))
-        self.okno_gry.blit(self.font30.render('50$', True, (255,255,255)), (GAME_WIDTH - 130, 120))
-        self.okno_gry.blit(self.font30.render('1.', True, (255,255,255)), (GAME_WIDTH - 30, 20))
-        self.okno_gry.blit(self.font30.render('2.', True, (255,255,255)), (GAME_WIDTH - 30, 70))
-        self.okno_gry.blit(self.font30.render('3.', True, (255,255,255)), (GAME_WIDTH - 30, 120))
+        self.okno_gry.blit(FONT30.render('10$', True, (255,255,255)), (GAME_WIDTH - 130, 20))
+        self.okno_gry.blit(FONT30.render('30$', True, (255,255,255)), (GAME_WIDTH - 130, 70))
+        self.okno_gry.blit(FONT30.render('50$', True, (255,255,255)), (GAME_WIDTH - 130, 120))
+        self.okno_gry.blit(FONT30.render('1.', True, (255,255,255)), (GAME_WIDTH - 30, 20))
+        self.okno_gry.blit(FONT30.render('2.', True, (255,255,255)), (GAME_WIDTH - 30, 70))
+        self.okno_gry.blit(FONT30.render('3.', True, (255,255,255)), (GAME_WIDTH - 30, 120))
 
-        self.okno_gry.blit(self.font40.render(f'{self.zdrowie_lasu}', True, (255,255,255)), (465, 550))
+        self.okno_gry.blit(FONT40.render(f'{self.zdrowie_lasu}', True, (255,255,255)), (465, 550))
 
         if self.wybrano_wieze_do_kupienia:
             pygame.draw.rect(self.okno_gry, self.kolor_wybranej_wiezy, (self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20))

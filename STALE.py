@@ -1,45 +1,23 @@
-import pygame
-
-
-def image_load(name, location=None):
-    image = pygame.image.load(name).convert()
-
-    if location is not None: 
-        image.set_colorkey(image.get_at(location))
-
-    return image
-
-
-def quit():
-    import sys
-
-    pygame.quit()
-    sys.exit(0)
+from funkcje import *
 
 
 pygame.font.init()
 pygame.display.set_mode()
 pygame.display.set_caption('Inwazja')
 
-lg = image_load('dane/lg.jpg')
-ld = image_load('dane/ld.jpg')
-pg = image_load('dane/pg.jpg')
-pd = image_load('dane/pd.jpg')
-
 TRAWA = image_load('dane/trawa.jpg')
 
 KULA_MOCY = image_load('dane/kula_mocy.png', (0, 0))
 DRUID = image_load('dane/druid.png', (0, 0))
 
-MYSZ = image_load('dane/mysz.png', (0, 0))
-SZCZUR = image_load('dane/szczur.png', (0, 0))
-PAJAK = image_load('dane/pajak.png', (0, 0))
-WAZ = image_load('dane/waz.png', (0, 0))
+zielony = image_load('dane/zielony.jpg')
+niebieski = image_load('dane/niebieski.jpg')
+zolty = image_load('dane/zolty.jpg')
 
 WIEZE = (
-    (image_load('dane/zielony.jpg'), (0,255,0), 10, 10, 100, 10, 200, 4),
-    (image_load('dane/niebieski.jpg'), (0,0,255), 30, 40, 150, 15,  75, 5),
-    (image_load('dane/zolty.jpg'), (255,255,0), 50,  2,  75,  0,  25, 2),
+    (zielony, (0,255,0), 10, 10, 100, 10, 200, 4),
+    (niebieski, (0,0,255), 30, 40, 150, 15,  75, 5),
+    (zolty, (255,255,0), 50,  2,  75,  0,  25, 2),
     (image_load('dane/zielony2.jpg'), 0),
     (image_load('dane/niebieski2.jpg'), 0),
     (image_load('dane/zolty2.jpg'), 0),
@@ -56,6 +34,11 @@ WIEZE = (
     (image_load('dane/niebieski6.jpg'), 0),
     (image_load('dane/zolty6.jpg'), 0)
 )
+
+lg = image_load('dane/lg.jpg')
+ld = image_load('dane/ld.jpg')
+pg = image_load('dane/pg.jpg')
+pd = image_load('dane/pd.jpg')
 
 TEREN = {
     0:  image_load('dane/poziomo.jpg'),
@@ -99,6 +82,11 @@ MAPA = (
     ( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 )
 
+MYSZ = image_load('dane/mysz.png', (0, 0))
+SZCZUR = image_load('dane/szczur.png', (0, 0))
+PAJAK = image_load('dane/pajak.png', (0, 0))
+WAZ = image_load('dane/waz.png', (0, 0))
+
 ENEMIES = {
     MYSZ:   (100, 1  , 1, 5 , 1, 15),
     SZCZUR: (200, 0.8, 3, 8 , 2, 17),
@@ -129,9 +117,9 @@ GAME_HEIGHT = (TILESIZE * MAPHEIGHT) + MENUSIZE
 TEKSTURY = (
     (image_load('dane/zacznij.jpg'), pygame.Rect(GAME_WIDTH - 180, GAME_HEIGHT - 65, 50, 50)),
     (image_load('dane/domek.jpg'), pygame.Rect(GAME_WIDTH - 85, GAME_HEIGHT - 85, 70, 70)),
-    (image_load('dane/zielony.jpg'), pygame.Rect(GAME_WIDTH - 80, 10, 40, 40)),
-    (image_load('dane/niebieski.jpg'), pygame.Rect(GAME_WIDTH - 80, 60, 40, 40)),
-    (image_load('dane/zolty.jpg'), pygame.Rect(GAME_WIDTH - 80, 110, 40, 40))
+    (zielony, pygame.Rect(GAME_WIDTH - 80, 10, 40, 40)),
+    (niebieski, pygame.Rect(GAME_WIDTH - 80, 60, 40, 40)),
+    (zolty, pygame.Rect(GAME_WIDTH - 80, 110, 40, 40))
 )
 
 TEKSTURY_INTERFEJSU_WIEZY = (
@@ -159,3 +147,9 @@ for row in range(MAPHEIGHT):
     OBSZAR[row] = tuple(OBSZAR[row])
 
 OBSZAR = tuple(OBSZAR)
+
+FONT30 = pygame.font.SysFont(None, 30)
+FONT40 = pygame.font.SysFont(None, 40)
+
+PREDKOSC_WYCHODZENIA = 10
+FPS = 90
