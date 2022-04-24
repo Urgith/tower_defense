@@ -13,5 +13,4 @@ def image_load(name, location=None):
 def quit():
     import sys
 
-    pygame.quit()
-    sys.exit(0)
+    sys.exit()
