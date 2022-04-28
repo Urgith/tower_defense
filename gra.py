@@ -1,4 +1,5 @@
 import random
+import sys
 
 from STALE import *
 
@@ -336,7 +337,7 @@ class Gra:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    quit()
+                    sys.exit()
 
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -344,7 +345,7 @@ class Gra:
                             self.wybrano_wieze_do_kupienia = False
                             self.wybrano_wieze = False
                         else:
-                            quit()
+                            sys.exit()
 
                     elif event.key == pygame.K_p:
 
@@ -352,7 +353,7 @@ class Gra:
                         while pauza:
                             for event in pygame.event.get():
                                 if event.type == pygame.QUIT:
-                                    quit()
+                                    sys.exit()
                                 elif event.type == pygame.KEYDOWN and (event.key == pygame.K_ESCAPE or event.key == pygame.K_p):
                                     pauza = False
 
@@ -412,7 +413,7 @@ class Gra:
                         self.start = True
 
                     elif TEKSTURY[1][1].collidepoint(self.pozycja_myszy):
-                        quit()
+                        sys.exit()
 
                     else:
                         for i, tekstura in enumerate(TEKSTURY):
@@ -505,15 +506,13 @@ class Gra:
             self.pozycja_myszy = pygame.mouse.get_pos()
 
         if self.gracz.zdrowie <= 0 or self.zdrowie_lasu <= 0:
-            quit()
+            sys.exit()
 
     def rysowanie(self):
         self.okno_gry.blit(TRAWA, (0, 0))
 
-        for row in range(MAP_TILES_H):
-            for column in range(MAP_TILES_W):
-                if MAPA[row][column] != 1:
-                    self.okno_gry.blit(TEREN[MAPA[row][column]], (column * TILESIZE, row * TILESIZE))
+        for tile_type, row, column in MAPA_TRASA:
+            self.okno_gry.blit(TEREN[tile_type], (column * TILESIZE, row * TILESIZE))
 
         for wieza in self.lista_wiez:
             self.okno_gry.blit(wieza.typ, (wieza.obiekt[0], wieza.obiekt[1]))

@@ -8,9 +8,3 @@ def image_load(name, location=None):
         image.set_colorkey(image.get_at(location))
 
     return image
-
-
-def quit():
-    import sys
-
-    sys.exit()
