@@ -511,8 +511,8 @@ class Gra:
     def rysowanie(self):
         self.okno_gry.blit(TRAWA, (0, 0))
 
-        for tile_type, row, column in MAPA_TRASA:
-            self.okno_gry.blit(TEREN[tile_type], (column * TILESIZE, row * TILESIZE))
+        for tile_type, location in MAPA_TRASA:
+            self.okno_gry.blit(TEREN[tile_type], location)
 
         for wieza in self.lista_wiez:
             self.okno_gry.blit(wieza.typ, (wieza.obiekt[0], wieza.obiekt[1]))

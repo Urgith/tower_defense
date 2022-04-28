@@ -31,6 +31,9 @@ MAPA = (
     ( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 )
 
+TILESIZE = 25
+MENUSIZE = 150
+
 MAP_TILES_W = len(MAPA[0])
 MAP_TILES_H = len(MAPA)
 
@@ -38,10 +41,7 @@ MAPA_TRASA = []
 for row in range(MAP_TILES_H):
     for column in range(MAP_TILES_W):
         if MAPA[row][column] != 1:
-            MAPA_TRASA.append((MAPA[row][column], row, column))
-
-TILESIZE = 25
-MENUSIZE = 150
+            MAPA_TRASA.append((MAPA[row][column], (column * TILESIZE, row * TILESIZE)))
 
 MAP_WIDTH = (TILESIZE * MAP_TILES_W)
 MAP_HEIGHT = (TILESIZE * MAP_TILES_H)
