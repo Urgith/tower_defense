@@ -407,17 +407,17 @@ class Gra:
 
                             Gracz.strzal(self.gracz, self)
 
-                    elif TEKSTURY[0][1].collidepoint(self.pozycja_myszy):
+                    elif pygame.Rect(*TEKSTURY[0][1], 50, 50).collidepoint(self.pozycja_myszy):
                         if self.licznik:
                             self.kliknieto_w_kolejna_runde = True
                         self.start = True
 
-                    elif TEKSTURY[1][1].collidepoint(self.pozycja_myszy):
+                    elif pygame.Rect(*TEKSTURY[1][1], 70, 70).collidepoint(self.pozycja_myszy):
                         sys.exit()
 
                     else:
-                        for i, tekstura in enumerate(TEKSTURY):
-                            if i >= 2 and tekstura[1].collidepoint(self.pozycja_myszy):
+                        for i, tekstura in enumerate(TEKSTURY[2:]):
+                            if pygame.Rect(*(tekstura[1]), 40, 40).collidepoint(self.pozycja_myszy):
                                 self.wybrano_wieze_do_kupienia = True
                                 self.zasieg_wybranej_wiezy = WIEZE[i - 2][4]
                                 self.kolor_wybranej_wiezy = WIEZE[i - 2][1]
@@ -554,7 +554,7 @@ class Gra:
         self.okno_gry.blits((
             (FONT30.render(f'Round:{self.runda + self.start}', True, (255,255,255)), (MAP_WIDTH + 57, MAP_HEIGHT - 105)),
 
-            *TEKSTURY_DRAW,
+            *TEKSTURY,
 
             (FONT30.render(f'Health: {self.gracz.zdrowie}', True, (255,255,255)), (MAP_WIDTH + 3, 3)),
             (FONT30.render(f'Damage: {5 + self.gracz.poziom}', True, (255,255,255)), (MAP_WIDTH + 3, 27)),

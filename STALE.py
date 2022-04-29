@@ -138,14 +138,6 @@ for row in range(MAP_TILES_W):
         OBSZAR[row].append((pygame.Rect(TILESIZE * column, TILESIZE * row, TILESIZE, TILESIZE), row, column))
 
 TEKSTURY = (
-    (image_load('dane/zacznij.jpg'), pygame.Rect(MAP_WIDTH + 3, MAP_HEIGHT - 123, 50, 50)),
-    (image_load('dane/domek.jpg'), pygame.Rect(MAP_WIDTH + 3, MAP_HEIGHT - 70, 70, 70)),
-    (zielony, pygame.Rect(MAP_WIDTH + 93, MAP_HEIGHT - 74, 40, 40)),
-    (niebieski, pygame.Rect(MAP_WIDTH + 93, MAP_HEIGHT - 49, 40, 40)),
-    (zolty, pygame.Rect(MAP_WIDTH + 93, MAP_HEIGHT - 24, 40, 40))
-)
-# TO REMOVE
-TEKSTURY_DRAW = (
     (image_load('dane/zacznij.jpg'), (MAP_WIDTH + 3, MAP_HEIGHT - 123)),
     (image_load('dane/domek.jpg'), (MAP_WIDTH + 3, MAP_HEIGHT - 70)),
     (zielony, (MAP_WIDTH + 93, MAP_HEIGHT - 74)),
