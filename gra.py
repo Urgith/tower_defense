@@ -292,7 +292,7 @@ class Wieza:
 class Gra:
 
     def __init__(self):
-        self.okno_gry = pygame.display.set_mode((MAP_WIDTH, MAP_HEIGHT + MENUSIZE))
+        self.okno_gry = pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
         self.gracz = Gracz()
 
         self.lista_przeciwnikow = []
@@ -535,7 +535,7 @@ class Gra:
         if self.wybrano_wieze:
             pygame.draw.circle(self.okno_gry, self.lista_wiez[self.wybrana_wieza].kolor, self.lista_wiez[self.wybrana_wieza].pole, self.lista_wiez[self.wybrana_wieza].zasieg, 1)
 
-        pygame.draw.rect(self.okno_gry, (0,0,0), (0, MAP_HEIGHT, MAP_WIDTH + MENUSIZE, MENUSIZE))
+        pygame.draw.rect(self.okno_gry, (0,0,0), (MAP_WIDTH, 0, MENUSIZE, MAP_HEIGHT))
 
         if self.wybrano_wieze:
             for i in range((self.lista_wiez[self.wybrana_wieza].rodzaj - 1) * 4, self.lista_wiez[self.wybrana_wieza].rodzaj * 4):
@@ -552,24 +552,23 @@ class Gra:
             ))
 
         self.okno_gry.blits((
-            (FONT30.render(f'Runda:{self.runda + self.start}', True, (255,255,255)), (MAP_WIDTH - 575, MAP_HEIGHT + 76)),
+            (FONT30.render(f'Round:{self.runda + self.start}', True, (255,255,255)), (MAP_WIDTH + 57, MAP_HEIGHT - 105)),
 
             *TEKSTURY_DRAW,
 
-            (FONT30.render(f'Doświadczenie: {self.gracz.doswiadczenie}/{((self.gracz.poziom + 1) * 10)**2}', True, (255,255,255)), (2, MAP_HEIGHT + 130)),
-            (FONT30.render(f'Poziom: {self.gracz.poziom}', True, (255,255,255)), (2, MAP_HEIGHT + 105)),
-            (FONT30.render(f'Obrażenia: {5 + self.gracz.poziom}', True, (255,255,255)), (2, MAP_HEIGHT + 40)),
-            (FONT30.render(f'Szybkość: {self.gracz.predkosc}', True, (255,255,255)), (2, MAP_HEIGHT + 65)),
-            (FONT30.render(f'Zdrowie: {self.gracz.zdrowie}', True, (255,255,255)), (2, MAP_HEIGHT + 5)),
-            (FONT30.render(f'Pieniądze: {self.pieniadze}', True, (255,255,255)), (140, MAP_HEIGHT + 78)),
-            (FONT30.render(f'Punkty: {self.punkty}', True, (255,255,255)), (140, MAP_HEIGHT + 100)),
+            (FONT30.render(f'Health: {self.gracz.zdrowie}', True, (255,255,255)), (MAP_WIDTH + 3, 3)),
+            (FONT30.render(f'Damage: {5 + self.gracz.poziom}', True, (255,255,255)), (MAP_WIDTH + 3, 27)),
+            (FONT30.render(f'Speed: {self.gracz.predkosc}', True, (255,255,255)), (MAP_WIDTH + 3, 47)),
+            (FONT30.render(f'Level: {self.gracz.poziom}', True, (255,255,255)), (MAP_WIDTH + 3, 71)),
+            (FONT30.render(f'Money: {self.pieniadze}', True, (255,255,255)), (MAP_WIDTH + 3, 95)),
+            (FONT30.render(f'Points: {self.punkty}', True, (255,255,255)), (MAP_WIDTH + 3, 115)),
 
-            (FONT30.render('10$', True, (255,255,255)), (515, MAP_HEIGHT + 20)),
-            (FONT30.render('30$', True, (255,255,255)), (515, MAP_HEIGHT + 70)),
-            (FONT30.render('50$', True, (255,255,255)), (515, MAP_HEIGHT + 120)),
-            (FONT30.render('1.', True, (255,255,255)), (470, MAP_HEIGHT + 20)),
-            (FONT30.render('2.', True, (255,255,255)), (470, MAP_HEIGHT + 70)),
-            (FONT30.render('3.', True, (255,255,255)), (470, MAP_HEIGHT + 120)),
+            (FONT30.render('10$', True, (255,255,255)), (MAP_WIDTH + 115, MAP_HEIGHT - 73)),
+            (FONT30.render('30$', True, (255,255,255)), (MAP_WIDTH + 115, MAP_HEIGHT - 48)),
+            (FONT30.render('50$', True, (255,255,255)), (MAP_WIDTH + 115, MAP_HEIGHT - 23)),
+            (FONT30.render('1.', True, (255,255,255)), (MAP_WIDTH + 75, MAP_HEIGHT - 73)),
+            (FONT30.render('2.', True, (255,255,255)), (MAP_WIDTH + 75, MAP_HEIGHT - 48)),
+            (FONT30.render('3.', True, (255,255,255)), (MAP_WIDTH + 75, MAP_HEIGHT - 23)),
 
             (FONT40.render(f'{self.zdrowie_lasu}', True, (255,255,255)), (465, 550)),
 
