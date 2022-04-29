@@ -37,12 +37,6 @@ MENUSIZE = 150
 MAP_TILES_W = len(MAPA[0])
 MAP_TILES_H = len(MAPA)
 
-MAPA_TRASA = []
-for row in range(MAP_TILES_H):
-    for column in range(MAP_TILES_W):
-        if MAPA[row][column] != 1:
-            MAPA_TRASA.append((MAPA[row][column], (column * TILESIZE, row * TILESIZE)))
-
 MAP_WIDTH = (TILESIZE * MAP_TILES_W)
 MAP_HEIGHT = (TILESIZE * MAP_TILES_H)
 
@@ -99,6 +93,12 @@ TEREN = {
     80: lg
 }
 
+MAPA_DRAW = []
+for row in range(MAP_TILES_H):
+    for column in range(MAP_TILES_W):
+        if MAPA[row][column] != 1:
+            MAPA_DRAW.append((TEREN[MAPA[row][column]], (column * TILESIZE, row * TILESIZE)))
+
 MYSZ = image_load('dane/mysz.png', (0, 0))
 SZCZUR = image_load('dane/szczur.png', (0, 0))
 PAJAK = image_load('dane/pajak.png', (0, 0))
@@ -142,6 +142,14 @@ TEKSTURY = (
     (zielony, pygame.Rect(490, MAP_HEIGHT + 18, 40, 40)),
     (niebieski, pygame.Rect(490, MAP_HEIGHT + 68, 40, 40)),
     (zolty, pygame.Rect(490, MAP_HEIGHT + 118, 40, 40))
+)
+# TO REMOVE
+TEKSTURY_DRAW = (
+    (image_load('dane/zacznij.jpg'), (MAP_WIDTH - 555, MAP_HEIGHT + 97)),
+    (image_load('dane/domek.jpg'), (MAP_WIDTH - 480, MAP_HEIGHT + 78)),
+    (zielony, (490, MAP_HEIGHT + 18)),
+    (niebieski, (490, MAP_HEIGHT + 68)),
+    (zolty, (490, MAP_HEIGHT + 118))
 )
 
 TEKSTURY_INTERFEJSU_WIEZY = (
