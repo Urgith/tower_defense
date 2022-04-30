@@ -14,7 +14,7 @@ DRUID_SIZE = 50
 DRUID_X = 100
 DRUID_Y = 100
 
-FPS_MAX = 100
+FPS_MAX = 2000
 PREDKOSC_WYCHODZENIA = 10
 
 MAPA = (
@@ -137,12 +137,6 @@ WAVES = (
     (SZCZUR,) * 10 + (PAJAK,) * 25 + (WAZ,) * 15
 )
 
-TO_UPDATE = (
-    pygame.Rect(0, 0, MAP_WIDTH, MAP_HEIGHT),   # mapa
-    pygame.Rect(MAP_WIDTH, 0, MENUSIZE, 264),   # interfejs góra
-    pygame.Rect(MAP_WIDTH, MAP_HEIGHT - 123, MENUSIZE, 123)   # interfejs dół
-)
-
 TEKSTURY = (
     (image_load('dane/zacznij.jpg'), (MAP_WIDTH + 3, MAP_HEIGHT - 123)),
     (image_load('dane/domek.jpg'), (MAP_WIDTH + 3, MAP_HEIGHT - 70)),
@@ -150,9 +144,9 @@ TEKSTURY = (
     (niebieski, (MAP_WIDTH + 93, MAP_HEIGHT - 49)),
     (zolty, (MAP_WIDTH + 93, MAP_HEIGHT - 24)),
     (image_load('dane/_arrow.png', (0, 0)), (MAP_WIDTH + 5, 2)),
-    (image_load('dane/_heart.png', (0, 0)), (MAP_WIDTH + 2, 23)),
-    (image_load('dane/_kula_mocy.png', (0, 0)), (MAP_WIDTH + 6, 44)),
-    (image_load('dane/_boots.png', (0, 0)), (MAP_WIDTH + 4, 62)),
+    (image_load('dane/_kula_mocy.png', (0, 0)), (MAP_WIDTH + 6, 25)),
+    (image_load('dane/_boots.png', (0, 0)), (MAP_WIDTH + 4, 43)),
+    (image_load('dane/_heart.png', (0, 0)), (MAP_WIDTH + 2, 60)),   
     (image_load('dane/_coin.png', (0, 0)), (MAP_WIDTH + 5, 82))
 )
 
