@@ -7,7 +7,8 @@ from STALE import *
 class Gracz:
 
     def __init__(self):
-        self.obiekt = pygame.Rect(100, 100, 30, 30)
+        self.x, self.y = (DRUID_X, DRUID_Y)
+        self.obiekt = pygame.Rect(self.x, self.y, DRUID_SIZE, DRUID_SIZE)
 
         self.doswiadczenie = 0
         self.poziom = 0
@@ -18,11 +19,9 @@ class Gracz:
         self.predkosc = 1
         self.rodzaj = 'gracz'
 
-        self.x, self.y = 100, 100
-
     def ruch(self):
         self.klikniete = pygame.key.get_pressed()
-        x, y = 0, 0
+        x, y = (0, 0)
 
         if self.klikniete[pygame.K_w]:
             self.y -= self.predkosc
@@ -39,26 +38,16 @@ class Gracz:
         if self.klikniete[pygame.K_d]:
             self.x += self.predkosc
             x = 1
-
-        if self.x < 0: self.x = 0
-        if self.y < 0: self.y = 0
-
-        if self.x > MAP_WIDTH - 30:
-            self.x = MAP_WIDTH - 30
-
-        if self.y > MAP_HEIGHT - 30:
-            self.y = MAP_HEIGHT - 30
-
+        # 0.4 ~= 2**0.5 - 1
         if x and y:
-            if x == 1:
-                self.x = self.x - self.predkosc + (self.predkosc / (2**0.5))
-            else:
-                self.x = self.x + self.predkosc - (self.predkosc / (2**0.5))
+            self.x -= x * self.predkosc * 0.4
+            self.y -= y * self.predkosc * 0.4
 
-            if y == 1:
-                self.y = self.y - self.predkosc + (self.predkosc / (2**0.5))
-            else:
-                self.y = self.y + self.predkosc - (self.predkosc / (2**0.5))
+        if not 0 < self.x < MAP_WIDTH - DRUID_SIZE:
+            self.x = self.obiekt.x
+
+        if not 0 < self.y < MAP_HEIGHT - DRUID_SIZE:
+            self.y = self.obiekt.y
 
         self.obiekt.x = self.x
         self.obiekt.y = self.y
@@ -67,13 +56,14 @@ class Gracz:
         gra.lista_pociskow.append(Pocisk(self, gra))
 
     def awansowanie(self):
-        poziom = int((self.doswiadczenie // 100)**0.5)
+        poziom = int((self.doswiadczenie // 100) ** 0.5)
 
         if poziom != self.poziom:
             self.poziom = poziom
 
             self.predkosc = 1 + (poziom / 10)
             self.max_zdrowie = int(1000 * (1 + (poziom / 10)))
+
             self.zdrowie = self.max_zdrowie
 
 
@@ -159,6 +149,7 @@ class Przeciwnik:
         self.pole = pole
 
 class Wieza:
+
     def __init__(self, gra):
         self.obiekt = pygame.Rect(gra.pozycja_myszy[0] - 10, gra.pozycja_myszy[1] - 10, 20, 20)
         self.pole = gra.pozycja_myszy
@@ -556,12 +547,12 @@ class Gra:
 
             *TEKSTURY,
 
-            (FONT30.render(f'Health: {self.gracz.zdrowie}', True, (255,255,255)), (MAP_WIDTH + 3, 3)),
-            (FONT30.render(f'Damage: {5 + self.gracz.poziom}', True, (255,255,255)), (MAP_WIDTH + 3, 27)),
-            (FONT30.render(f'Speed: {self.gracz.predkosc}', True, (255,255,255)), (MAP_WIDTH + 3, 47)),
-            (FONT30.render(f'Level: {self.gracz.poziom}', True, (255,255,255)), (MAP_WIDTH + 3, 71)),
-            (FONT30.render(f'Money: {self.pieniadze}', True, (255,255,255)), (MAP_WIDTH + 3, 95)),
-            (FONT30.render(f'Points: {self.punkty}', True, (255,255,255)), (MAP_WIDTH + 3, 115)),
+            (FONT30.render(f'{self.gracz.poziom}', True, (255,255,255)), (MAP_WIDTH + 23, 2)),
+            (FONT30.render(f'{self.gracz.zdrowie}', True, (255,255,255)), (MAP_WIDTH + 23, 23)),
+            (FONT30.render(f'{5 + self.gracz.poziom}', True, (255,255,255)), (MAP_WIDTH + 23, 41)),
+            (FONT30.render(f'{self.gracz.predkosc}', True, (255,255,255)), (MAP_WIDTH + 23, 59)),
+            (FONT30.render(f'{self.pieniadze}', True, (255,255,255)), (MAP_WIDTH + 23, 81)),
+            (FONT30.render(f'Points: {self.punkty}', True, (255,255,255)), (MAP_WIDTH + 10, 100)),
 
             (FONT30.render('10$', True, (255,255,255)), (MAP_WIDTH + 115, MAP_HEIGHT - 73)),
             (FONT30.render('30$', True, (255,255,255)), (MAP_WIDTH + 115, MAP_HEIGHT - 48)),
@@ -570,7 +561,7 @@ class Gra:
             (FONT30.render('2.', True, (255,255,255)), (MAP_WIDTH + 75, MAP_HEIGHT - 48)),
             (FONT30.render('3.', True, (255,255,255)), (MAP_WIDTH + 75, MAP_HEIGHT - 23)),
 
-            (FONT40.render(f'{self.zdrowie_lasu}', True, (255,255,255)), (465, 550)),
+            (FONT40.render(f'{self.zdrowie_lasu}', True, (255,255,255)), (BASE_RECT.x - (1.5 * TILESIZE), BASE_RECT.y)),
 
             (DRUID, (self.gracz.obiekt.x, self.gracz.obiekt.y))
         ))
@@ -586,15 +577,15 @@ class Gra:
 
         if stan == 2:
             color = int((self.gracz.max_zdrowie - self.gracz.zdrowie) / self.gracz.max_zdrowie * 3 * 255)
-            pygame.draw.rect(self.okno_gry, (color,255,0), (self.gracz.x - 5, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * 40, 5))
+            pygame.draw.rect(self.okno_gry, (color,255,0), (self.gracz.x, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * DRUID_SIZE, 5))
 
         elif stan == 1:
             color = int((self.gracz.zdrowie - self.gracz.max_zdrowie / 3) / self.gracz.max_zdrowie * 3 * 255)
-            pygame.draw.rect(self.okno_gry, (255,color,0), (self.gracz.x - 5, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * 40, 5))
+            pygame.draw.rect(self.okno_gry, (255,color,0), (self.gracz.x, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * DRUID_SIZE, 5))
 
         elif stan == 0:
             color = int(self.gracz.zdrowie / self.gracz.max_zdrowie * 3 * 255)
-            pygame.draw.rect(self.okno_gry, (color,0,0), (self.gracz.x - 5, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * 40, 5))
+            pygame.draw.rect(self.okno_gry, (color,0,0), (self.gracz.x, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * DRUID_SIZE, 5))
 
     def postawienie_wiezy(self):
         # TO OPTIMIZE

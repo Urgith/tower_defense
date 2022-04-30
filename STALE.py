@@ -3,6 +3,20 @@ from funkcje import *
 import os
 
 
+# CHANGEABLE
+TILESIZE = 25
+MENUSIZE = 150
+
+BASE_LOC_X = 20
+BASE_LOC_Y = 22
+
+DRUID_SIZE = 50
+DRUID_X = 100
+DRUID_Y = 100
+
+FPS_MAX = 100
+PREDKOSC_WYCHODZENIA = 10
+
 MAPA = (
     ( 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     (10, 1, 1, 1, 1, 1, 1, 5, 0, 0, 8, 1, 1, 1, 5, 0, 8, 1, 1, 1, 1, 1, 1, 1, 1, 5, 0, 0, 8, 1, 1, 1, 1, 1, 1),
@@ -30,11 +44,8 @@ MAPA = (
     ( 1, 1, 1,50, 0, 7, 1, 1, 1, 1, 1, 1, 1, 1,50, 0, 7, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     ( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 )
-
-TILESIZE = 25
-MENUSIZE = 150
-
-BASE_RECT = pygame.Rect(TILESIZE * 20, TILESIZE * 22, TILESIZE, TILESIZE)
+##################################################
+BASE_RECT = pygame.Rect(TILESIZE * BASE_LOC_X, TILESIZE * BASE_LOC_Y, TILESIZE, TILESIZE)
 
 MAP_TILES_W = len(MAPA[0])
 MAP_TILES_H = len(MAPA)
@@ -46,10 +57,10 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
 pygame.display.set_caption('Inwazja')
 
-TRAWA = image_load('dane/trawa.jpg')
+TRAWA = image_load('dane/trawa.jpg', scale=(MAP_WIDTH, MAP_HEIGHT))
 
 KULA_MOCY = image_load('dane/kula_mocy.png')
-DRUID = image_load('dane/druid.png', (0, 0))
+DRUID = image_load('dane/druid.png', (0, 0), scale=(DRUID_SIZE, DRUID_SIZE))
 
 zielony = image_load('dane/zielony.jpg')
 niebieski = image_load('dane/niebieski.jpg')
@@ -76,15 +87,15 @@ WIEZE = (
     (image_load('dane/zolty6.jpg'), 0)
 )
 
-lg = image_load('dane/lg.jpg')
-ld = image_load('dane/ld.jpg')
-pg = image_load('dane/pg.jpg')
-pd = image_load('dane/pd.jpg')
+lg = image_load('dane/lg.jpg', scale=(TILESIZE, TILESIZE))
+ld = image_load('dane/ld.jpg', scale=(TILESIZE, TILESIZE))
+pg = image_load('dane/pg.jpg', scale=(TILESIZE, TILESIZE))
+pd = image_load('dane/pd.jpg', scale=(TILESIZE, TILESIZE))
 
 TEREN = {
-    0:  image_load('dane/poziomo.jpg'),
-    10: image_load('dane/pionowo.jpg'),
-    3:  image_load('dane/las.jpg'),
+    0:  image_load('dane/poziomo.jpg', scale=(TILESIZE, TILESIZE)),
+    10: image_load('dane/pionowo.jpg', scale=(TILESIZE, TILESIZE)),
+    3:  image_load('dane/las.jpg', scale=(TILESIZE, TILESIZE)),
     5:  lg,
     50: ld,
     6:  pg,
@@ -128,7 +139,7 @@ WAVES = (
 
 TO_UPDATE = (
     pygame.Rect(0, 0, MAP_WIDTH, MAP_HEIGHT),   # mapa
-    pygame.Rect(MAP_WIDTH, 0, MENUSIZE, 280),   # interfejs góra
+    pygame.Rect(MAP_WIDTH, 0, MENUSIZE, 264),   # interfejs góra
     pygame.Rect(MAP_WIDTH, MAP_HEIGHT - 123, MENUSIZE, 123)   # interfejs dół
 )
 
@@ -137,27 +148,29 @@ TEKSTURY = (
     (image_load('dane/domek.jpg'), (MAP_WIDTH + 3, MAP_HEIGHT - 70)),
     (zielony, (MAP_WIDTH + 93, MAP_HEIGHT - 74)),
     (niebieski, (MAP_WIDTH + 93, MAP_HEIGHT - 49)),
-    (zolty, (MAP_WIDTH + 93, MAP_HEIGHT - 24))
+    (zolty, (MAP_WIDTH + 93, MAP_HEIGHT - 24)),
+    (image_load('dane/_arrow.png', (0, 0)), (MAP_WIDTH + 5, 2)),
+    (image_load('dane/_heart.png', (0, 0)), (MAP_WIDTH + 2, 23)),
+    (image_load('dane/_kula_mocy.png', (0, 0)), (MAP_WIDTH + 6, 44)),
+    (image_load('dane/_boots.png', (0, 0)), (MAP_WIDTH + 4, 62)),
+    (image_load('dane/_coin.png', (0, 0)), (MAP_WIDTH + 5, 82))
 )
 
 TEKSTURY_INTERFEJSU_WIEZY = (
-    (image_load('dane/atak_zielony.jpg'), pygame.Rect(MAP_WIDTH + 3, 135, 70, 70)),
-    (image_load('dane/zasieg_zielony.jpg'), pygame.Rect(MAP_WIDTH + 78, 135, 70, 70)),
-    (image_load('dane/predkosc_zielony.jpg'), pygame.Rect(MAP_WIDTH + 3, 210, 70, 70)),
-    (image_load('dane/dolar_zielony.jpg'), pygame.Rect(MAP_WIDTH + 78, 210, 70,70)),
-    (image_load('dane/atak_niebieski.jpg'), pygame.Rect(MAP_WIDTH + 3, 135, 70, 70)),
-    (image_load('dane/zasieg_niebieski.jpg'), pygame.Rect(MAP_WIDTH + 78, 135, 70, 70)),
-    (image_load('dane/przebicie_niebieski.jpg'), pygame.Rect(MAP_WIDTH + 3, 210, 70, 70)),
-    (image_load('dane/dolar_niebieski.jpg'), pygame.Rect(MAP_WIDTH + 78, 210, 70, 70)),
-    (image_load('dane/atak_zolty.jpg'), pygame.Rect(MAP_WIDTH + 3, 135, 70, 70)),
-    (image_load('dane/zasieg_zolty.jpg'), pygame.Rect(MAP_WIDTH + 78, 135, 70, 70)),
-    (image_load('dane/elektryzacja_zolty.jpg'), pygame.Rect(MAP_WIDTH + 3, 210, 70, 70)),
-    (image_load('dane/dolar_zolty.jpg'), pygame.Rect(MAP_WIDTH + 78, 210, 70, 70))
+    (image_load('dane/atak_zielony.jpg'), pygame.Rect(MAP_WIDTH + 3, 119, 70, 70)),
+    (image_load('dane/zasieg_zielony.jpg'), pygame.Rect(MAP_WIDTH + 78, 119, 70, 70)),
+    (image_load('dane/predkosc_zielony.jpg'), pygame.Rect(MAP_WIDTH + 3, 194, 70, 70)),
+    (image_load('dane/dolar_zielony.jpg'), pygame.Rect(MAP_WIDTH + 78, 194, 70,70)),
+    (image_load('dane/atak_niebieski.jpg'), pygame.Rect(MAP_WIDTH + 3, 119, 70, 70)),
+    (image_load('dane/zasieg_niebieski.jpg'), pygame.Rect(MAP_WIDTH + 78, 119, 70, 70)),
+    (image_load('dane/przebicie_niebieski.jpg'), pygame.Rect(MAP_WIDTH + 3, 194, 70, 70)),
+    (image_load('dane/dolar_niebieski.jpg'), pygame.Rect(MAP_WIDTH + 78, 194, 70, 70)),
+    (image_load('dane/atak_zolty.jpg'), pygame.Rect(MAP_WIDTH + 3, 119, 70, 70)),
+    (image_load('dane/zasieg_zolty.jpg'), pygame.Rect(MAP_WIDTH + 78, 119, 70, 70)),
+    (image_load('dane/elektryzacja_zolty.jpg'), pygame.Rect(MAP_WIDTH + 3, 194, 70, 70)),
+    (image_load('dane/dolar_zolty.jpg'), pygame.Rect(MAP_WIDTH + 78, 194, 70, 70))
 )
 
 pygame.font.init()
 FONT30 = pygame.font.SysFont(None, 30)
 FONT40 = pygame.font.SysFont(None, 40)
-
-PREDKOSC_WYCHODZENIA = 10
-FPS_MAX = 90
