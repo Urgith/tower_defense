@@ -34,6 +34,8 @@ MAPA = (
 TILESIZE = 25
 MENUSIZE = 150
 
+BASE_RECT = pygame.Rect(TILESIZE * 20, TILESIZE * 22, TILESIZE, TILESIZE)
+
 MAP_TILES_W = len(MAPA[0])
 MAP_TILES_H = len(MAPA)
 
@@ -129,13 +131,6 @@ TO_UPDATE = (
     pygame.Rect(MAP_WIDTH, 0, MENUSIZE, 280),   # interfejs góra
     pygame.Rect(MAP_WIDTH, MAP_HEIGHT - 123, MENUSIZE, 123)   # interfejs dół
 )
-
-OBSZAR = []
-for row in range(MAP_TILES_W):
-    OBSZAR.append([])
-
-    for column in range(MAP_TILES_H):
-        OBSZAR[row].append((pygame.Rect(TILESIZE * column, TILESIZE * row, TILESIZE, TILESIZE), row, column))
 
 TEKSTURY = (
     (image_load('dane/zacznij.jpg'), (MAP_WIDTH + 3, MAP_HEIGHT - 123)),

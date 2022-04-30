@@ -498,7 +498,7 @@ class Gra:
                 self.gracz.zdrowie -= przeciwnik.atak
 
             przeciwnik.ruch()
-            if przeciwnik.obiekt.colliderect(OBSZAR[22][20][0]):
+            if przeciwnik.obiekt.colliderect(BASE_RECT):
                 self.zdrowie_lasu -= przeciwnik.atak
                 self.lista_przeciwnikow.pop(i)
 
@@ -575,7 +575,15 @@ class Gra:
             (DRUID, (self.gracz.obiekt.x, self.gracz.obiekt.y))
         ))
 
+        self.draw_health_bar()
+
+        if self.wybrano_wieze_do_kupienia:
+            pygame.draw.rect(self.okno_gry, self.kolor_wybranej_wiezy, (self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20))
+            pygame.draw.circle(self.okno_gry, self.kolor_wybranej_wiezy, self.pozycja_myszy, self.zasieg_wybranej_wiezy, 1)
+
+    def draw_health_bar(self):
         stan = int((self.gracz.zdrowie / (self.gracz.max_zdrowie + 1)) * 3)
+
         if stan == 2:
             color = int((self.gracz.max_zdrowie - self.gracz.zdrowie) / self.gracz.max_zdrowie * 3 * 255)
             pygame.draw.rect(self.okno_gry, (color,255,0), (self.gracz.x - 5, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * 40, 5))
@@ -588,18 +596,23 @@ class Gra:
             color = int(self.gracz.zdrowie / self.gracz.max_zdrowie * 3 * 255)
             pygame.draw.rect(self.okno_gry, (color,0,0), (self.gracz.x - 5, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * 40, 5))
 
-        if self.wybrano_wieze_do_kupienia:
-            pygame.draw.rect(self.okno_gry, self.kolor_wybranej_wiezy, (self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20))
-            pygame.draw.circle(self.okno_gry, self.kolor_wybranej_wiezy, self.pozycja_myszy, self.zasieg_wybranej_wiezy, 1)
-
     def postawienie_wiezy(self):
-        for row in OBSZAR:
-            for column in row:
-                if column[0].colliderect(pygame.Rect(self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20)) and (MAPA[column[1]][column[2]] == 0 or MAPA[column[1]][column[2]] == 10 or MAPA[column[1]][column[2]] == 3 or MAPA[column[1]][column[2]] == 5 or MAPA[column[1]][column[2]] == 50 or MAPA[column[1]][column[2]] == 6 or MAPA[column[1]][column[2]] == 60 or MAPA[column[1]][column[2]] == 7 or MAPA[column[1]][column[2]] == 70 or MAPA[column[1]][column[2]] == 8 or MAPA[column[1]][column[2]] == 80) or self.pozycja_myszy[0] - 10 < 0 or self.pozycja_myszy[1] - 10 < 0 or self.pozycja_myszy[0] + 10 > MAP_WIDTH or self.pozycja_myszy[1] + 10 > MAP_HEIGHT:
+        # TO OPTIMIZE
+        nowa_wieza_rect = pygame.Rect(self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20)
+
+        for r in range(MAP_HEIGHT):
+            for c in range(MAP_WIDTH):
+                if (pygame.Rect(TILESIZE * c, TILESIZE * r, TILESIZE, TILESIZE).colliderect(nowa_wieza_rect)
+                    and (self.pozycja_myszy[0] < 10
+                    or self.pozycja_myszy[1] < 10
+                    or self.pozycja_myszy[0] > MAP_WIDTH - 10
+                    or self.pozycja_myszy[1] > MAP_HEIGHT - 10
+                    or MAPA[r][c] in {0, 10, 3, 5, 50, 6, 60, 7, 70, 8, 80})):
+
                     return False
 
         for wieza in self.lista_wiez:
-            if wieza.obiekt.colliderect(pygame.Rect(self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20)):
+            if wieza.obiekt.colliderect(nowa_wieza_rect):
                 return False
 
         return True
