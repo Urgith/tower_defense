@@ -58,6 +58,7 @@ class Gra:
 
         self.clock = pygame.time.Clock()
 
+    # SUPMETHODS
     def rounds(self):
         if self.start:
             self.licznik += 1
@@ -98,7 +99,7 @@ class Gra:
                         sys.exit()
 
                 elif event.key == pygame.K_p:
-                    self.pause()
+                    self.pause_loop()
 
                 elif event.key in {pygame.K_1, pygame.K_2, pygame.K_3}:
                     self.mainly_to_display_choosen_tower(event.key - 49)
@@ -235,7 +236,7 @@ class Gra:
             *TEKSTURY,
 
             (FONT30.render(f'{self.gracz.poziom}', True, WHITE), (W_23, 2)),
-            (FONT30.render(f'{5 + self.gracz.poziom}', True, WHITE), (W_23, 23)),
+            (FONT30.render(f'{self.gracz.obrazenia}', True, WHITE), (W_23, 23)),
             (FONT30.render(f'{self.gracz.predkosc}', True, WHITE), (W_23, 41)),
             (FONT30.render(f'{self.gracz.zdrowie}', True, WHITE), (W_23, 59)),
             (FONT30.render(f'{self.pieniadze}', True, WHITE), (W_23, 81)),
@@ -282,20 +283,24 @@ class Gra:
 
         self.to_update()
 
+    # submethods
+    # short
     def new_round(self):
         self.start = True
 
         if self.licznik != 0:
             self.kliknieto_w_kolejna_runde = True
 
+    # short
     def mainly_to_display_choosen_tower(self, i):
         self.wybrano_wieze_do_kupienia = True
         self.zasieg_wybranej_wiezy = WIEZE[i][4]
         self.kolor_wybranej_wiezy = WIEZE[i][1]
         self.rodzaj_wybranej_wiezy = i + 1
 
+    # short
     @staticmethod
-    def pause():
+    def pause_loop():
         pause = True
 
         while pause:
@@ -305,9 +310,8 @@ class Gra:
                 elif event.type == pygame.KEYDOWN and (event.key == pygame.K_ESCAPE or event.key == pygame.K_p):
                     pause = False
 
+    # MEDIUM
     def place_tower(self):
-        # TO OPTIMIZE
-        mozna_postawic = True
         nowa_wieza_rect = pygame.Rect(self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20)
 
         for r in range(MAP_HEIGHT):
@@ -317,22 +321,42 @@ class Gra:
                   or self.pozycja_myszy[1] < 10
                   or self.pozycja_myszy[0] > MAP_WIDTH - 10
                   or self.pozycja_myszy[1] > MAP_HEIGHT - 10
-                  or MAPA[r][c] in {0, 10, 3, 5, 50, 6, 60, 7, 70, 8, 80})):
+                  or MAPA[r][c] != 1)):
 
-                    mozna_postawic = False
+                    self.wybrano_wieze_do_kupienia = False
+                    return
 
         for wieza in self.lista_wiez:
             if wieza.obiekt.colliderect(nowa_wieza_rect):
-                mozna_postawic = False
+                self.wybrano_wieze_do_kupienia = False
+                return
 
         self.lista_wiez.append(Wieza(self.pozycja_myszy, self.rodzaj_wybranej_wiezy))
         self.pieniadze -= self.lista_wiez[-1].koszt
-        if (not mozna_postawic) or (self.pieniadze < 0):
+        if (not self.wybrano_wieze_do_kupienia) or (self.pieniadze < 0):
             self.pieniadze += self.lista_wiez[-1].koszt
             self.lista_wiez.pop()
 
         self.wybrano_wieze_do_kupienia = False
 
+    # short
+    def draw_health_bar(self):
+        stan = int((self.gracz.zdrowie / (self.gracz.max_zdrowie + 1)) * 3)
+        pasek = pygame.Rect((self.gracz.x, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * DRUID_SIZE, 5))
+
+        if stan == 2:
+            color = (self.gracz.max_zdrowie - self.gracz.zdrowie) / self.gracz.max_zdrowie
+            pygame.draw.rect(self.okno_gry, (int(765 * color), 255, 0), pasek)
+
+        elif stan == 1:
+            color = (self.gracz.zdrowie - (self.gracz.max_zdrowie / 3)) / self.gracz.max_zdrowie
+            pygame.draw.rect(self.okno_gry, (255, int(765 * color), 0), pasek)
+
+        else:
+            color = (self.gracz.zdrowie / self.gracz.max_zdrowie)
+            pygame.draw.rect(self.okno_gry, (int(765 * color), 0, 0), pasek)
+
+    # LONG METHOD
     def to_update(self):
         x, y, *_ = self.gracz.obiekt
         x_plus_druid_size = x + DRUID_SIZE
@@ -384,27 +408,6 @@ class Gra:
         else:
             pygame.display.update(self.previous)
             self.previous = rect_to_update[:]
-
-        # WIZUALIZACJA PODZIAŁU MAPY
-        #for i, rect in enumerate(map_rects):
-        #    pygame.draw.rect(self.okno_gry, (85*i, 85*i, 85*i), rect)
-        #pygame.display.flip()
-
-    def draw_health_bar(self):
-        stan = int((self.gracz.zdrowie / (self.gracz.max_zdrowie + 1)) * 3)
-        pasek = pygame.Rect((self.gracz.x, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * DRUID_SIZE, 5))
-
-        if stan == 2:
-            color = (self.gracz.max_zdrowie - self.gracz.zdrowie) / self.gracz.max_zdrowie
-            pygame.draw.rect(self.okno_gry, (int(765 * color), 255, 0), pasek)
-
-        elif stan == 1:
-            color = (self.gracz.zdrowie - (self.gracz.max_zdrowie / 3)) / self.gracz.max_zdrowie
-            pygame.draw.rect(self.okno_gry, (255, int(765 * color), 0), pasek)
-
-        else:
-            color = (self.gracz.zdrowie / self.gracz.max_zdrowie)
-            pygame.draw.rect(self.okno_gry, (int(765 * color), 0, 0), pasek)
 
 
 if __name__ == '__main__':
