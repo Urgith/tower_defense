@@ -101,6 +101,9 @@ class Gra:
                 elif event.key in {pygame.K_1, pygame.K_2, pygame.K_3}:
                     self.mainly_to_display_choosen_tower(event.key - 49)
 
+                elif event.key == pygame.K_SPACE:
+                    self.new_round()
+
             elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
 
                 if self.pozycja_myszy[0] < MAP_WIDTH and self.pozycja_myszy[1] < MAP_HEIGHT:
@@ -120,10 +123,7 @@ class Gra:
                             self.gracz.strzelam = not self.gracz.strzelam
 
                 elif pygame.Rect(*TEKSTURY[0][1], 50, 50).collidepoint(self.pozycja_myszy):
-                    self.start = True
-
-                    if self.licznik:
-                        self.kliknieto_w_kolejna_runde = True
+                    self.new_round()
 
                 elif pygame.Rect(*TEKSTURY[1][1], 70, 70).collidepoint(self.pozycja_myszy):
                     sys.exit()
@@ -279,6 +279,12 @@ class Gra:
 
         self.to_update()
 
+    def new_round(self):
+        self.start = True
+
+        if self.licznik != 0:
+            self.kliknieto_w_kolejna_runde = True
+
     def mainly_to_display_choosen_tower(self, i):
         self.wybrano_wieze_do_kupienia = True
         self.zasieg_wybranej_wiezy = WIEZE[i][4]
@@ -326,18 +332,20 @@ class Gra:
 
     def to_update(self):
         x, y, *_ = self.gracz.obiekt
+        x_plus_druid_size = x + DRUID_SIZE
+        y_plus_druid_size = y + DRUID_SIZE
 
         rect_to_update = [
             INTERFACE_LOW_HEIGHT,
             BASE_HP_STRING,
             pygame.Rect(MAP_WIDTH, 0, MENUSIZE, self.interface_up_height),
-            pygame.Rect(0, 0, x + DRUID_SIZE, y + DRUID_SIZE)
+            pygame.Rect(0, 0, x_plus_druid_size, y_plus_druid_size)
         ]
 
         map_rects = (
-            pygame.Rect(x, 0, MAP_WIDTH - x, y),
-            pygame.Rect(x + DRUID_SIZE, y, MAP_WIDTH - x - DRUID_SIZE, MAP_HEIGHT - y),
-            pygame.Rect(0, y + DRUID_SIZE, x + DRUID_SIZE, MAP_HEIGHT - y - DRUID_SIZE)
+            pygame.Rect(x_plus_druid_size, 0, MAP_WIDTH - x_plus_druid_size, y),
+            pygame.Rect(x_plus_druid_size, y, MAP_WIDTH - x_plus_druid_size, MAP_HEIGHT - y),
+            pygame.Rect(0, y_plus_druid_size, x_plus_druid_size, MAP_HEIGHT - y_plus_druid_size)
         )
         # NEW SYNTAX
         for rect in map_rects:
@@ -373,6 +381,11 @@ class Gra:
         else:
             pygame.display.update(self.previous)
             self.previous = rect_to_update[:]
+
+        # WIZUALIZACJA PODZIAŁU MAPY
+        #for i, rect in enumerate(map_rects):
+        #    pygame.draw.rect(self.okno_gry, (85*i, 85*i, 85*i), rect)
+        #pygame.display.flip()
 
     def draw_health_bar(self):
         stan = int((self.gracz.zdrowie / (self.gracz.max_zdrowie + 1)) * 3)

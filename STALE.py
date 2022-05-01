@@ -7,8 +7,8 @@ import os
 TILESIZE = 25  # 25
 MENUSIZE = 150  # 150
 
-BASE_X = 20  # 20
-BASE_Y = 22  # 22
+BASE_X = 20 * TILESIZE  # 20
+BASE_Y = 22 * TILESIZE  # 22
 
 DRUID_SIZE = 50  # 50
 DRUID_X = 100  # 100
@@ -45,8 +45,8 @@ MAPA = (
     ( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 )
 ##################################################
-BASE_RECT = pygame.Rect((BASE_X * TILESIZE), (BASE_Y * TILESIZE), TILESIZE, TILESIZE)
-BASE_HP_STRING = pygame.Rect((BASE_X * TILESIZE) - 36, (BASE_Y * TILESIZE) + 2, 44, 20)
+BASE_RECT = pygame.Rect(BASE_X, BASE_Y, TILESIZE, TILESIZE)
+BASE_HP_STRING = pygame.Rect(BASE_X - 36, BASE_Y + 2, 44, 20)
 
 MAP_TILES_W = len(MAPA[0])
 MAP_TILES_H = len(MAPA)
