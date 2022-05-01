@@ -1,4 +1,3 @@
-import copy
 import sys
 
 from STALE import *
@@ -10,7 +9,7 @@ from wieza import Wieza
 class Gra:
 
     def __init__(self):
-        self.initialize_attributes()
+        self.initialize_attributes_and_map()
 
         while True:
             self.clock.tick(FPS_MAX)
@@ -20,7 +19,7 @@ class Gra:
             self.interactions()
             self.draw()
 
-    def initialize_attributes(self):
+    def initialize_attributes_and_map(self):
         self.okno_gry = pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
         self.gracz = Gracz()
 
@@ -37,16 +36,23 @@ class Gra:
         self.wybrano_wieze = False
         self.start = False
 
+        self.change_interface = False
+        self.previous = None
+
         self.zdrowie_lasu = 100
         self.pieniadze = 50
         self.punkty = 0
 
-        self.to_update = (
-            pygame.Rect(0, 0, MAP_WIDTH, MAP_HEIGHT),   # mapa
-            pygame.Rect(MAP_WIDTH, 0, MENUSIZE, 117),   # interfejs góra
-            pygame.Rect(MAP_WIDTH, MAP_HEIGHT - 123, MENUSIZE, 123)   # interfejs dół
-        )
-        self.previous_to_update = copy.deepcopy(self.to_update)
+        self.len_waves_round = len(WAVES[0])
+
+        self.okno_gry.blits((
+            (TRAWA, (0, 0)),
+            *MAPA_DRAW,
+            (FONT40.render(f'{self.zdrowie_lasu}', True, (255,255,255)), (BASE_RECT.x - (1.5 * TILESIZE), BASE_RECT.y))))
+
+        pygame.display.update(pygame.Rect(0, 0, MAP_WIDTH, MAP_HEIGHT))
+
+        self.interface_up_height = 117
 
         self.clock = pygame.time.Clock()
 
@@ -54,17 +60,21 @@ class Gra:
         if self.start:
             self.licznik += 1
 
+        if self.start and (self.runda != LEN_WAVES):
+
             if ((self.licznik % PREDKOSC_WYCHODZENIA) == 0
-              and self.numer_przeciwnika < len(WAVES[self.runda])
-              and self.runda != (len(WAVES) - 1)):
+              and self.numer_przeciwnika < self.len_waves_round):
 
                 self.lista_przeciwnikow.append(Przeciwnik(self.runda, self.numer_przeciwnika))
                 self.numer_przeciwnika += 1
 
-            elif self.kliknieto_w_kolejna_runde and self.numer_przeciwnika == len(WAVES[self.runda]):
+            elif self.kliknieto_w_kolejna_runde and self.numer_przeciwnika == self.len_waves_round:
                 self.kliknieto_w_kolejna_runde = False
                 self.numer_przeciwnika = 0
                 self.runda += 1
+
+                if self.runda != LEN_WAVES:
+                    self.len_waves_round = len(WAVES[self.runda])
 
                 self.gracz.awansowanie()
 
@@ -80,7 +90,7 @@ class Gra:
                     if self.wybrano_wieze_do_kupienia or self.wybrano_wieze:
                         self.wybrano_wieze_do_kupienia = False
                         self.wybrano_wieze = False
-                        self.to_update[1].h = 117
+                        self.change_interface = True
 
                     else:
                         sys.exit()
@@ -101,13 +111,13 @@ class Gra:
                         for i, wieza in enumerate(self.lista_wiez):
                             if wieza.obiekt.collidepoint(self.pozycja_myszy):
                                 self.wybrano_wieze = True
-                                self.to_update[1].h = 264
                                 self.wybrana_wieza = i
+                                self.change_interface = True
                                 break
                         # NEW SYNTAX
                         else:
                             self.wybrano_wieze = False
-                            self.gracz.strzal(self)
+                            self.gracz.strzelam = not self.gracz.strzelam
 
                 elif pygame.Rect(*TEKSTURY[0][1], 50, 50).collidepoint(self.pozycja_myszy):
                     self.start = True
@@ -131,6 +141,7 @@ class Gra:
                                 break
 
     def interactions(self):
+        self.gracz.strzal(self)
         self.gracz.ruch()
 
         for i, przeciwnik in enumerate(self.lista_przeciwnikow):
@@ -199,11 +210,10 @@ class Gra:
                         break
 
     def draw(self):
-        self.okno_gry.blits((
-            (TRAWA, (0, 0)), *MAPA_DRAW))
+        self.okno_gry.blits(((TRAWA, (0, 0)), *MAPA_DRAW))
 
         for wieza in self.lista_wiez:
-            self.okno_gry.blit(wieza.typ, (wieza.obiekt[0], wieza.obiekt[1]))
+            self.okno_gry.blit(wieza.typ, wieza.obiekt)
 
         for przeciwnik in self.lista_przeciwnikow:
             self.okno_gry.blit(przeciwnik.rodzaj, (przeciwnik.obiekt.x - ((przeciwnik.rozmiar - 15) / 2), przeciwnik.obiekt.y - ((przeciwnik.rozmiar - 15) / 2)))
@@ -214,29 +224,7 @@ class Gra:
                 if przeciwnik.startowe_zdrowie > przeciwnik.zdrowie:
                     pygame.draw.rect(self.okno_gry, (255,0,0), pygame.Rect(przeciwnik.obiekt.x - 5 + (25 * przeciwnik.zdrowie) // przeciwnik.startowe_zdrowie, przeciwnik.obiekt.y - 10, (25 * (przeciwnik.startowe_zdrowie - przeciwnik.zdrowie)) // przeciwnik.startowe_zdrowie, 3))
 
-        for pocisk in self.lista_pociskow:
-            if pocisk.rodzaj == 'gracz':
-                self.okno_gry.blit(KULA_MOCY, (pocisk.obiekt.x, pocisk.obiekt.y))
-            else:
-                pygame.draw.rect(self.okno_gry, pocisk.kolor, pocisk.obiekt)
-
-        if self.wybrano_wieze:
-            pygame.draw.circle(self.okno_gry, self.lista_wiez[self.wybrana_wieza].kolor, self.lista_wiez[self.wybrana_wieza].pole, self.lista_wiez[self.wybrana_wieza].zasieg, 1)
-
         pygame.draw.rect(self.okno_gry, (0,0,0), (MAP_WIDTH, 0, MENUSIZE, MAP_HEIGHT))
-
-        if self.wybrano_wieze:
-            self.okno_gry.blits((
-                *TEKSTURY_INTERFEJSU_WIEZY[(self.lista_wiez[self.wybrana_wieza].rodzaj - 1) * 4 : self.lista_wiez[self.wybrana_wieza].rodzaj * 4],
-
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_atak}$'    , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 50)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_zasieg}$'  , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 50)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_reszta}$'  , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 50)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].cena_calkowita}$', True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[3][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[3][1][1] + 50)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_atak}'    , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 5)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_zasieg}'  , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 5)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_reszta}'  , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 5)),
-            ))
 
         self.okno_gry.blits((
             (FONT30.render(f'Round:{self.runda + self.start}', True, (255,255,255)), (MAP_WIDTH + 57, MAP_HEIGHT - 105)),
@@ -264,15 +252,32 @@ class Gra:
 
         self.draw_health_bar()
 
+        if self.wybrano_wieze:
+            self.okno_gry.blits((
+                *TEKSTURY_INTERFEJSU_WIEZY[(self.lista_wiez[self.wybrana_wieza].rodzaj - 1) * 4 : self.lista_wiez[self.wybrana_wieza].rodzaj * 4],
+
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_atak}$'    , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 50)),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_zasieg}$'  , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 50)),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_reszta}$'  , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 50)),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].cena_calkowita}$', True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[3][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[3][1][1] + 50)),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_atak}'    , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 5)),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_zasieg}'  , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 5)),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_reszta}'  , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 5)),
+            ))
+
+            pygame.draw.circle(self.okno_gry, self.lista_wiez[self.wybrana_wieza].kolor, self.lista_wiez[self.wybrana_wieza].pole, self.lista_wiez[self.wybrana_wieza].zasieg, 2)
+
+        for pocisk in self.lista_pociskow:
+            if pocisk.rodzaj == 'gracz':
+                self.okno_gry.blit(KULA_MOCY, pocisk.obiekt)
+            else:
+                pygame.draw.rect(self.okno_gry, pocisk.kolor, pocisk.obiekt)
+
         if self.wybrano_wieze_do_kupienia:
             pygame.draw.rect(self.okno_gry, self.kolor_wybranej_wiezy, (self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20))
-            pygame.draw.circle(self.okno_gry, self.kolor_wybranej_wiezy, self.pozycja_myszy, self.zasieg_wybranej_wiezy, 1)
+            pygame.draw.circle(self.okno_gry, self.kolor_wybranej_wiezy, self.pozycja_myszy, self.zasieg_wybranej_wiezy, 2)
 
-        if self.to_update == self.previous_to_update:
-            pygame.display.update(self.to_update)
-        else:
-            pygame.display.update(self.previous_to_update)
-            self.previous_to_update = copy.deepcopy(self.to_update)
+        self.to_update()
 
     def mainly_to_display_choosen_tower(self, i):
         self.wybrano_wieze_do_kupienia = True
@@ -318,6 +323,56 @@ class Gra:
             self.lista_wiez.pop()
 
         self.wybrano_wieze_do_kupienia = False
+
+    def to_update(self):
+        x, y, *_ = self.gracz.obiekt
+
+        rect_to_update = [
+            INTERFACE_LOW_HEIGHT,
+            BASE_HP_STRING,
+            pygame.Rect(MAP_WIDTH, 0, MENUSIZE, self.interface_up_height),
+            pygame.Rect(0, 0, x + DRUID_SIZE, y + DRUID_SIZE)
+        ]
+
+        map_rects = (
+            pygame.Rect(x, 0, MAP_WIDTH - x, y),
+            pygame.Rect(x + DRUID_SIZE, y, MAP_WIDTH - x - DRUID_SIZE, MAP_HEIGHT - y),
+            pygame.Rect(0, y + DRUID_SIZE, x + DRUID_SIZE, MAP_HEIGHT - y - DRUID_SIZE)
+        )
+        # NEW SYNTAX
+        for rect in map_rects:
+            for przeciwnik in self.lista_przeciwnikow:
+                if rect.colliderect(przeciwnik.obiekt):
+                    rect_to_update.append(rect)
+                    break
+
+            else:
+                for pocisk in self.lista_pociskow:
+                    if rect.colliderect(pocisk.obiekt):
+                        rect_to_update.append(rect)
+                        break
+
+                else:
+                    for wieza in self.lista_wiez:
+                        if rect.colliderect(wieza.obiekt):
+                            rect_to_update.append(rect)
+                            break
+
+        if self.change_interface:
+            self.interface_up_height = 264
+            self.change_interface = False
+
+        if self.wybrano_wieze_do_kupienia:
+            rect_to_update.append(pygame.Rect((self.pozycja_myszy[0] - self.zasieg_wybranej_wiezy), (self.pozycja_myszy[1] - self.zasieg_wybranej_wiezy), (2 * self.zasieg_wybranej_wiezy), (2 * self.zasieg_wybranej_wiezy)))
+
+        if self.wybrano_wieze:
+            rect_to_update.append(pygame.Rect((self.lista_wiez[self.wybrana_wieza].pole[0] - self.lista_wiez[self.wybrana_wieza].zasieg, self.lista_wiez[self.wybrana_wieza].pole[1] - self.lista_wiez[self.wybrana_wieza].zasieg, (2 * self.lista_wiez[self.wybrana_wieza].zasieg), (2 * self.lista_wiez[self.wybrana_wieza].zasieg))))
+
+        if self.previous == rect_to_update:
+            pygame.display.update(rect_to_update)
+        else:
+            pygame.display.update(self.previous)
+            self.previous = rect_to_update[:]
 
     def draw_health_bar(self):
         stan = int((self.gracz.zdrowie / (self.gracz.max_zdrowie + 1)) * 3)

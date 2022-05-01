@@ -13,7 +13,7 @@ class Pocisk:
         if self.rodzaj == 'gracz':
             self.x, self.y = gra.gracz.obiekt.x, gra.gracz.obiekt.y
             self.obiekt = pygame.Rect(self.x, self.y, 8, 8)
-            self.obrazenia = 5 + rodzaj.poziom
+            self.obrazenia = gra.gracz.obrazenia
 
             x, y = gra.pozycja_myszy[0] - self.x, gra.pozycja_myszy[1] - self.y
             self.kierunek_x = x / ((x**2 + y**2)**0.5) * (2 + (rodzaj.poziom / 5))

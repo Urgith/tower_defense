@@ -4,18 +4,18 @@ import os
 
 
 # CHANGEABLE
-TILESIZE = 25
-MENUSIZE = 150
+TILESIZE = 25  # 25
+MENUSIZE = 150  # 150
 
-BASE_LOC_X = 20
-BASE_LOC_Y = 22
+BASE_X = 20  # 20
+BASE_Y = 22  # 22
 
-DRUID_SIZE = 50
-DRUID_X = 100
-DRUID_Y = 100
+DRUID_SIZE = 50  # 50
+DRUID_X = 100  # 100
+DRUID_Y = 100  # 100
 
-FPS_MAX = 2000
-PREDKOSC_WYCHODZENIA = 10
+FPS_MAX = 100  # 100
+PREDKOSC_WYCHODZENIA = 10  # 10
 
 MAPA = (
     ( 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -45,13 +45,16 @@ MAPA = (
     ( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 )
 ##################################################
-BASE_RECT = pygame.Rect(TILESIZE * BASE_LOC_X, TILESIZE * BASE_LOC_Y, TILESIZE, TILESIZE)
+BASE_RECT = pygame.Rect((BASE_X * TILESIZE), (BASE_Y * TILESIZE), TILESIZE, TILESIZE)
+BASE_HP_STRING = pygame.Rect((BASE_X * TILESIZE) - 36, (BASE_Y * TILESIZE) + 2, 44, 20)
 
 MAP_TILES_W = len(MAPA[0])
 MAP_TILES_H = len(MAPA)
 
 MAP_WIDTH = (TILESIZE * MAP_TILES_W)
 MAP_HEIGHT = (TILESIZE * MAP_TILES_H)
+
+INTERFACE_LOW_HEIGHT = pygame.Rect(MAP_WIDTH, MAP_HEIGHT - 123, MENUSIZE, 123)
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
@@ -137,12 +140,17 @@ WAVES = (
     (SZCZUR,) * 10 + (PAJAK,) * 25 + (WAZ,) * 15
 )
 
+LEN_WAVES = len(WAVES)
+
+_3_ = MAP_WIDTH + 3
+_93_ = MAP_WIDTH + 93
+
 TEKSTURY = (
-    (image_load('dane/zacznij.jpg'), (MAP_WIDTH + 3, MAP_HEIGHT - 123)),
-    (image_load('dane/domek.jpg'), (MAP_WIDTH + 3, MAP_HEIGHT - 70)),
-    (zielony, (MAP_WIDTH + 93, MAP_HEIGHT - 74)),
-    (niebieski, (MAP_WIDTH + 93, MAP_HEIGHT - 49)),
-    (zolty, (MAP_WIDTH + 93, MAP_HEIGHT - 24)),
+    (image_load('dane/zacznij.jpg'), (_3_, MAP_HEIGHT - 123)),
+    (image_load('dane/domek.jpg'), (_3_, MAP_HEIGHT - 70)),
+    (zielony, (_93_, MAP_HEIGHT - 74)),
+    (niebieski, (_93_, MAP_HEIGHT - 49)),
+    (zolty, (_93_, MAP_HEIGHT - 24)),
     (image_load('dane/_arrow.png', (0, 0)), (MAP_WIDTH + 5, 2)),
     (image_load('dane/_kula_mocy.png', (0, 0)), (MAP_WIDTH + 6, 25)),
     (image_load('dane/_boots.png', (0, 0)), (MAP_WIDTH + 4, 43)),
@@ -150,19 +158,24 @@ TEKSTURY = (
     (image_load('dane/_coin.png', (0, 0)), (MAP_WIDTH + 5, 82))
 )
 
+_3 = pygame.Rect(_3_, 119, 70, 70)
+_78 = pygame.Rect(MAP_WIDTH + 78, 119, 70, 70)
+__3 = pygame.Rect(_3_, 194, 70, 70)
+__78 = pygame.Rect(MAP_WIDTH + 78, 194, 70, 70)
+
 TEKSTURY_INTERFEJSU_WIEZY = (
-    (image_load('dane/atak_zielony.jpg'), pygame.Rect(MAP_WIDTH + 3, 119, 70, 70)),
-    (image_load('dane/zasieg_zielony.jpg'), pygame.Rect(MAP_WIDTH + 78, 119, 70, 70)),
-    (image_load('dane/predkosc_zielony.jpg'), pygame.Rect(MAP_WIDTH + 3, 194, 70, 70)),
-    (image_load('dane/dolar_zielony.jpg'), pygame.Rect(MAP_WIDTH + 78, 194, 70,70)),
-    (image_load('dane/atak_niebieski.jpg'), pygame.Rect(MAP_WIDTH + 3, 119, 70, 70)),
-    (image_load('dane/zasieg_niebieski.jpg'), pygame.Rect(MAP_WIDTH + 78, 119, 70, 70)),
-    (image_load('dane/przebicie_niebieski.jpg'), pygame.Rect(MAP_WIDTH + 3, 194, 70, 70)),
-    (image_load('dane/dolar_niebieski.jpg'), pygame.Rect(MAP_WIDTH + 78, 194, 70, 70)),
-    (image_load('dane/atak_zolty.jpg'), pygame.Rect(MAP_WIDTH + 3, 119, 70, 70)),
-    (image_load('dane/zasieg_zolty.jpg'), pygame.Rect(MAP_WIDTH + 78, 119, 70, 70)),
-    (image_load('dane/elektryzacja_zolty.jpg'), pygame.Rect(MAP_WIDTH + 3, 194, 70, 70)),
-    (image_load('dane/dolar_zolty.jpg'), pygame.Rect(MAP_WIDTH + 78, 194, 70, 70))
+    (image_load('dane/atak_zielony.jpg'), _3),
+    (image_load('dane/zasieg_zielony.jpg'), _78),
+    (image_load('dane/predkosc_zielony.jpg'), __3),
+    (image_load('dane/dolar_zielony.jpg'), __78),
+    (image_load('dane/atak_niebieski.jpg'), _3),
+    (image_load('dane/zasieg_niebieski.jpg'), _78),
+    (image_load('dane/przebicie_niebieski.jpg'), __3),
+    (image_load('dane/dolar_niebieski.jpg'), __78),
+    (image_load('dane/atak_zolty.jpg'), _3),
+    (image_load('dane/zasieg_zolty.jpg'), _78),
+    (image_load('dane/elektryzacja_zolty.jpg'), __3),
+    (image_load('dane/dolar_zolty.jpg'), __78)
 )
 
 pygame.font.init()

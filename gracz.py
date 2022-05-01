@@ -15,8 +15,12 @@ class Gracz:
 
         self.max_zdrowie = 1000
         self.zdrowie = 1000
-
+        self.obrazenia = 5
         self.predkosc = 1
+
+        self.szybkostrzelnosc = 10
+        self.strzelam = False
+
         self.rodzaj = 'gracz'
 
     def ruch(self):
@@ -40,20 +44,20 @@ class Gracz:
             x = 1
         # 0.4 ~= 2**0.5 - 1
         if x and y:
-            self.x -= x * self.predkosc * 0.4
-            self.y -= y * self.predkosc * 0.4
+            self.x -= x * self.predkosc * 0.414
+            self.y -= y * self.predkosc * 0.414
 
-        if not 0 < self.x < MAP_WIDTH - DRUID_SIZE:
+        if not (0 < self.x < MAP_WIDTH - DRUID_SIZE):
             self.x = self.obiekt.x
 
-        if not 0 < self.y < MAP_HEIGHT - DRUID_SIZE:
+        if not (0 < self.y < MAP_HEIGHT - DRUID_SIZE):
             self.y = self.obiekt.y
 
-        self.obiekt.x = self.x
-        self.obiekt.y = self.y
+        self.obiekt.x, self.obiekt.y = (self.x, self.y)
 
     def strzal(self, gra):
-        gra.lista_pociskow.append(Pocisk(self, gra))
+        if self.strzelam and (gra.licznik % self.szybkostrzelnosc == 1):
+            gra.lista_pociskow.append(Pocisk(self, gra))
 
     def awansowanie(self):
         poziom = int((self.doswiadczenie // 100) ** 0.5)
@@ -62,6 +66,7 @@ class Gracz:
             self.poziom = poziom
 
             self.predkosc = 1 + (poziom / 10)
-            self.max_zdrowie = int(1000 * (1 + (poziom / 10)))
+            self.obrazenia = 5 + poziom
 
+            self.max_zdrowie = int(1000 * (1 + (poziom / 10)))
             self.zdrowie = self.max_zdrowie
