@@ -4,18 +4,18 @@ import os
 
 
 # CHANGEABLE
-TILESIZE = 25  # 25
+TILESIZE = 30  # 30
 MENUSIZE = 150  # 150
 
 BASE_X = 18 * TILESIZE  # 18
 BASE_Y = 21 * TILESIZE  # 21
 
-DRUID_SIZE = 50  # 50
+DRUID_SIZE = 2 * TILESIZE # 2 *
 DRUID_X = 100  # 100
 DRUID_Y = 100  # 100
 
-FPS_MAX = 100  # 100
-PREDKOSC_WYCHODZENIA = 10  # 10
+FPS_MAX = 90  # 90
+PREDKOSC_WYCHODZENIA = 20  # 20
 
 MAPA = (
     ( 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -64,7 +64,7 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
 pygame.display.set_caption('Inwazja')
 
-TRAWA = image_load('dane/trawa.jpg')
+TRAWA = image_load('dane/_trawa.jpg')
 LAS = image_load('dane/las.jpg', scale=(3 * TILESIZE, 3 * TILESIZE))
 
 KULA_MOCY = image_load('dane/kula_mocy.png')

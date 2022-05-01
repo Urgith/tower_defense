@@ -7,7 +7,8 @@ class Przeciwnik:
 
     def __init__(self, runda, numer_przeciwnika):
         self.rodzaj = WAVES[runda][numer_przeciwnika]
-        self.rozmiar = ENEMIES[self.rodzaj][5]
+        (self.predkosc, self.atak, self.punkty,
+            self.monety, self.rozmiar) = ENEMIES[self.rodzaj][1:]
 
         self.x, self.y = (5, 5)
         self.obiekt = pygame.Rect((self.x, self.y, self.rozmiar, self.rozmiar))
@@ -16,14 +17,8 @@ class Przeciwnik:
         self.startowe_zdrowie = int(ENEMIES[self.rodzaj][0] * (1.1**runda))
         self.zdrowie = int(ENEMIES[self.rodzaj][0] * (1.1**runda))
 
-        self.predkosc = ENEMIES[self.rodzaj][1]
-        self.atak = ENEMIES[self.rodzaj][2]
-        self.punkty = ENEMIES[self.rodzaj][3]
-        self.monety = ENEMIES[self.rodzaj][4]
-
-        self.ids = []
-
         self.pole = MAPA[0][0]
+        self.ids = []
 
     def ruch(self):
         self_x = self.x - 5

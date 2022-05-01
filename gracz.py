@@ -65,8 +65,8 @@ class Gracz:
         if poziom != self.poziom:
             self.poziom = poziom
 
-            self.predkosc = 1 + (poziom / 10)
-            self.obrazenia = 5 + poziom
+            self.predkosc += (poziom / 10)
+            self.obrazenia += poziom
 
             self.max_zdrowie = int(1000 * (1 + (poziom / 10)))
             self.zdrowie = self.max_zdrowie

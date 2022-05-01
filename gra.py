@@ -20,7 +20,6 @@ class Gra:
             self.draw()
 
     def initialize_attributes_and_map(self):
-        self.okno_gry = pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
         self.gracz = Gracz()
 
         self.lista_przeciwnikow = []
@@ -45,6 +44,7 @@ class Gra:
 
         self.len_waves_round = len(WAVES[0])
 
+        self.okno_gry = pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
         self.okno_gry.blits((
             (TRAWA, (0, 0)),
             *MAPA_DRAW,
@@ -180,18 +180,18 @@ class Gra:
                         pocisk.przebicie -= 1
 
                         if pocisk.przebicie == 0:
-                            ostatni_pocisk = self.lista_pociskow.pop(i)
+                            self.lista_pociskow.pop(i)
 
                     elif pocisk.rodzaj != 2:
                         przeciwnik.zdrowie -= pocisk.obrazenia
-                        ostatni_pocisk = self.lista_pociskow.pop(i)
+                        self.lista_pociskow.pop(i)
 
                     if przeciwnik.zdrowie <= 0:
                         self.punkty += przeciwnik.punkty
                         self.pieniadze += przeciwnik.monety
                         self.lista_przeciwnikow.pop(j)
 
-                        if ostatni_pocisk.rodzaj == 'gracz':
+                        if pocisk.rodzaj == 'gracz':
                             self.gracz.doswiadczenie += przeciwnik.punkty
 
                     break

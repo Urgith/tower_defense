@@ -15,7 +15,7 @@ class Wieza:
         self.poziom_atak, self.poziom_zasieg, self.poziom_reszta, self.poziom = (0, 0, 0, 0)
 
         (self.typ, self.kolor, self.koszt, self.obrazenia, self.zasieg,
-            self.przeladowanie,self.dlugosc_zycia, self.rozmiar_pocisku) = WIEZE[self.rodzaj - 1]
+            self.przeladowanie, self.dlugosc_zycia, self.rozmiar_pocisku) = WIEZE[self.rodzaj - 1]
 
         self.cena_calkowita = self.koszt
         if self.rodzaj == 1: 
