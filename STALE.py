@@ -64,7 +64,7 @@ os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
 pygame.display.set_caption('Inwazja')
 
-TRAWA = image_load('dane/trawa.jpg', scale=(MAP_WIDTH, MAP_HEIGHT))
+TRAWA = image_load('dane/trawa.jpg')
 LAS = image_load('dane/las.jpg', scale=(3 * TILESIZE, 3 * TILESIZE))
 
 KULA_MOCY = image_load('dane/kula_mocy.png')
