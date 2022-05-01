@@ -48,7 +48,9 @@ class Gra:
         self.okno_gry.blits((
             (TRAWA, (0, 0)),
             *MAPA_DRAW,
-            (FONT40.render(f'{self.zdrowie_lasu}', True, (255,255,255)), (BASE_RECT.x - (1.5 * TILESIZE), BASE_RECT.y))))
+            (LAS, BASE_RECT),
+            (FONT40.render(f'{self.zdrowie_lasu}', True, WHITE), BASE_HP_STRING)
+        ))
 
         pygame.display.update(pygame.Rect(0, 0, MAP_WIDTH, MAP_HEIGHT))
 
@@ -89,8 +91,8 @@ class Gra:
                 if event.key == pygame.K_ESCAPE:
                     if self.wybrano_wieze_do_kupienia or self.wybrano_wieze:
                         self.wybrano_wieze_do_kupienia = False
+                        self.change_interface = False
                         self.wybrano_wieze = False
-                        self.change_interface = True
 
                     else:
                         sys.exit()
@@ -113,14 +115,15 @@ class Gra:
                     else:
                         for i, wieza in enumerate(self.lista_wiez):
                             if wieza.obiekt.collidepoint(self.pozycja_myszy):
+                                self.change_interface = True
                                 self.wybrano_wieze = True
                                 self.wybrana_wieza = i
-                                self.change_interface = True
                                 break
                         # NEW SYNTAX
                         else:
-                            self.wybrano_wieze = False
                             self.gracz.strzelam = not self.gracz.strzelam
+                            self.change_interface = False
+                            self.wybrano_wieze = False
 
                 elif pygame.Rect(*TEKSTURY[0][1], 50, 50).collidepoint(self.pozycja_myszy):
                     self.new_round()
@@ -210,7 +213,7 @@ class Gra:
                         break
 
     def draw(self):
-        self.okno_gry.blits(((TRAWA, (0, 0)), *MAPA_DRAW))
+        self.okno_gry.blits(((TRAWA, (0, 0)), *MAPA_DRAW, (LAS, BASE_RECT)))
 
         for wieza in self.lista_wiez:
             self.okno_gry.blit(wieza.typ, wieza.obiekt)
@@ -222,30 +225,30 @@ class Gra:
                 pygame.draw.rect(self.okno_gry, (0,255,0), pygame.Rect(przeciwnik.obiekt.x - 5, przeciwnik.obiekt.y - 10, (25 * przeciwnik.zdrowie) // przeciwnik.startowe_zdrowie, 3))
 
                 if przeciwnik.startowe_zdrowie > przeciwnik.zdrowie:
-                    pygame.draw.rect(self.okno_gry, (255,0,0), pygame.Rect(przeciwnik.obiekt.x - 5 + (25 * przeciwnik.zdrowie) // przeciwnik.startowe_zdrowie, przeciwnik.obiekt.y - 10, (25 * (przeciwnik.startowe_zdrowie - przeciwnik.zdrowie)) // przeciwnik.startowe_zdrowie, 3))
+                    pygame.draw.rect(self.okno_gry, RED, pygame.Rect(przeciwnik.obiekt.x - 5 + (25 * przeciwnik.zdrowie) // przeciwnik.startowe_zdrowie, przeciwnik.obiekt.y - 10, (25 * (przeciwnik.startowe_zdrowie - przeciwnik.zdrowie)) // przeciwnik.startowe_zdrowie, 3))
 
         pygame.draw.rect(self.okno_gry, (0,0,0), (MAP_WIDTH, 0, MENUSIZE, MAP_HEIGHT))
 
         self.okno_gry.blits((
-            (FONT30.render(f'Round:{self.runda + self.start}', True, (255,255,255)), (MAP_WIDTH + 57, MAP_HEIGHT - 105)),
+            (FONT30.render(f'Round:{self.runda + self.start}', True, WHITE), (MAP_WIDTH + 57, MAP_HEIGHT - 105)),
 
             *TEKSTURY,
 
-            (FONT30.render(f'{self.gracz.poziom}', True, (255,255,255)), (MAP_WIDTH + 23, 2)),
-            (FONT30.render(f'{5 + self.gracz.poziom}', True, (255,255,255)), (MAP_WIDTH + 23, 23)),
-            (FONT30.render(f'{self.gracz.predkosc}', True, (255,255,255)), (MAP_WIDTH + 23, 41)),
-            (FONT30.render(f'{self.gracz.zdrowie}', True, (255,255,255)), (MAP_WIDTH + 23, 59)),
-            (FONT30.render(f'{self.pieniadze}', True, (255,255,255)), (MAP_WIDTH + 23, 81)),
-            (FONT30.render(f'Points: {self.punkty}', True, (255,255,255)), (MAP_WIDTH + 10, 100)),
+            (FONT30.render(f'{self.gracz.poziom}', True, WHITE), (W_23, 2)),
+            (FONT30.render(f'{5 + self.gracz.poziom}', True, WHITE), (W_23, 23)),
+            (FONT30.render(f'{self.gracz.predkosc}', True, WHITE), (W_23, 41)),
+            (FONT30.render(f'{self.gracz.zdrowie}', True, WHITE), (W_23, 59)),
+            (FONT30.render(f'{self.pieniadze}', True, WHITE), (W_23, 81)),
+            (FONT30.render(f'Points: {self.punkty}', True, WHITE), (MAP_WIDTH + 10, 100)),
 
-            (FONT30.render('10$', True, (255,255,255)), (MAP_WIDTH + 115, MAP_HEIGHT - 73)),
-            (FONT30.render('30$', True, (255,255,255)), (MAP_WIDTH + 115, MAP_HEIGHT - 48)),
-            (FONT30.render('50$', True, (255,255,255)), (MAP_WIDTH + 115, MAP_HEIGHT - 23)),
-            (FONT30.render('1.', True, (255,255,255)), (MAP_WIDTH + 75, MAP_HEIGHT - 73)),
-            (FONT30.render('2.', True, (255,255,255)), (MAP_WIDTH + 75, MAP_HEIGHT - 48)),
-            (FONT30.render('3.', True, (255,255,255)), (MAP_WIDTH + 75, MAP_HEIGHT - 23)),
+            (FONT30.render('10$', True, WHITE), (W_115, MAP_HEIGHT - 73)),
+            (FONT30.render('30$', True, WHITE), (W_115, MAP_HEIGHT - 48)),
+            (FONT30.render('50$', True, WHITE), (W_115, MAP_HEIGHT - 23)),
+            (FONT30.render('1.', True, WHITE), (W_75, MAP_HEIGHT - 73)),
+            (FONT30.render('2.', True, WHITE), (W_75, MAP_HEIGHT - 48)),
+            (FONT30.render('3.', True, WHITE), (W_75, MAP_HEIGHT - 23)),
 
-            (FONT40.render(f'{self.zdrowie_lasu}', True, (255,255,255)), (BASE_RECT.x - (1.5 * TILESIZE), BASE_RECT.y)),
+            (FONT40.render(f'{self.zdrowie_lasu}', True, WHITE), BASE_HP_STRING),
 
             (DRUID, (self.gracz.obiekt.x, self.gracz.obiekt.y))
         ))
@@ -256,13 +259,13 @@ class Gra:
             self.okno_gry.blits((
                 *TEKSTURY_INTERFEJSU_WIEZY[(self.lista_wiez[self.wybrana_wieza].rodzaj - 1) * 4 : self.lista_wiez[self.wybrana_wieza].rodzaj * 4],
 
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_atak}$'    , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 50)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_zasieg}$'  , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 50)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_reszta}$'  , True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 50)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].cena_calkowita}$', True, (255,0,0)), (TEKSTURY_INTERFEJSU_WIEZY[3][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[3][1][1] + 50)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_atak}'    , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 5)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_zasieg}'  , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 5)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_reszta}'  , True, (255,0,255)), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0] + 5, TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 5)),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_atak}$'    , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0], TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 50)),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_zasieg}$'  , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0], TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 50)),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_reszta}$'  , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0], TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 50)),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].cena_calkowita}$', True, RED), (TEKSTURY_INTERFEJSU_WIEZY[3][1][0], TEKSTURY_INTERFEJSU_WIEZY[3][1][1] + 50)),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_atak}'    , True, PURPLE), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0], TEKSTURY_INTERFEJSU_WIEZY[0][1][1])),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_zasieg}'  , True, PURPLE), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0], TEKSTURY_INTERFEJSU_WIEZY[1][1][1])),
+                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_reszta}'  , True, PURPLE), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0], TEKSTURY_INTERFEJSU_WIEZY[2][1][1])),
             ))
 
             pygame.draw.circle(self.okno_gry, self.lista_wiez[self.wybrana_wieza].kolor, self.lista_wiez[self.wybrana_wieza].pole, self.lista_wiez[self.wybrana_wieza].zasieg, 2)
@@ -337,7 +340,6 @@ class Gra:
 
         rect_to_update = [
             INTERFACE_LOW_HEIGHT,
-            BASE_HP_STRING,
             pygame.Rect(MAP_WIDTH, 0, MENUSIZE, self.interface_up_height),
             pygame.Rect(0, 0, x_plus_druid_size, y_plus_druid_size)
         ]
@@ -350,7 +352,7 @@ class Gra:
         # NEW SYNTAX
         for rect in map_rects:
             for przeciwnik in self.lista_przeciwnikow:
-                if rect.colliderect(przeciwnik.obiekt):
+                if rect.colliderect(przeciwnik.obiekt_z_paskiem):
                     rect_to_update.append(rect)
                     break
 
@@ -368,7 +370,8 @@ class Gra:
 
         if self.change_interface:
             self.interface_up_height = 264
-            self.change_interface = False
+        else:
+            self.interface_up_height = 117
 
         if self.wybrano_wieze_do_kupienia:
             rect_to_update.append(pygame.Rect((self.pozycja_myszy[0] - self.zasieg_wybranej_wiezy), (self.pozycja_myszy[1] - self.zasieg_wybranej_wiezy), (2 * self.zasieg_wybranej_wiezy), (2 * self.zasieg_wybranej_wiezy)))

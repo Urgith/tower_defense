@@ -9,8 +9,9 @@ class Przeciwnik:
         self.rodzaj = WAVES[runda][numer_przeciwnika]
 
         self.rozmiar = ENEMIES[self.rodzaj][5]
-        self.x, self.y = 5, 5
+        self.x, self.y = (5, 5)
         self.obiekt = pygame.Rect((self.x, self.y, self.rozmiar, self.rozmiar))
+        self.obiekt_z_paskiem = pygame.Rect((self.x - 5, self.y - 10, self.rozmiar + 5, self.rozmiar + 10))
 
         self.pole = MAPA[0][0]
         self.startowe_zdrowie = int(ENEMIES[self.rodzaj][0] * (1.1**runda))
@@ -42,5 +43,6 @@ class Przeciwnik:
         elif pole == 8 or pole == 80:
             self.y += self.predkosc
 
-        self.obiekt.x, self.obiekt.y = self.x, self.y
+        self.obiekt.x, self.obiekt.y = (self.x, self.y)
+        self.obiekt_z_paskiem.x, self.obiekt_z_paskiem.y = (self.x - 5, self.y - 10)
         self.pole = pole

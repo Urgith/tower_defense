@@ -70,6 +70,7 @@ class Wieza:
 
             elif (polepszenie % 4) == 3:
                 gra.wybrano_wieze = False
+                gra.change_interface = False
                 gra.pieniadze += self.cena_calkowita
                 gra.lista_wiez.pop(gra.wybrana_wieza)
 
@@ -99,6 +100,7 @@ class Wieza:
 
             elif (polepszenie % 4) == 3:
                 gra.wybrano_wieze = False
+                gra.change_interface = False
                 gra.pieniadze += self.cena_calkowita
                 gra.lista_wiez.pop(gra.wybrana_wieza)
 
@@ -129,6 +131,7 @@ class Wieza:
 
             elif (polepszenie % 4) == 3:
                 gra.wybrano_wieze = False
+                gra.change_interface = False
                 gra.pieniadze += self.cena_calkowita
                 gra.lista_wiez.pop(gra.wybrana_wieza)
 
