@@ -1,12 +1,13 @@
 import pygame
 import random
 
-from STALE import *
+from CONSTANTS import *
 
 
 class Pocisk:
 
     def __init__(self, rodzaj, gra):
+        self.predkosc = 100
         self.rodzaj = rodzaj.rodzaj
         self.czas_powstania = gra.licznik
 
@@ -16,8 +17,9 @@ class Pocisk:
             self.obrazenia = gra.gracz.obrazenia
 
             x, y = (gra.pozycja_myszy[0] - self.x, gra.pozycja_myszy[1] - self.y)
-            self.kierunek_x = x / ((x**2 + y**2)**0.5) * (2 + (rodzaj.poziom / 5))
-            self.kierunek_y = y / ((x**2 + y**2)**0.5) * (2 + (rodzaj.poziom / 5))
+
+            self.kierunek_x = x / ((x**2 + y**2)**0.5) * gra.gracz.predkosc_pocisku
+            self.kierunek_y = y / ((x**2 + y**2)**0.5) * gra.gracz.predkosc_pocisku
 
         else:
             if self.rodzaj == 2:
@@ -36,10 +38,10 @@ class Pocisk:
             x, y = (gra.celowany_przeciwnik.x + (gra.celowany_przeciwnik.rozmiar / 2) - self.x,
                    gra.celowany_przeciwnik.y + (gra.celowany_przeciwnik.rozmiar / 2) - self.y)
 
-            self.kierunek_x = x / ((x**2 + y**2)**0.5) * self.rodzaj * rodzaj.predkosc
-            self.kierunek_y = y / ((x**2 + y**2)**0.5) * self.rodzaj * rodzaj.predkosc
+            self.kierunek_x = x / ((x**2 + y**2)**0.5) * self.predkosc
+            self.kierunek_y = y / ((x**2 + y**2)**0.5) * self.predkosc
 
-    def ruch(self):
-        self.x += self.kierunek_x
-        self.y += self.kierunek_y
+    def move(self, dt):
+        self.x += self.kierunek_x * dt
+        self.y += self.kierunek_y * dt
         self.obiekt.x, self.obiekt.y = (self.x, self.y)

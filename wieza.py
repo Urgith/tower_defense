@@ -1,17 +1,17 @@
 import pygame
 
-from STALE import *
+from CONSTANTS import *
 from pocisk import Pocisk
 
 
 class Wieza:
 
-    def __init__(self, pozycja_myszy, rodzaj_wybranej_wiezy):
+    def __init__(self, pozycja_myszy, rodzaj_wybranej_wiezy, licznik):
         self.obiekt = pygame.Rect(pozycja_myszy[0] - 10, pozycja_myszy[1] - 10, 20, 20)
         self.pole = pozycja_myszy
         self.rodzaj = rodzaj_wybranej_wiezy
-        self.licznik = 0
-        self.predkosc = 1
+        self.licznik = licznik
+        self.predkosc = 100
         self.poziom_atak, self.poziom_zasieg, self.poziom_reszta, self.poziom = (0, 0, 0, 0)
 
         (self.typ, self.kolor, self.koszt, self.obrazenia, self.zasieg,
@@ -36,12 +36,18 @@ class Wieza:
             self.ilu_na_raz = 3
             self.elektryzacja = 0
 
-    def strzal(self, gra):
-        if self.licznik + self.przeladowanie <= gra.licznik:
-            self.licznik = gra.licznik
+    def shoot(self, gra):
+        if (gra.licznik - self.licznik > self.przeladowanie) or self.mozna_strzelac:
             gra.lista_pociskow.append(Pocisk(self, gra))
+            self.licznik = gra.licznik
 
-    def polepszenie(self, gra, polepszenie):
+            if self.rodzaj == 3:
+                self.mozna_strzelac = True
+
+        if self.rodzaj == 3:
+            gra.celowany_przeciwnik.zdrowie -= self.elektryzacja
+
+    def upgrade(self, gra, polepszenie):
         gra.wybrano_wieze = True
 
         if self.rodzaj == 1:
@@ -56,7 +62,7 @@ class Wieza:
                 if gra.pieniadze >= 1 and self.poziom_zasieg <= 4:
                     self.cena_calkowita += 1
                     gra.pieniadze -= 1
-                    self.dlugosc_zycia += 30
+                    self.dlugosc_zycia += 150
                     self.zasieg += 15
                     self.poziom_zasieg += 1
 
@@ -86,7 +92,7 @@ class Wieza:
                 if gra.pieniadze >= 2 and self.poziom_zasieg <= 4:
                     self.cena_calkowita += 2
                     gra.pieniadze -= 2
-                    self.dlugosc_zycia += 15
+                    self.dlugosc_zycia += 300
                     self.zasieg += 30
                     self.poziom_zasieg += 1
 
@@ -117,7 +123,7 @@ class Wieza:
                 if gra.pieniadze >= 4 and self.poziom_zasieg <= 4:
                     self.cena_calkowita += 4
                     gra.pieniadze -= 4
-                    self.dlugosc_zycia += 5
+                    self.dlugosc_zycia += 150
                     self.zasieg += 15
                     self.poziom_zasieg += 1
 

@@ -5,17 +5,18 @@ import os
 
 # CHANGEABLE
 TILESIZE = 30  # 30
-MENUSIZE = 150  # 150
+MENUSIZE = 5 * TILESIZE  # 5 *
 
-BASE_X = 18 * TILESIZE  # 18
-BASE_Y = 21 * TILESIZE  # 21
+BASE_X = 18 * TILESIZE  # 18 *
+BASE_Y = 21 * TILESIZE  # 21 *
 
-DRUID_SIZE = 2 * TILESIZE # 2 *
-DRUID_X = 100  # 100
-DRUID_Y = 100  # 100
+DRUID_SIZE = 2 * TILESIZE  # 2 *
+DRUID_X = 150  # 150
+DRUID_Y = 150  # 150
 
-FPS_MAX = 90  # 90
-PREDKOSC_WYCHODZENIA = 20  # 20
+FRAMERATE = 30  # 30
+GAME_SPEED = 0.001  # 0.001
+OPPONENTS_GAP = 250  # 250
 
 MAPA = (
     ( 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -44,13 +45,13 @@ MAPA = (
     ( 1, 1, 1,50, 0, 7, 1, 1, 1, 1, 1, 1, 1, 1,50, 0, 7, 1, 3, 3, 3, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     ( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 )
-##################################################
+#-------------------------------------------------
 PURPLE = (255, 0, 255)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
 BASE_RECT = pygame.Rect(BASE_X, BASE_Y, (3 * TILESIZE), (3 * TILESIZE))
-BASE_HP_STRING = pygame.Rect(BASE_X + (TILESIZE / 2), BASE_Y + TILESIZE, 44, 20)
+BASE_HP_STRING = pygame.Rect(BASE_X + (TILESIZE / 2) + 5, BASE_Y + TILESIZE + 3, 44, 20)
 
 MAP_TILES_W = len(MAPA[0])
 MAP_TILES_H = len(MAPA)
@@ -69,15 +70,17 @@ LAS = image_load('dane/las.jpg', scale=(3 * TILESIZE, 3 * TILESIZE))
 
 KULA_MOCY = image_load('dane/kula_mocy.png')
 DRUID = image_load('dane/druid.png', (0, 0), scale=(DRUID_SIZE, DRUID_SIZE))
+PRAD = image_load('dane/prad.png', (0, 0))
 
 zielony = image_load('dane/zielony.jpg')
 niebieski = image_load('dane/niebieski.jpg')
 zolty = image_load('dane/zolty.jpg')
-
+                        # cost, damage, range, reload, life span, size
+                        #   c,  d,  ra,  re,    l, s
 WIEZE = (
-    (zielony, (0,255,0), 10, 10, 100, 10, 200, 4),
-    (niebieski, (0,0,255), 30, 40, 150, 15, 75, 5),
-    (zolty, (255,255,0), 50, 2, 75, 0, 25, 2),
+    (zielony, (0,255,0),   10, 10, 100, 100, 1000, 4),
+    (niebieski, (0,0,255), 30, 40, 150, 150, 1500, 5),
+    (zolty, (255,255,0),   50,  2,  75,  10,  750, 2),
     (image_load('dane/zielony2.jpg'), 0),
     (image_load('dane/niebieski2.jpg'), 0),
     (image_load('dane/zolty2.jpg'), 0),
@@ -136,25 +139,26 @@ MYSZ = image_load('dane/mysz.png', (0, 0))
 SZCZUR = image_load('dane/szczur.png', (0, 0))
 PAJAK = image_load('dane/pajak.png', (0, 0))
 WAZ = image_load('dane/waz.png', (0, 0))
-
-ENEMIES = {
-    MYSZ:   (100, 1  , 1, 5 , 1, 15),
-    SZCZUR: (200, 0.8, 3, 8 , 2, 17),
-    PAJAK:  (250, 1.2, 2, 12, 2, 19),
-    WAZ:    (350, 1.3, 3, 15, 3, 21)
+        # health, speed, damage, points, money, size
+ENEMIES = { # hp,  sp, d,  p, m, si
+    MYSZ:   ( 80, 100, 1,  2, 1, 15),
+    SZCZUR: (150,  90, 2,  4, 2, 17),
+    PAJAK:  (300, 110, 3,  8, 3, 19),
+    WAZ:    (500, 120, 5, 12, 4, 21)
 }
 
 WAVES = (
-    (MYSZ,) * 10,
+    (MYSZ,) * 6,
     (MYSZ,) * 15,
-    (MYSZ,) * 10 + (SZCZUR,) * 5,
-    (MYSZ,) * 10 + (SZCZUR,) * 10,
-    (MYSZ,) * 5 + (SZCZUR,) * 20,
-    (MYSZ,) * 5 + (SZCZUR,) * 15 + (PAJAK,) * 5,
-    (MYSZ,) * 5 + (SZCZUR,) * 15 + (PAJAK,) * 10,
-    (SZCZUR,) * 20 + (PAJAK,) * 15,
-    (SZCZUR,) * 15 + (PAJAK,) * 20 + (WAZ,) * 5,
-    (SZCZUR,) * 10 + (PAJAK,) * 25 + (WAZ,) * 15
+    (MYSZ,) * 25 + (SZCZUR,) * 5,
+    (MYSZ,) * 20 + (SZCZUR,) * 10,
+    (MYSZ,) * 18 + (SZCZUR,) * 15,
+    (MYSZ,) * 15 + (SZCZUR,) * 20 + (PAJAK,) * 3,
+    (MYSZ,) * 12 + (SZCZUR,) * 20 + (PAJAK,) * 8,
+    (MYSZ,) * 10 + (SZCZUR,) * 18 + (PAJAK,) * 15,
+    (MYSZ,) * 8  + (SZCZUR,) * 15 + (PAJAK,) * 15 + (WAZ,) * 3,
+    (MYSZ,) * 5  + (SZCZUR,) * 12 + (PAJAK,) * 20 + (WAZ,) * 8,
+    (MYSZ,) * 3  + (SZCZUR,) * 10 + (PAJAK,) * 20 + (WAZ,) * 15
 )
 
 LEN_WAVES = len(WAVES)
