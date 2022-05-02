@@ -13,7 +13,9 @@ class Gra:
         self.initialize_map()
 
         while True:
-            self.time_control()
+            self.time = self.clock.tick(FRAMERATE)
+            self.dt = (self.time * GAME_SPEED)
+
             self.rounds()
             self.events()
             self.update()
@@ -22,6 +24,8 @@ class Gra:
     def initialize_attributes(self):
         self.gracz = Gracz()
 
+        #self.lista_indeksow_do_usuwania_1 = []
+        #self.lista_indeksow_do_usuwania_2 = []
         self.lista_przeciwnikow = []
         self.lista_pociskow = []
         self.lista_wiez = []
@@ -44,7 +48,7 @@ class Gra:
         self.previous = []
 
         self.zdrowie_lasu = 100
-        self.pieniadze = 50
+        self.pieniadze = STARTING_MONEY
         self.punkty = 0
 
         self.len_waves_round = len(WAVES[0])
@@ -64,16 +68,6 @@ class Gra:
 
         pygame.display.update(pygame.Rect(0, 0, MAP_WIDTH, MAP_HEIGHT))
 
-
-    def time_control(self):
-        self.time = self.clock.tick(FRAMERATE)
-
-        if not self.was_paused:
-            self.dt = self.time * GAME_SPEED
-        else:
-            self.dt = 0
-
-            self.was_paused = False
 
     def rounds(self):
         if self.start:
@@ -164,12 +158,13 @@ class Gra:
         self.gracz.shoot(self)
         self.gracz.move(self.dt)
 
+        #self.lista_indeksow_do_usuwania_1 = []
         for i, przeciwnik in enumerate(self.lista_przeciwnikow):
             przeciwnik.move(self.dt)
 
             if przeciwnik.obiekt.colliderect(BASE_RECT):
                 self.zdrowie_lasu -= przeciwnik.atak
-                self.lista_przeciwnikow.pop(i)
+                self.lista_indeksow_do_usuwania.append(i)
 
                 if self.zdrowie_lasu <= 0:
                     sys.exit()
@@ -177,13 +172,17 @@ class Gra:
                 continue
 
             elif przeciwnik.obiekt.colliderect(self.gracz.obiekt):
-                self.gracz.zdrowie -= przeciwnik.atak
+                self.gracz.zdrowie -= przeciwnik.atak * self.dt * 60
 
                 if self.gracz.zdrowie <= 0:
                     sys.exit()
 
             przeciwnik.is_electrified = False
 
+        #for indeks in sorted(self.lista_indeksow_do_usuwania_1, reverse=True):
+        #    del self.lista_przeciwnikow[indeks]
+
+        #self.lista_indeksow_do_usuwania_1 = []
         for i, pocisk in enumerate(self.lista_pociskow):
             pocisk.move(self.dt)
 
@@ -195,6 +194,7 @@ class Gra:
                 self.lista_pociskow.pop(i)
                 continue
 
+            #self.lista_indeksow_do_usuwania_2 = []
             for j, przeciwnik in enumerate(self.lista_przeciwnikow):
                 if pocisk.obiekt.colliderect(przeciwnik.obiekt):
 
@@ -221,11 +221,18 @@ class Gra:
 
                     break
 
+            #for indeks in sorted(self.lista_indeksow_do_usuwania_2, reverse=True):
+            #    del self.lista_przeciwnikow[indeks]
+
+        #for indeks in sorted(self.lista_indeksow_do_usuwania_1, reverse=True):
+        #    del self.lista_pociskow[indeks]
+
         for wieza in self.lista_wiez:
             ilu_juz_zaatakowano = 0
             wieza.mozna_strzelac = False
 
             if wieza.rodzaj == 3:
+                #self.lista_indeksow_do_usuwania_1 = []
                 for i, przeciwnik in enumerate(self.lista_przeciwnikow):
                     if (
                       (przeciwnik.obiekt.x - wieza.pole[0])**2 + (przeciwnik.obiekt.y - wieza.pole[1])**2)**0.5 <= wieza.zasieg \
@@ -240,6 +247,9 @@ class Gra:
                                 self.lista_przeciwnikow.pop(i)
 
                             przeciwnik.is_electrified = True
+
+                #for indeks in sorted(self.lista_indeksow_do_usuwania_1, reverse=True):
+                #    del self.lista_przeciwnikow[indeks]
 
             for przeciwnik in self.lista_przeciwnikow:
                 if (
@@ -264,9 +274,9 @@ class Gra:
         for przeciwnik in self.lista_przeciwnikow:
             self.okno_gry.blit(przeciwnik.rodzaj, (przeciwnik.obiekt.x - ((przeciwnik.rozmiar - 15) / 2), przeciwnik.obiekt.y - ((przeciwnik.rozmiar - 15) / 2)))
 
-            pygame.draw.rect(self.okno_gry, (0,255,0), pygame.Rect(przeciwnik.obiekt.x - 5, przeciwnik.obiekt.y - 10, (25 * przeciwnik.zdrowie) // przeciwnik.startowe_zdrowie, 3))
+            pygame.draw.rect(self.okno_gry, WHITE, pygame.Rect(przeciwnik.obiekt.x - 5, przeciwnik.obiekt.y - 10, (25 * przeciwnik.zdrowie) // przeciwnik.startowe_zdrowie, 2))
             if przeciwnik.startowe_zdrowie > przeciwnik.zdrowie:
-                pygame.draw.rect(self.okno_gry, RED, pygame.Rect(przeciwnik.obiekt.x - 5 + (25 * przeciwnik.zdrowie) // przeciwnik.startowe_zdrowie, przeciwnik.obiekt.y - 10, (25 * (przeciwnik.startowe_zdrowie - przeciwnik.zdrowie)) // przeciwnik.startowe_zdrowie, 3))
+                pygame.draw.rect(self.okno_gry, RED, pygame.Rect(przeciwnik.obiekt.x - 5 + (25 * przeciwnik.zdrowie) // przeciwnik.startowe_zdrowie, przeciwnik.obiekt.y - 10, (25 * (przeciwnik.startowe_zdrowie - przeciwnik.zdrowie)) // przeciwnik.startowe_zdrowie, 2))
 
             if przeciwnik.is_electrified:
                 self.okno_gry.blit(PRAD, (przeciwnik.obiekt.x - ((przeciwnik.rozmiar - 15) / 2), przeciwnik.obiekt.y - ((przeciwnik.rozmiar - 15) / 2)))
@@ -281,7 +291,7 @@ class Gra:
             (FONT30.render(f'{self.gracz.poziom} | {round(100 * (self.gracz.doswiadczenie - self.gracz.do_poprzedniego) / (self.gracz.do_nastepnego - self.gracz.do_poprzedniego), 2)}%', True, WHITE), (W_23, 2)),
             (FONT30.render(f'{self.gracz.obrazenia} | {1000 / self.gracz.przeladowanie}', True, WHITE), (W_23, 23)),
             (FONT30.render(f'{self.gracz.predkosc}', True, WHITE), (W_23, 41)),
-            (FONT30.render(f'{self.gracz.zdrowie}', True, WHITE), (W_23, 59)),
+            (FONT30.render(f'{int(self.gracz.zdrowie)}', True, WHITE), (W_23, 59)),
             (FONT30.render(f'{self.pieniadze}', True, WHITE), (W_23, 81)),
             (FONT30.render(f'Points: {self.punkty}', True, WHITE), (MAP_WIDTH + 10, 100)),
 
@@ -303,9 +313,9 @@ class Gra:
             self.okno_gry.blits((
                 *TEKSTURY_INTERFEJSU_WIEZY[(self.lista_wiez[self.wybrana_wieza].rodzaj - 1) * 4 : self.lista_wiez[self.wybrana_wieza].rodzaj * 4],
 
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_atak}$'    , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0], TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 50)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_zasieg}$'  , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0], TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 50)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].koszt_reszta}$'  , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0], TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 50)),
+                (FONT30.render(f'{WIEZE_POLEPSZENIA[self.lista_wiez[self.wybrana_wieza].rodzaj - 1][0][0]}$'    , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0], TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 50)),
+                (FONT30.render(f'{WIEZE_POLEPSZENIA[self.lista_wiez[self.wybrana_wieza].rodzaj - 1][1][0]}$'  , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0], TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 50)),
+                (FONT30.render(f'{WIEZE_POLEPSZENIA[self.lista_wiez[self.wybrana_wieza].rodzaj - 1][2]}$'  , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0], TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 50)),
                 (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].cena_calkowita}$', True, RED), (TEKSTURY_INTERFEJSU_WIEZY[3][1][0], TEKSTURY_INTERFEJSU_WIEZY[3][1][1] + 50)),
                 (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_atak}'    , True, PURPLE), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0], TEKSTURY_INTERFEJSU_WIEZY[0][1][1])),
                 (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_zasieg}'  , True, PURPLE), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0], TEKSTURY_INTERFEJSU_WIEZY[1][1][1])),
@@ -399,10 +409,13 @@ class Gra:
             self.kliknieto_w_kolejna_runde = True
 
     def pause_loop(self):
-        self.was_paused = True
+        #self.was_paused = True
 
         pause = True
         while pause:
+            self.time = self.clock.tick(FRAMERATE)
+            self.dt = self.time * GAME_SPEED
+
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     sys.exit()
@@ -436,13 +449,18 @@ class Gra:
                 self.wybrano_wieze_do_kupienia = False
                 return
 
-        self.lista_wiez.append(Wieza(self.pozycja_myszy, self.rodzaj_wybranej_wiezy, self.licznik))
-        self.pieniadze -= self.lista_wiez[-1].koszt
+        self.lista_wiez.append(Wieza(self.pozycja_myszy, self.rodzaj_wybranej_wiezy, self.licznik, self.dt))
+        self.pieniadze -= self.lista_wiez[-1].cena_calkowita
         if (not self.wybrano_wieze_do_kupienia) or (self.pieniadze < 0):
-            self.pieniadze += self.lista_wiez[-1].koszt
-            self.lista_wiez.pop()
+            self.sell_tower(self.lista_wiez[-1].cena_calkowita)
 
         self.wybrano_wieze_do_kupienia = False
+
+    def sell_tower(self, cena_calkowita):
+        self.wybrano_wieze = False
+        self.change_interface = False
+        self.pieniadze += cena_calkowita
+        self.lista_wiez.pop(self.wybrana_wieza)
 
 
 if __name__ == '__main__':
