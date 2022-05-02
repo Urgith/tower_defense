@@ -11,11 +11,12 @@ class Wieza:
         self.pole = pozycja_myszy
         self.rodzaj = rodzaj_wybranej_wiezy
         self.licznik = licznik
-        self.predkosc = 100
         self.poziom_atak, self.poziom_zasieg, self.poziom_reszta, self.poziom = (0, 0, 0, 0)
 
-        (self.typ, self.kolor, self.koszt, self.obrazenia, self.zasieg,
-            self.przeladowanie, self.dlugosc_zycia, self.rozmiar_pocisku) = WIEZE[self.rodzaj - 1]
+        (self.typ, self.kolor, self.koszt, self.obrazenia, self.predkosc, self.zasieg,
+            self.przeladowanie, self.rozmiar_pocisku) = WIEZE[self.rodzaj - 1]
+
+        self.dlugosc_zycia = self.zasieg / self.predkosc * 1000
 
         self.cena_calkowita = self.koszt
         if self.rodzaj == 1: 
@@ -62,9 +63,9 @@ class Wieza:
                 if gra.pieniadze >= 1 and self.poziom_zasieg <= 4:
                     self.cena_calkowita += 1
                     gra.pieniadze -= 1
-                    self.dlugosc_zycia += 150
                     self.zasieg += 15
                     self.poziom_zasieg += 1
+                    self.dlugosc_zycia = self.zasieg / self.predkosc * 1000
 
             elif (polepszenie % 4) == 2:
                 if gra.pieniadze >= 2 and self.poziom_reszta <= 4:
@@ -92,9 +93,9 @@ class Wieza:
                 if gra.pieniadze >= 2 and self.poziom_zasieg <= 4:
                     self.cena_calkowita += 2
                     gra.pieniadze -= 2
-                    self.dlugosc_zycia += 300
                     self.zasieg += 30
                     self.poziom_zasieg += 1
+                    self.dlugosc_zycia = self.zasieg / self.predkosc * 1000
 
             elif (polepszenie % 4) == 2:
                 if gra.pieniadze >= 20 and self.poziom_reszta <= 4:
@@ -123,9 +124,9 @@ class Wieza:
                 if gra.pieniadze >= 4 and self.poziom_zasieg <= 4:
                     self.cena_calkowita += 4
                     gra.pieniadze -= 4
-                    self.dlugosc_zycia += 150
                     self.zasieg += 15
                     self.poziom_zasieg += 1
+                    self.dlugosc_zycia = self.zasieg / self.predkosc * 1000
 
             elif (polepszenie % 4) == 2:
                 if gra.pieniadze >= 30 and self.poziom_reszta <= 4:

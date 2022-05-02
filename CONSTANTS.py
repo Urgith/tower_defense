@@ -14,7 +14,7 @@ DRUID_SIZE = 2 * TILESIZE  # 2 *
 DRUID_X = 150  # 150
 DRUID_Y = 150  # 150
 
-FRAMERATE = 30  # 30
+FRAMERATE = 60  # 60
 GAME_SPEED = 0.001  # 0.001
 OPPONENTS_GAP = 250  # 250
 
@@ -75,12 +75,12 @@ PRAD = image_load('dane/prad.png', (0, 0))
 zielony = image_load('dane/zielony.jpg')
 niebieski = image_load('dane/niebieski.jpg')
 zolty = image_load('dane/zolty.jpg')
-                        # cost, damage, range, reload, life span, size
-                        #   c,  d,  ra,  re,    l, s
+                        # cost, damage, speed, range, reload, life span, size
+                        #   c,  d,  sp,  ra,  re,    l, s
 WIEZE = (
-    (zielony, (0,255,0),   10, 10, 100, 100, 1000, 4),
-    (niebieski, (0,0,255), 30, 40, 150, 150, 1500, 5),
-    (zolty, (255,255,0),   50,  2,  75,  10,  750, 2),
+    (zielony, (0,255,0),   10, 10, 200, 150, 200, 4),
+    (niebieski, (0,0,255), 30, 20, 100, 100, 400, 6),
+    (zolty, (255,255,0),   50,  5, 300,  80, 100, 3),
     (image_load('dane/zielony2.jpg'), 0),
     (image_load('dane/niebieski2.jpg'), 0),
     (image_load('dane/zolty2.jpg'), 0),

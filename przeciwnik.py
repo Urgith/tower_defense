@@ -6,7 +6,7 @@ from CONSTANTS import *
 class Przeciwnik:
 
     def __init__(self, runda, numer_przeciwnika):
-        self.rodzaj = WAVES[runda][numer_przeciwnika]
+        self.rodzaj = WAVES[min(runda, LEN_WAVES - 1)][numer_przeciwnika]
         (self.zdrowie, self.predkosc, self.atak, self.punkty,
             self.monety, self.rozmiar) = ENEMIES[self.rodzaj]
 

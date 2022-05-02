@@ -79,8 +79,6 @@ class Gra:
         if self.start:
             self.licznik += self.time
 
-        if self.start and (self.runda != LEN_WAVES):
-
             if (self.licznik - self.licznik_rund > OPPONENTS_GAP
               and self.numer_przeciwnika < self.len_waves_round):
 
@@ -93,8 +91,10 @@ class Gra:
                 self.numer_przeciwnika = 0
                 self.runda += 1
 
-                if self.runda != LEN_WAVES:
+                if self.runda < LEN_WAVES:
                     self.len_waves_round = len(WAVES[self.runda])
+                else:
+                    self.len_waves_round = len(WAVES[-1])
 
     def events(self):
         self.pozycja_myszy = pygame.mouse.get_pos()
@@ -412,7 +412,7 @@ class Gra:
 
     def tower_to_buy(self, i):
         self.wybrano_wieze_do_kupienia = True
-        self.zasieg_wybranej_wiezy = WIEZE[i][4]
+        self.zasieg_wybranej_wiezy = WIEZE[i][5]
         self.kolor_wybranej_wiezy = WIEZE[i][1]
         self.rodzaj_wybranej_wiezy = i + 1
 
