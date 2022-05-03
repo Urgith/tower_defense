@@ -100,9 +100,7 @@ class Gra:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     if self.wybrano_wieze_do_kupienia or self.wybrano_wieze:
-                        self.wybrano_wieze_do_kupienia = False
-                        self.change_interface = False
-                        self.wybrano_wieze = False
+                        self.tower_flags_to_False()
 
                     else:
                         sys.exit()
@@ -110,7 +108,7 @@ class Gra:
                 elif event.key == pygame.K_p:
                     self.pause_loop()
 
-                elif event.key in {pygame.K_1, pygame.K_2, pygame.K_3}:
+                elif event.key in PYGAME_K1_K2_K3:
                     self.tower_to_buy(event.key - 49)
 
                 elif event.key == pygame.K_SPACE:
@@ -123,34 +121,33 @@ class Gra:
                         self.place_tower()
 
                     else:
-                        for i, wieza in enumerate(self.lista_wiez):
+                        for wieza in self.lista_wiez:
                             if wieza.obiekt.collidepoint(self.pozycja_myszy):
                                 self.change_interface = True
                                 self.wybrano_wieze = True
-                                self.wybrana_wieza = i
+                                self.wybrana_wieza = wieza
                                 break
 
                         else:
                             self.gracz.strzelam = not self.gracz.strzelam
-                            self.change_interface = False
-                            self.wybrano_wieze = False
+                            self.tower_flags_to_False()
 
-                elif pygame.Rect(*TEKSTURY[0][1], 50, 50).collidepoint(self.pozycja_myszy):
+                elif TEKSTURY[0][1].collidepoint(self.pozycja_myszy):
                     self.new_round()
 
-                elif pygame.Rect(*TEKSTURY[1][1], 70, 70).collidepoint(self.pozycja_myszy):
+                elif TEKSTURY[1][1].collidepoint(self.pozycja_myszy):
                     sys.exit()
 
                 else:
                     for i, tekstura in enumerate(TEKSTURY[2:5]):
-                        if pygame.Rect(*(tekstura[1]), 20, 20).collidepoint(self.pozycja_myszy):
+                        if tekstura[1].collidepoint(self.pozycja_myszy):
                             self.tower_to_buy(i)
                             break
 
                     if self.wybrano_wieze:
-                        for i in range((self.lista_wiez[self.wybrana_wieza].rodzaj - 1) * 4, self.lista_wiez[self.wybrana_wieza].rodzaj * 4):
+                        for i in range((self.wybrana_wieza.rodzaj - 1) * 4, self.wybrana_wieza.rodzaj * 4):
                             if TEKSTURY_INTERFEJSU_WIEZY[i][1].collidepoint(self.pozycja_myszy):
-                                self.lista_wiez[self.wybrana_wieza].upgrade(self, i)
+                                self.wybrana_wieza.upgrade(self, i)
                                 break
 
 
@@ -311,18 +308,18 @@ class Gra:
 
         if self.wybrano_wieze:
             self.okno_gry.blits((
-                *TEKSTURY_INTERFEJSU_WIEZY[(self.lista_wiez[self.wybrana_wieza].rodzaj - 1) * 4 : self.lista_wiez[self.wybrana_wieza].rodzaj * 4],
+                *TEKSTURY_INTERFEJSU_WIEZY[(self.wybrana_wieza.rodzaj - 1) * 4 : self.wybrana_wieza.rodzaj * 4],
 
-                (FONT30.render(f'{WIEZE_POLEPSZENIA[self.lista_wiez[self.wybrana_wieza].rodzaj - 1][0][0]}$'    , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0], TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 50)),
-                (FONT30.render(f'{WIEZE_POLEPSZENIA[self.lista_wiez[self.wybrana_wieza].rodzaj - 1][1][0]}$'  , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0], TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 50)),
-                (FONT30.render(f'{WIEZE_POLEPSZENIA[self.lista_wiez[self.wybrana_wieza].rodzaj - 1][2]}$'  , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0], TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 50)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].cena_calkowita}$', True, RED), (TEKSTURY_INTERFEJSU_WIEZY[3][1][0], TEKSTURY_INTERFEJSU_WIEZY[3][1][1] + 50)),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_atak}'    , True, PURPLE), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0], TEKSTURY_INTERFEJSU_WIEZY[0][1][1])),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_zasieg}'  , True, PURPLE), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0], TEKSTURY_INTERFEJSU_WIEZY[1][1][1])),
-                (FONT30.render(f'{self.lista_wiez[self.wybrana_wieza].poziom_reszta}'  , True, PURPLE), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0], TEKSTURY_INTERFEJSU_WIEZY[2][1][1])),
+                (FONT30.render(f'{WIEZE_POLEPSZENIA[self.wybrana_wieza.rodzaj - 1][0][0]}$'    , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0], TEKSTURY_INTERFEJSU_WIEZY[0][1][1] + 50)),
+                (FONT30.render(f'{WIEZE_POLEPSZENIA[self.wybrana_wieza.rodzaj - 1][1][0]}$'  , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0], TEKSTURY_INTERFEJSU_WIEZY[1][1][1] + 50)),
+                (FONT30.render(f'{WIEZE_POLEPSZENIA[self.wybrana_wieza.rodzaj - 1][2]}$'  , True, RED), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0], TEKSTURY_INTERFEJSU_WIEZY[2][1][1] + 50)),
+                (FONT30.render(f'{self.wybrana_wieza.cena_calkowita}$', True, RED), (TEKSTURY_INTERFEJSU_WIEZY[3][1][0], TEKSTURY_INTERFEJSU_WIEZY[3][1][1] + 50)),
+                (FONT30.render(f'{self.wybrana_wieza.poziom_atak}'    , True, PURPLE), (TEKSTURY_INTERFEJSU_WIEZY[0][1][0], TEKSTURY_INTERFEJSU_WIEZY[0][1][1])),
+                (FONT30.render(f'{self.wybrana_wieza.poziom_zasieg}'  , True, PURPLE), (TEKSTURY_INTERFEJSU_WIEZY[1][1][0], TEKSTURY_INTERFEJSU_WIEZY[1][1][1])),
+                (FONT30.render(f'{self.wybrana_wieza.poziom_reszta}'  , True, PURPLE), (TEKSTURY_INTERFEJSU_WIEZY[2][1][0], TEKSTURY_INTERFEJSU_WIEZY[2][1][1])),
             ))
 
-            pygame.draw.circle(self.okno_gry, self.lista_wiez[self.wybrana_wieza].kolor, self.lista_wiez[self.wybrana_wieza].pole, self.lista_wiez[self.wybrana_wieza].zasieg, 2)
+            pygame.draw.circle(self.okno_gry, self.wybrana_wieza.kolor, self.wybrana_wieza.pole, self.wybrana_wieza.zasieg, 2)
 
         for pocisk in self.lista_pociskow:
             if pocisk.rodzaj == 'gracz':
@@ -335,23 +332,6 @@ class Gra:
             pygame.draw.circle(self.okno_gry, self.kolor_wybranej_wiezy, self.pozycja_myszy, self.zasieg_wybranej_wiezy, 2)
 
         self.display_update()
-
-
-    def draw_health_bar(self):
-        stan = int((self.gracz.zdrowie / (self.gracz.max_zdrowie + 1)) * 3)
-        pasek = pygame.Rect((self.gracz.x, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * DRUID_SIZE, 5))
-
-        if stan == 2:
-            color = (self.gracz.max_zdrowie - self.gracz.zdrowie) / self.gracz.max_zdrowie
-            pygame.draw.rect(self.okno_gry, (int(765 * color), 255, 0), pasek)
-
-        elif stan == 1:
-            color = (self.gracz.zdrowie - (self.gracz.max_zdrowie / 3)) / self.gracz.max_zdrowie
-            pygame.draw.rect(self.okno_gry, (255, int(765 * color), 0), pasek)
-
-        else:
-            color = (self.gracz.zdrowie / self.gracz.max_zdrowie)
-            pygame.draw.rect(self.okno_gry, (int(765 * color), 0, 0), pasek)
 
     def display_update(self):
         x, y, *_ = self.gracz.obiekt
@@ -396,11 +376,36 @@ class Gra:
             rect_to_update.append(pygame.Rect((self.pozycja_myszy[0] - self.zasieg_wybranej_wiezy), (self.pozycja_myszy[1] - self.zasieg_wybranej_wiezy), (2 * self.zasieg_wybranej_wiezy), (2 * self.zasieg_wybranej_wiezy)))
 
         if self.wybrano_wieze:
-            rect_to_update.append(pygame.Rect((self.lista_wiez[self.wybrana_wieza].pole[0] - self.lista_wiez[self.wybrana_wieza].zasieg, self.lista_wiez[self.wybrana_wieza].pole[1] - self.lista_wiez[self.wybrana_wieza].zasieg, (2 * self.lista_wiez[self.wybrana_wieza].zasieg), (2 * self.lista_wiez[self.wybrana_wieza].zasieg))))
+            rect_to_update.append(pygame.Rect((self.wybrana_wieza.pole[0] - self.wybrana_wieza.zasieg, self.wybrana_wieza.pole[1] - self.wybrana_wieza.zasieg, (2 * self.wybrana_wieza.zasieg), (2 * self.wybrana_wieza.zasieg))))
 
         self.previous.append(pygame.Rect.union(pygame.Rect(0, 0, x_plus_druid_size, y_plus_druid_size), self.gracz.previous_obiekt))
         pygame.display.update()
         self.previous = rect_to_update
+
+
+    def draw_health_bar(self):
+        stan = int((self.gracz.zdrowie / (self.gracz.max_zdrowie + 1)) * 5)
+        pasek = pygame.Rect((self.gracz.x, self.gracz.y - 5, self.gracz.zdrowie / self.gracz.max_zdrowie * DRUID_SIZE, 5))
+
+        if stan == 4:
+            color = (self.gracz.max_zdrowie - self.gracz.zdrowie) / self.gracz.max_zdrowie
+            pygame.draw.rect(self.okno_gry, (0, int(1275 * color), 255), pasek)
+
+        elif stan == 3:
+            color = (self.gracz.zdrowie - (3 * self.gracz.max_zdrowie / 5)) / self.gracz.max_zdrowie
+            pygame.draw.rect(self.okno_gry, (0, 255, int(1275 * color)), pasek)
+
+        elif stan == 2:
+            color = ((3 * self.gracz.max_zdrowie / 5) - self.gracz.zdrowie) / self.gracz.max_zdrowie
+            pygame.draw.rect(self.okno_gry, (int(1275 * color), 255, 0), pasek)
+
+        elif stan == 1:
+            color = (self.gracz.zdrowie - (self.gracz.max_zdrowie / 5)) / self.gracz.max_zdrowie
+            pygame.draw.rect(self.okno_gry, (255, int(1275 * color), 0), pasek)
+
+        else:
+            color = (self.gracz.zdrowie / self.gracz.max_zdrowie)
+            pygame.draw.rect(self.okno_gry, (int(1275 * color), 0, 0), pasek)
 
     def new_round(self):
         self.start = True
@@ -449,7 +454,8 @@ class Gra:
                 self.wybrano_wieze_do_kupienia = False
                 return
 
-        self.lista_wiez.append(Wieza(self.pozycja_myszy, self.rodzaj_wybranej_wiezy, self.licznik, self.dt))
+        self.wybrana_wieza = Wieza(self.pozycja_myszy, self.rodzaj_wybranej_wiezy, self.licznik, self.dt)
+        self.lista_wiez.append(self.wybrana_wieza)
         self.pieniadze -= self.lista_wiez[-1].cena_calkowita
         if (not self.wybrano_wieze_do_kupienia) or (self.pieniadze < 0):
             self.sell_tower(self.lista_wiez[-1].cena_calkowita)
@@ -457,10 +463,15 @@ class Gra:
         self.wybrano_wieze_do_kupienia = False
 
     def sell_tower(self, cena_calkowita):
-        self.wybrano_wieze = False
-        self.change_interface = False
+        self.tower_flags_to_False()
         self.pieniadze += cena_calkowita
-        self.lista_wiez.pop(self.wybrana_wieza)
+        self.lista_wiez.remove(self.wybrana_wieza)
+
+    def tower_flags_to_False(self):
+        self.wybrano_wieze_do_kupienia = False
+        self.wybrano_wieze = False
+
+        self.change_interface = False
 
 
 if __name__ == '__main__':

@@ -64,3 +64,5 @@ LEN_WAVES = len(WAVES)
 pygame.font.init()
 FONT30 = pygame.font.SysFont(None, 30)
 FONT40 = pygame.font.SysFont(None, 40)
+
+PYGAME_K1_K2_K3 = {pygame.K_1, pygame.K_2, pygame.K_3}

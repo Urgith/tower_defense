@@ -81,11 +81,11 @@ W_93 = MAP_WIDTH + 93
 W_115 = MAP_WIDTH + 115
 
 TEKSTURY = (
-    (image_load('data/zacznij.jpg'), (W_3, MAP_HEIGHT - 123)),
-    (image_load('data/domek.jpg'), (W_3, MAP_HEIGHT - 70)),
-    (zielony, (W_93, MAP_HEIGHT - 74)),
-    (niebieski, (W_93, MAP_HEIGHT - 49)),
-    (zolty, (W_93, MAP_HEIGHT - 24)),
+    (image_load('data/zacznij.jpg'), pygame.Rect(W_3, MAP_HEIGHT - 125, 50, 50)),
+    (image_load('data/domek.jpg'), pygame.Rect(W_3, MAP_HEIGHT - 72, 70, 70)),
+    (zielony, pygame.Rect(W_93, MAP_HEIGHT - 74, 20, 20)),
+    (niebieski, pygame.Rect(W_93, MAP_HEIGHT - 49, 20, 20)),
+    (zolty, pygame.Rect(W_93, MAP_HEIGHT - 24, 20, 20)),
     (image_load('data/stats_icons/_arrow.png', (0, 0)), (MAP_WIDTH + 5, 2)),
     (image_load('data/stats_icons/_kula_mocy.png', (0, 0)), (MAP_WIDTH + 6, 25)),
     (image_load('data/stats_icons/_boots.png', (0, 0)), (MAP_WIDTH + 4, 43)),
