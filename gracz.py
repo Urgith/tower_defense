@@ -22,7 +22,7 @@ class Gracz:
         self.predkosc = 100
 
         self.predkosc_pocisku = 200
-        self.strzelam = STARTING_FIRING
+        self.strzelam = START_FIRING
 
         self.rodzaj = 'gracz'
 
