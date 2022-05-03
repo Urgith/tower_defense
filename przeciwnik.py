@@ -10,8 +10,8 @@ class Przeciwnik:
         (self.zdrowie, self.predkosc, self.atak, self.punkty,
             self.monety, self.rozmiar) = ENEMIES[self.rodzaj]
 
-        self.TILESIZE_ROZMIAR = (TILESIZE - self.rozmiar)
-        self.x, self.y = (self.TILESIZE_ROZMIAR // 2, 0)
+        self.TILESIZE_ROZMIAR_BY_2 = (TILESIZE - self.rozmiar) // 2
+        self.x, self.y = (self.TILESIZE_ROZMIAR_BY_2 // 2, 0)
         self.hp_bar_x, self.hp_bar_y = (0, -5)
         self.mov_x, self.mov_y = (0, 0)
 
@@ -30,32 +30,52 @@ class Przeciwnik:
 
     def move(self, dt):
         pole = MAPA[int((self.obiekt.centery + self.mov_y) / TILESIZE)][int((self.obiekt.centerx + self.mov_x) / TILESIZE)]
+
         if pole != self.pole and pole not in {0, 1, 10}:
             self.pole = pole
 
+            if self.pole in {5, 50}:
+                self.mov_x = -TILESIZE_BY_2
+                self.mov_y = 0
+            elif self.pole in {6, 60}:
+                self.mov_x = TILESIZE_BY_2
+                self.mov_y = 0
+            elif self.pole in {7, 70}:
+                self.mov_y = TILESIZE_BY_2
+                self.mov_x = 0
+            else:
+                self.mov_y = -TILESIZE_BY_2
+                self.mov_x = 0
+
         if self.pole in {5, 50}:
             self.x += self.predkosc * dt
-            self.mov_x = -TILESIZE_BY_2
-            self.mov_y = 0
+
+            self.obiekt.x = self.x
+            self.hp_bar.x = self.x - self.TILESIZE_ROZMIAR_BY_2
+            self.hp_bar_lost.x = self.hp_bar.x + self.hp_bar.w
 
         elif self.pole in {6, 60}:
             self.x -= self.predkosc * dt
-            self.mov_x = TILESIZE_BY_2
-            self.mov_y = 0
+            
+            self.obiekt.x = self.x
+            self.hp_bar.x = self.x - self.TILESIZE_ROZMIAR_BY_2
+            self.hp_bar_lost.x = self.hp_bar.x + self.hp_bar.w
 
         elif self.pole in {7, 70}:
             self.y -= self.predkosc * dt
-            self.mov_y = TILESIZE_BY_2
-            self.mov_x = 0
+            self.obiekt.y = self.hp_bar.y = self.hp_bar_lost.y = self.y
 
-        elif self.pole in {8, 80}:
+        else:
             self.y += self.predkosc * dt
-            self.mov_y = -TILESIZE_BY_2
-            self.mov_x = 0
+            self.obiekt.y = self.hp_bar.y = self.hp_bar_lost.y = self.y
 
-        self.obiekt.x, self.obiekt.y = (self.x, self.y)
-        self.hp_bar.x, self.hp_bar.y = self.x - (self.TILESIZE_ROZMIAR // 2), self.y
+    def lose_hp(self, damage):
+        self.zdrowie -= damage
+        self.update_hp_bar()
+
+    def update_hp_bar(self):
         self.hp_bar.w = TILESIZE * (self.zdrowie / self.startowe_zdrowie)
-
-        self.hp_bar_lost.x, self.hp_bar_lost.y = self.hp_bar.x + self.hp_bar.w, self.hp_bar.y
         self.hp_bar_lost.w = TILESIZE - self.hp_bar.w
+
+        self.hp_bar.x = self.x - self.TILESIZE_ROZMIAR_BY_2
+        self.hp_bar_lost.x = self.hp_bar.x + self.hp_bar.w

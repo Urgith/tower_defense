@@ -203,15 +203,15 @@ class Gra:
                 przeciwnik = self.lista_przeciwnikow[collision_test]
 
                 if pocisk.rodzaj == 2 and (pocisk.id not in przeciwnik.ids):
+                    przeciwnik.lose_hp(pocisk.obrazenia)
                     przeciwnik.ids.append(pocisk.id)
-                    przeciwnik.zdrowie -= pocisk.obrazenia
                     pocisk.przebicie -= 1
 
                     if pocisk.przebicie == 0:
                         self.lista_pociskow.pop(i)
 
                 elif pocisk.rodzaj != 2:
-                    przeciwnik.zdrowie -= pocisk.obrazenia
+                    przeciwnik.lose_hp(pocisk.obrazenia)
                     self.lista_pociskow.pop(i)
 
                 if przeciwnik.zdrowie <= 0:
@@ -239,7 +239,7 @@ class Gra:
                       or ((przeciwnik.obiekt.x + przeciwnik.rozmiar - wieza.pole[0])**2 + (przeciwnik.obiekt.y + przeciwnik.rozmiar - wieza.pole[1])**2)**0.5 <= wieza.zasieg:
 
                         if wieza.elektryzacja > 0:
-                            przeciwnik.zdrowie -= wieza.elektryzacja
+                            przeciwnik.lose_hp(wieza.elektryzacja)
 
                             if przeciwnik.zdrowie <= 0:
                                 self.lista_przeciwnikow.pop(i)
