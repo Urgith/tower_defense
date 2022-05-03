@@ -1,6 +1,6 @@
 import pygame
 
-from CONSTANTS import *
+from _STALE import *
 from pocisk import Pocisk
 
 

@@ -1,6 +1,6 @@
 import sys
 
-from CONSTANTS import *
+from _STALE import *
 from gracz import Gracz
 from przeciwnik import Przeciwnik
 from wieza import Wieza
@@ -69,6 +69,10 @@ class Gra:
 
 
     def rounds(self):
+        #self.licznik += self.time
+        #self.kliknieto_w_kolejna_runde = True
+
+        #if self.runda < LEN_WAVES:
         if self.start:
             self.licznik += self.time
 
@@ -181,42 +185,45 @@ class Gra:
             przeciwnik.is_electrified = False
 
     def update_bullets(self):
+        lista = [przeciwnik.obiekt for przeciwnik in self.lista_przeciwnikow]
+
         for i, pocisk in enumerate(self.lista_pociskow):
             pocisk.move(self.dt)
 
-            if pocisk.rodzaj != 'gracz' and (pocisk.czas_powstania + pocisk.dlugosc_zycia < self.licznik):
+            if pocisk.rodzaj != 'gracz' and (pocisk.data_konca < self.licznik):
                 self.lista_pociskow.pop(i)
                 continue
 
-            if pocisk.obiekt.x < 0 or pocisk.obiekt.y < 0 or pocisk.obiekt.x > MAP_WIDTH - 8 or pocisk.obiekt.y > MAP_HEIGHT - 8:
+            if pocisk.obiekt.x < 0 or pocisk.obiekt.y < 0 or pocisk.obiekt.x > W_8_ or pocisk.obiekt.y > H_8_:
                 self.lista_pociskow.pop(i)
                 continue
 
-            for j, przeciwnik in enumerate(self.lista_przeciwnikow):
-                if pocisk.obiekt.colliderect(przeciwnik.obiekt):
+            collision_test = pocisk.obiekt.collidelist(lista)
+            if collision_test != -1:
+                przeciwnik = self.lista_przeciwnikow[collision_test]
 
-                    if pocisk.rodzaj == 2 and (pocisk.id not in przeciwnik.ids):
-                        przeciwnik.ids.append(pocisk.id)
-                        przeciwnik.zdrowie -= pocisk.obrazenia
-                        pocisk.przebicie -= 1
+                if pocisk.rodzaj == 2 and (pocisk.id not in przeciwnik.ids):
+                    przeciwnik.ids.append(pocisk.id)
+                    przeciwnik.zdrowie -= pocisk.obrazenia
+                    pocisk.przebicie -= 1
 
-                        if pocisk.przebicie == 0:
-                            self.lista_pociskow.pop(i)
-
-                    elif pocisk.rodzaj != 2:
-                        przeciwnik.zdrowie -= pocisk.obrazenia
+                    if pocisk.przebicie == 0:
                         self.lista_pociskow.pop(i)
 
-                    if przeciwnik.zdrowie <= 0:
-                        self.punkty += przeciwnik.punkty
-                        self.pieniadze += przeciwnik.monety
-                        self.lista_przeciwnikow.pop(j)
+                elif pocisk.rodzaj != 2:
+                    przeciwnik.zdrowie -= pocisk.obrazenia
+                    self.lista_pociskow.pop(i)
 
-                        if pocisk.rodzaj == 'gracz':
-                            self.gracz.doswiadczenie += przeciwnik.punkty
-                            self.gracz.check_level_up()
+                if przeciwnik.zdrowie <= 0:
+                    self.punkty += przeciwnik.punkty
+                    self.pieniadze += przeciwnik.monety
 
-                    break
+                    self.lista_przeciwnikow.pop(collision_test)
+                    lista.pop(collision_test)
+
+                    if pocisk.rodzaj == 'gracz':
+                        self.gracz.doswiadczenie += przeciwnik.punkty
+                        self.gracz.check_level_up()
 
     def update_towers(self):
         for wieza in self.lista_wiez:
@@ -253,55 +260,6 @@ class Gra:
                     if wieza.rodzaj != 3 or ilu_juz_zaatakowano == wieza.ilu_na_raz:
                         break
 
-    def display_update(self):
-        #x, y, *_ = self.gracz.obiekt
-        #x_plus_druid_size = x + DRUID_SIZE
-        #y_plus_druid_size = y + DRUID_SIZE
-
-        #rect_to_update = [
-        #    INTERFACE_LOW_HEIGHT,
-        #    pygame.Rect(MAP_WIDTH, 0, MENUSIZE, self.interface_up_height),
-        #    pygame.Rect(0, 0, MAP_WIDTH, MAP_HEIGHT)
-        #]
-
-        #map_rects = (
-        #    pygame.Rect(x_plus_druid_size, 0, MAP_WIDTH - x_plus_druid_size, y),
-        #    pygame.Rect(x_plus_druid_size, y, MAP_WIDTH - x_plus_druid_size, MAP_HEIGHT - y),
-        #    pygame.Rect(0, y_plus_druid_size, x_plus_druid_size, MAP_HEIGHT - y_plus_druid_size)
-        #)
-
-        #for rect in map_rects:
-        #    for przeciwnik in self.lista_przeciwnikow:
-        #        if rect.colliderect(przeciwnik.hp_bar):
-        #            rect_to_update.append(rect)
-        #            break
-
-        #    else:
-        #        for pocisk in self.lista_pociskow:
-        #            if rect.colliderect(pocisk.obiekt):
-        #                rect_to_update.append(rect)
-        #                break
-
-        #        else:
-        #            for wieza in self.lista_wiez:
-        #                if rect.colliderect(wieza.obiekt):
-        #                    rect_to_update.append(rect)
-        #                    break
-
-        #if self.change_interface:
-        #    self.interface_up_height = 264
-        #else:
-        #    self.interface_up_height = 117
-
-        #if self.wybrano_wieze_do_kupienia:
-        #    rect_to_update.append(pygame.Rect((self.pozycja_myszy[0] - self.zasieg_wybranej_wiezy), (self.pozycja_myszy[1] - self.zasieg_wybranej_wiezy), (2 * self.zasieg_wybranej_wiezy), (2 * self.zasieg_wybranej_wiezy)))
-
-        #if self.wybrano_wieze:
-        #    rect_to_update.append(pygame.Rect((self.wybrana_wieza.pole[0] - self.wybrana_wieza.zasieg, self.wybrana_wieza.pole[1] - self.wybrana_wieza.zasieg, (2 * self.wybrana_wieza.zasieg), (2 * self.wybrana_wieza.zasieg))))
-
-        #self.previous.append(pygame.Rect.union(pygame.Rect(0, 0, x_plus_druid_size, y_plus_druid_size), self.gracz.previous_obiekt))
-        pygame.display.update()
-        #self.previous = rect_to_update
 
     def draw(self):
         self.okno_gry.blits(((TRAWA, (0, 0)), *MAPA_DRAW, (LAS, BASE_RECT)))
@@ -311,8 +269,8 @@ class Gra:
 
         for przeciwnik in self.lista_przeciwnikow:
             self.okno_gry.blit(przeciwnik.rodzaj, przeciwnik.obiekt)
-            pygame.draw.rect(self.okno_gry, WHITE, przeciwnik.hp_bar)
 
+            pygame.draw.rect(self.okno_gry, WHITE, przeciwnik.hp_bar)
             if przeciwnik.startowe_zdrowie > przeciwnik.zdrowie:
                 pygame.draw.rect(self.okno_gry, RED, przeciwnik.hp_bar_lost)
 
@@ -322,7 +280,7 @@ class Gra:
         pygame.draw.rect(self.okno_gry, (0,0,0), (MAP_WIDTH, 0, MENUSIZE, MAP_HEIGHT))
 
         self.okno_gry.blits((
-            (FONT30.render(f'Round:{self.runda + self.start}', True, WHITE), (MAP_WIDTH + 57, MAP_HEIGHT - 105)),
+            (FONT30.render(f'Round:{self.runda + self.start}', True, WHITE), (W_57, H_105_)),
 
             *TEKSTURY,
 
@@ -331,14 +289,14 @@ class Gra:
             (FONT30.render(f'{self.gracz.predkosc}', True, WHITE), (W_23, 41)),
             (FONT30.render(f'{int(self.gracz.zdrowie)}', True, WHITE), (W_23, 59)),
             (FONT30.render(f'{self.pieniadze}', True, WHITE), (W_23, 81)),
-            (FONT30.render(f'Points: {self.punkty}', True, WHITE), (MAP_WIDTH + 10, 100)),
+            (FONT30.render(f'Points: {self.punkty}', True, WHITE), (W_10, 100)),
 
-            (FONT30.render('10$', True, WHITE), (W_115, MAP_HEIGHT - 73)),
-            (FONT30.render('30$', True, WHITE), (W_115, MAP_HEIGHT - 48)),
-            (FONT30.render('50$', True, WHITE), (W_115, MAP_HEIGHT - 23)),
-            (FONT30.render('1.', True, WHITE), (W_75, MAP_HEIGHT - 73)),
-            (FONT30.render('2.', True, WHITE), (W_75, MAP_HEIGHT - 48)),
-            (FONT30.render('3.', True, WHITE), (W_75, MAP_HEIGHT - 23)),
+            (FONT30.render('10$', True, WHITE), (W_115, H_73_)),
+            (FONT30.render('30$', True, WHITE), (W_115, H_48_)),
+            (FONT30.render('50$', True, WHITE), (W_115, H_23_)),
+            (FONT30.render('1.', True, WHITE), (W_75, H_73_)),
+            (FONT30.render('2.', True, WHITE), (W_75, H_48_)),
+            (FONT30.render('3.', True, WHITE), (W_75, H_23_)),
 
             (FONT40.render(f'{self.zdrowie_lasu}', True, WHITE), BASE_HP_STRING),
 
@@ -372,7 +330,7 @@ class Gra:
             pygame.draw.rect(self.okno_gry, self.kolor_wybranej_wiezy, (self.pozycja_myszy[0] - 10, self.pozycja_myszy[1] - 10, 20, 20))
             pygame.draw.circle(self.okno_gry, self.kolor_wybranej_wiezy, self.pozycja_myszy, self.zasieg_wybranej_wiezy, 2)
 
-        self.display_update()
+        pygame.display.update()
 
     def draw_health_bar(self):
         stan = int((self.gracz.zdrowie / (self.gracz.max_zdrowie + 1)) * 5)
@@ -433,8 +391,8 @@ class Gra:
               or BASE_RECT.colliderect(nowa_wieza_rect)
               or self.pozycja_myszy[0] < 10
               or self.pozycja_myszy[1] < 10
-              or self.pozycja_myszy[0] > MAP_WIDTH - 10
-              or self.pozycja_myszy[1] > MAP_HEIGHT - 10):
+              or self.pozycja_myszy[0] > W_10_
+              or self.pozycja_myszy[1] > H_10_):
 
                 self.wybrano_wieze_do_kupienia = False
                 return

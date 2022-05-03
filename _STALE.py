@@ -1,5 +1,4 @@
-from IMAGES import *
-from funkcje import *
+from _IMAGES import *
 
 
 PURPLE = (255, 0, 255)

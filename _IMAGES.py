@@ -1,4 +1,4 @@
-from CHANGABLE import *
+from _CHANGEABLE import *
 from funkcje import *
 
 import os
@@ -15,10 +15,30 @@ MAP_TILES_H = len(MAPA)
 MAP_WIDTH = (TILESIZE * MAP_TILES_W)
 MAP_HEIGHT = (TILESIZE * MAP_TILES_H)
 
+W_10_ = MAP_WIDTH - 10
+W_8_ = MAP_WIDTH - 8
+W_3 = MAP_WIDTH + 3
+W_10 = MAP_WIDTH + 10
+W_23 = MAP_WIDTH + 23
+W_57 = MAP_WIDTH + 57
+W_75 = MAP_WIDTH + 75
+W_93 = MAP_WIDTH + 93
+W_115 = MAP_WIDTH + 115
+
+H_105_ = MAP_HEIGHT - 105
+H_73_ = MAP_HEIGHT - 73
+H_48_ = MAP_HEIGHT - 48
+H_23_ = MAP_HEIGHT - 23
+H_10_ = MAP_HEIGHT - 10
+H_8_ = MAP_HEIGHT - 8
+
+W_MINUS_DRUID = MAP_WIDTH - DRUID_SIZE
+H_MINUS_DRUID = MAP_HEIGHT - DRUID_SIZE
+
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
 
-TRAWA = image_load('data/_trawa.jpg')
+TRAWA = image_load('data/trawa.jpg')
 LAS = image_load('data/trace/las.jpg', scale=(3 * TILESIZE, 3 * TILESIZE))
 
 KULA_MOCY = image_load('data/kula_mocy.png')
@@ -73,12 +93,6 @@ MYSZ = image_load('data/enemies/mysz.png', (0, 0), scale=(20, 20))
 SZCZUR = image_load('data/enemies/szczur.png', (0, 0), scale=(22, 22))
 PAJAK = image_load('data/enemies/pajak.png', (0, 0), scale=(24, 24))
 WAZ = image_load('data/enemies/waz.png', (0, 0), scale=(26, 26))
-
-W_3 = MAP_WIDTH + 3
-W_23 = MAP_WIDTH + 23
-W_75 = MAP_WIDTH + 75
-W_93 = MAP_WIDTH + 93
-W_115 = MAP_WIDTH + 115
 
 TEKSTURY = (
     (image_load('data/zacznij.jpg'), pygame.Rect(W_3, MAP_HEIGHT - 125, 50, 50)),

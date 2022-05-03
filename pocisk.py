@@ -1,7 +1,7 @@
 import pygame
 import random
 
-from CONSTANTS import *
+from _STALE import *
 
 
 class Pocisk:
@@ -27,7 +27,7 @@ class Pocisk:
             elif self.rodzaj == 3:
                 self.elektryzacja = wieza.elektryzacja
 
-            self.dlugosc_zycia = wieza.dlugosc_zycia
+            self.data_konca = wieza.dlugosc_zycia + self.czas_powstania
             self.obrazenia = wieza.obrazenia
             self.predkosc = wieza.predkosc
 

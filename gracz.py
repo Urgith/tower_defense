@@ -1,6 +1,6 @@
 import pygame
 
-from CONSTANTS import *
+from _STALE import *
 from pocisk import Pocisk
 
 
@@ -54,13 +54,13 @@ class Gracz:
 
         if self.x < 0:
             self.x = 0
-        elif self.x > MAP_WIDTH - DRUID_SIZE:
-            self.x = MAP_WIDTH - DRUID_SIZE
+        elif self.x > W_MINUS_DRUID:
+            self.x = W_MINUS_DRUID
 
         if self.y < 0:
             self.y = 0
-        elif self.y > MAP_HEIGHT - DRUID_SIZE:
-            self.y = MAP_HEIGHT - DRUID_SIZE
+        elif self.y > H_MINUS_DRUID:
+            self.y = H_MINUS_DRUID
 
         self.obiekt.x, self.obiekt.y = (self.x, self.y)
 

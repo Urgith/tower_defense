@@ -1,6 +1,6 @@
 import pygame
 
-from CONSTANTS import *
+from _STALE import *
 
 
 class Przeciwnik:
@@ -54,7 +54,7 @@ class Przeciwnik:
             self.mov_x = 0
 
         self.obiekt.x, self.obiekt.y = (self.x, self.y)
-        self.hp_bar.x, self.hp_bar.y = self.x - (self.TILESIZE_ROZMIAR) // 2, self.y
+        self.hp_bar.x, self.hp_bar.y = self.x - (self.TILESIZE_ROZMIAR // 2), self.y
         self.hp_bar.w = TILESIZE * (self.zdrowie / self.startowe_zdrowie)
 
         self.hp_bar_lost.x, self.hp_bar_lost.y = self.hp_bar.x + self.hp_bar.w, self.hp_bar.y
