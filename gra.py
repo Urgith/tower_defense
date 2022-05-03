@@ -164,12 +164,12 @@ class Gra:
         self.update_towers()
 
     def update_opponents(self):
-        for i, przeciwnik in enumerate(self.lista_przeciwnikow):
+        for przeciwnik in self.lista_przeciwnikow:
             przeciwnik.move(self.dt)
 
             if przeciwnik.obiekt.colliderect(BASE_RECT):
                 self.zdrowie_lasu -= przeciwnik.atak
-                self.lista_przeciwnikow.pop(i)
+                self.lista_przeciwnikow.remove(przeciwnik)
 
                 if self.zdrowie_lasu <= 0:
                     sys.exit()
@@ -356,6 +356,7 @@ class Gra:
             color = (self.gracz.zdrowie / self.gracz.max_zdrowie)
             pygame.draw.rect(self.okno_gry, (int(1275 * color), 0, 0), pasek)
 
+
     def new_round(self):
         self.start = True
 
@@ -363,7 +364,6 @@ class Gra:
             self.kliknieto_w_kolejna_runde = True
 
     def pause_loop(self):
-        #self.was_paused = True
 
         pause = True
         while pause:
