@@ -17,12 +17,12 @@ class Gracz:
         self.do_nastepnego = 10
 
         self.zdrowie = self.max_zdrowie = 1000
-        self.przeladowanie = 250
+        self.przeladowanie = STARTING_FIRE_RATE
         self.obrazenia = 10
         self.predkosc = 100
 
         self.predkosc_pocisku = 200
-        self.strzelam = False
+        self.strzelam = STARTING_FIRING
 
         self.rodzaj = 'gracz'
 

@@ -1,11 +1,12 @@
 TILESIZE = 30  # 30
 
-DRUID_X = 150  # 150
-DRUID_Y = 150  # 150
+DRUID_X = 750  # 750
+DRUID_Y = 400  # 400
 
 FRAMERATE = 60  # 60
 GAME_SPEED = 0.001  # 0.001
 OPPONENTS_GAP = 250  # 250
+STARTING_MOUSE_POSITION = (500, 750)  # (500, 750)
 
 MAPA = (
     ( 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -35,4 +36,10 @@ MAPA = (
     ( 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
 )
 
-STARTING_MONEY = 50
+STARTING_MONEY = 50  # 50
+STARTING_FIRE_RATE = 250  # 250
+STARTING_FIRING = False  # False
+
+# TO COMMENT
+#FRAMERATE = 2000
+#OPPONENTS_GAP = 1
