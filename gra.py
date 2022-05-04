@@ -1,7 +1,7 @@
 import sys
 
 from _STALE import *
-from gracz import Gracz
+from player import Player
 from przeciwnik import Przeciwnik
 from wieza import Wieza
 
@@ -22,7 +22,7 @@ class Gra:
 
     def initialize_attributes(self):
         self.game_window = pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
-        self.player = Gracz()
+        self.player = Player()
 
         self.opponents = []
         self.bullets = []
@@ -114,7 +114,7 @@ class Gra:
                                 break
 
                         else:
-                            self.player.strzelam = not self.player.strzelam
+                            self.player.shooting = not self.player.shooting
                             self.tower_flags_to_False()
 
                 elif TEXTURES[0][1].collidepoint(self.mouse_pos):
@@ -159,10 +159,10 @@ class Gra:
 
                 continue
 
-            elif opponent.obiekt.colliderect(self.player.obiekt):
-                self.player.zdrowie -= opponent.atak * self.dt * 60
+            elif opponent.obiekt.colliderect(self.player.rect):
+                self.player.health -= opponent.atak * self.dt * 60
 
-                if self.player.zdrowie <= 0:
+                if self.player.health <= 0:
                     sys.exit()
             # for drawing
             opponent.is_electrified = False
@@ -205,7 +205,7 @@ class Gra:
                     opponents_rects_list.pop(collided_opponent_index)
 
                     if bullet.rodzaj == 'gracz':
-                        self.player.doswiadczenie += opponent.points
+                        self.player.experience += opponent.points
                         self.player.check_level_up()
 
     def update_towers(self):
@@ -273,10 +273,10 @@ class Gra:
 
             *TEXTURES,
 
-            (FONT30.render(f'{player.poziom} | {round(100 * (player.doswiadczenie - player.do_poprzedniego) / (player.do_nastepnego - player.do_poprzedniego), 2)}%', True, WHITE), (W_23, 2)),
-            (FONT30.render(f'{player.obrazenia} | {1000 / player.przeladowanie}', True, WHITE), (W_23, 23)),
-            (FONT30.render(f'{player.predkosc}', True, WHITE), (W_23, 41)),
-            (FONT30.render(f'{int(player.zdrowie)}', True, WHITE), (W_23, 59)),
+            (FONT30.render(f'{player.level} | {round(100 * (player.experience - player.to_previous) / (player.to_next - player.to_previous), 2)}%', True, WHITE), (W_23, 2)),
+            (FONT30.render(f'{player.damage} | {1000 / player.reload}', True, WHITE), (W_23, 23)),
+            (FONT30.render(f'{player.speed}', True, WHITE), (W_23, 41)),
+            (FONT30.render(f'{int(player.health)}', True, WHITE), (W_23, 59)),
             (FONT30.render(f'{self.money}', True, WHITE), (W_23, 81)),
             (FONT30.render(f'Points: {self.points}', True, WHITE), (W_10, 100)),
 
@@ -289,7 +289,7 @@ class Gra:
 
             (FONT40.render(f'{self.base_health}', True, WHITE), BASE_HP_STRING),
 
-            (DRUID, player.obiekt)
+            (DRUID, player.rect)
         ))
 
         self.draw_health_bar(player)
@@ -323,27 +323,27 @@ class Gra:
         pygame.display.update()
 
     def draw_health_bar(self, player):
-        state = int((player.zdrowie / (player.max_zdrowie + 1)) * 5)
-        bar_width = pygame.Rect((player.x, player.y - 5, player.zdrowie / player.max_zdrowie * DRUID_SIZE, 5))
+        state = int((player.health / (player.max_health + 1)) * 5)
+        bar_width = pygame.Rect((player.x, player.y - 5, player.health / player.max_health * DRUID_SIZE, 5))
 
         if state == 4:
-            color = (player.max_zdrowie - player.zdrowie) / player.max_zdrowie
+            color = (player.max_health - player.health) / player.max_health
             pygame.draw.rect(self.game_window, (0, int(1275 * color), 255), bar_width)
 
         elif state == 3:
-            color = (player.zdrowie - (3 * player.max_zdrowie / 5)) / player.max_zdrowie
+            color = (player.health - (3 * player.max_health / 5)) / player.max_health
             pygame.draw.rect(self.game_window, (0, 255, int(1275 * color)), bar_width)
 
         elif state == 2:
-            color = ((3 * player.max_zdrowie / 5) - player.zdrowie) / player.max_zdrowie
+            color = ((3 * player.max_health / 5) - player.health) / player.max_health
             pygame.draw.rect(self.game_window, (int(1275 * color), 255, 0), bar_width)
 
         elif state == 1:
-            color = (player.zdrowie - (player.max_zdrowie / 5)) / player.max_zdrowie
+            color = (player.health - (player.max_health / 5)) / player.max_health
             pygame.draw.rect(self.game_window, (255, int(1275 * color), 0), bar_width)
 
         else:
-            color = (player.zdrowie / player.max_zdrowie)
+            color = (player.health / player.max_health)
             pygame.draw.rect(self.game_window, (int(1275 * color), 0, 0), bar_width)
 
 

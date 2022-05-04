@@ -11,10 +11,10 @@ class Pocisk:
         self.czas_powstania = gra.counter
 
         if self.rodzaj == 'gracz':
-            self.obrazenia = gra.player.obrazenia
-            self.predkosc = gra.player.predkosc_pocisku
+            self.obrazenia = gra.player.damage
+            self.predkosc = gra.player.bullet_speed
 
-            self.x, self.y, *_ = gra.player.obiekt
+            self.x, self.y, *_ = gra.player.rect
             self.obiekt = pygame.Rect(self.x, self.y, 8, 8)
 
             (x, y) = (gra.mouse_pos[0] - self.x, gra.mouse_pos[1] - self.y)
