@@ -6,11 +6,11 @@ from pocisk import Pocisk
 
 class Wieza:
 
-    def __init__(self, pozycja_myszy, rodzaj_wybranej_wiezy, licznik, dt):
-        self.obiekt = pygame.Rect(pozycja_myszy[0] - 10, pozycja_myszy[1] - 10, 20, 20)
-        self.pole = pozycja_myszy
+    def __init__(self, mouse_pos, rodzaj_wybranej_wiezy, counter, dt):
+        self.obiekt = pygame.Rect(mouse_pos[0] - 10, mouse_pos[1] - 10, 20, 20)
+        self.pole = mouse_pos
         self.rodzaj = rodzaj_wybranej_wiezy
-        self.licznik = licznik
+        self.counter = counter
         self.poziom_atak, self.poziom_zasieg, self.poziom_reszta, self.poziom = (0, 0, 0, 0)
 
         (self.typ, self.kolor, self.cena_calkowita, self.obrazenia, self.predkosc, self.zasieg,
@@ -24,31 +24,30 @@ class Wieza:
             self.ilu_na_raz = 2
             self.elektryzacja = 0.1 * dt * 60
 
-    def shoot(self, gra):
-        if (gra.licznik - self.licznik > self.przeladowanie) or self.mozna_strzelac:
-            gra.lista_pociskow.append(Pocisk(self, gra))
-            self.licznik = gra.licznik
+    def shoot(self, gra, przeciwnik):
+        if (gra.counter - self.counter > self.przeladowanie) or self.mozna_strzelac:
+            gra.bullets.append(Pocisk(self, gra, przeciwnik))
+            self.counter = gra.counter
 
             if self.rodzaj == 3:
                 self.mozna_strzelac = True
 
         if self.rodzaj == 3:
-            gra.celowany_przeciwnik.zdrowie -= self.elektryzacja
+            przeciwnik.lose_hp(self.elektryzacja)
 
     def upgrade(self, gra, polepszenie):
-        gra.wybrano_wieze = True
 
         if (polepszenie % 4) == 3:
             gra.sell_tower(self.cena_calkowita)
 
-        if (polepszenie % 4) == 0 and (gra.pieniadze >= WIEZE_POLEPSZENIA[self.rodzaj - 1][0][0]) and (self.poziom_atak <= 4):
+        if (polepszenie % 4) == 0 and (gra.money >= WIEZE_POLEPSZENIA[self.rodzaj - 1][0][0]) and (self.poziom_atak <= 4):
             self.increase_damage(WIEZE_POLEPSZENIA[self.rodzaj - 1][0][1])
             self.increase_cost(gra, WIEZE_POLEPSZENIA[self.rodzaj - 1][0][0])
 
             if self.rodzaj == 3:
                 self.ilu_na_raz += 1
 
-        elif (polepszenie % 4) == 1 and (gra.pieniadze >= WIEZE_POLEPSZENIA[self.rodzaj - 1][1][0]) and (self.poziom_zasieg <= 4):
+        elif (polepszenie % 4) == 1 and (gra.money >= WIEZE_POLEPSZENIA[self.rodzaj - 1][1][0]) and (self.poziom_zasieg <= 4):
                 self.increase_range(WIEZE_POLEPSZENIA[self.rodzaj - 1][1][1])
                 self.increase_cost(gra, WIEZE_POLEPSZENIA[self.rodzaj - 1][1][0])
 
@@ -59,7 +58,7 @@ class Wieza:
         self.typ = WIEZE[self.rodzaj - 1 + (self.poziom * 3)][0]
 
     def increase_cost(self, gra, cost):
-        gra.pieniadze -= cost
+        gra.money -= cost
         self.cena_calkowita += cost
 
     def increase_damage(self, damage):
@@ -73,7 +72,7 @@ class Wieza:
         self.dlugosc_zycia = (self.zasieg / self.predkosc * 1000)
 
     def increase_special(self, gra, reload=30, pierce_rate=2, electro_rate=4):
-        if (gra.pieniadze >= WIEZE_POLEPSZENIA[self.rodzaj - 1][2]):
+        if (gra.money >= WIEZE_POLEPSZENIA[self.rodzaj - 1][2]):
             self.poziom_reszta += 1
             self.predkosc += 50
             self.increase_cost(gra, WIEZE_POLEPSZENIA[self.rodzaj - 1][2])

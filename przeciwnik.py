@@ -5,9 +5,9 @@ from _STALE import *
 
 class Przeciwnik:
 
-    def __init__(self, runda, numer_przeciwnika):
-        self.rodzaj = WAVES[min(runda, LEN_WAVES - 1)][numer_przeciwnika]
-        (self.zdrowie, self.predkosc, self.atak, self.punkty,
+    def __init__(self, round, opponent_number):
+        self.rodzaj = WAVES[min(round, LEN_WAVES - 1)][opponent_number]
+        (self.zdrowie, self.predkosc, self.atak, self.points,
             self.monety, self.rozmiar) = ENEMIES[self.rodzaj]
 
         self.TILESIZE_ROZMIAR_BY_2 = (TILESIZE - self.rozmiar) // 2
@@ -19,7 +19,7 @@ class Przeciwnik:
         self.hp_bar = pygame.Rect(self.hp_bar_x, self.y - 5, TILESIZE, 2)
         self.hp_bar_lost = pygame.Rect(TILESIZE, self.hp_bar_y, TILESIZE, 2)
 
-        self.zdrowie = int(self.zdrowie * (1.1**runda))
+        self.zdrowie = int(self.zdrowie * (1.1**round))
         self.startowe_zdrowie = self.zdrowie
 
         self.predkosc_test = (self.predkosc / 100)

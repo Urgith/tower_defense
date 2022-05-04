@@ -7,9 +7,11 @@ from pocisk import Pocisk
 class Gracz:
 
     def __init__(self):
+        self.shooting_counter = pygame.time.get_ticks()
+
         self.x, self.y = (DRUID_X, DRUID_Y)
         self.obiekt = pygame.Rect(self.x, self.y, DRUID_SIZE, DRUID_SIZE)
-        self.previous_obiekt = pygame.Rect(self.x, self.y, DRUID_SIZE, DRUID_SIZE)
+        #self.previous_obiekt = pygame.Rect(self.x, self.y, DRUID_SIZE, DRUID_SIZE)
 
         self.doswiadczenie = 0
         self.poziom = 0
@@ -27,7 +29,7 @@ class Gracz:
         self.rodzaj = 'gracz'
 
     def move(self, dt):
-        self.previous_obiekt.x, self.previous_obiekt.y = (self.x, self.y)
+        #self.previous_obiekt.x, self.previous_obiekt.y = (self.x, self.y)
 
         self.klikniete = pygame.key.get_pressed()
         x, y = (0, 0)
@@ -65,9 +67,9 @@ class Gracz:
         self.obiekt.x, self.obiekt.y = (self.x, self.y)
 
     def shoot(self, gra):
-        if self.strzelam and (gra.licznik - gra.licznik_strzelania > self.przeladowanie):
-            gra.lista_pociskow.append(Pocisk(self, gra))
-            gra.licznik_strzelania = gra.licznik
+        if self.strzelam and (gra.counter - self.shooting_counter > self.przeladowanie):
+            gra.bullets.append(Pocisk(self, gra))
+            self.shooting_counter = gra.counter
 
     def check_level_up(self):
         if self.doswiadczenie >= self.do_nastepnego:

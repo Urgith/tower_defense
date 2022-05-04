@@ -38,12 +38,12 @@ H_MINUS_DRUID = MAP_HEIGHT - DRUID_SIZE
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
 
-TRAWA = image_load('data/trawa.jpg')
-LAS = image_load('data/trace/las.jpg', scale=(3 * TILESIZE, 3 * TILESIZE))
+GRASS = image_load('data/trawa.jpg')
+FOREST = image_load('data/trace/las.jpg', scale=(3 * TILESIZE, 3 * TILESIZE))
 
-KULA_MOCY = image_load('data/kula_mocy.png')
+MAGIC_BALL = image_load('data/kula_mocy.png')
 DRUID = image_load('data/druid.png', (0, 0), scale=(DRUID_SIZE, DRUID_SIZE))
-PRAD = image_load('data/prad.png', (0, 0))
+ELECTRO = image_load('data/prad.png', (0, 0))
 
 zielony = image_load('data/towers/zielony.jpg')
 niebieski = image_load('data/towers/niebieski.jpg')
@@ -94,7 +94,7 @@ SZCZUR = image_load('data/enemies/szczur.png', (0, 0), scale=(22, 22))
 PAJAK = image_load('data/enemies/pajak.png', (0, 0), scale=(24, 24))
 WAZ = image_load('data/enemies/waz.png', (0, 0), scale=(26, 26))
 
-TEKSTURY = (
+TEXTURES = (
     (image_load('data/zacznij.jpg'), pygame.Rect(W_3, MAP_HEIGHT - 125, 50, 50)),
     (image_load('data/domek.jpg'), pygame.Rect(W_3, MAP_HEIGHT - 72, 70, 70)),
     (zielony, pygame.Rect(W_93, MAP_HEIGHT - 74, 20, 20)),
@@ -112,7 +112,7 @@ RECT78 = pygame.Rect(MAP_WIDTH + 78, 119, 70, 70)
 RECT_3 = pygame.Rect(W_3, 194, 70, 70)
 RECT_78 = pygame.Rect(MAP_WIDTH + 78, 194, 70, 70)
 
-TEKSTURY_INTERFEJSU_WIEZY = (
+TOWER_TEXTURES = (
     (image_load('data/upgrades/atak_zielony.jpg'), RECT3),
     (image_load('data/upgrades/zasieg_zielony.jpg'), RECT78),
     (image_load('data/upgrades/predkosc_zielony.jpg'), RECT_3),
