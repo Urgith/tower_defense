@@ -1,13 +1,11 @@
-import pygame
-
-from _STALE import *
+from _CONSTANTS import *
 from pocisk import Pocisk
 
 
 class Tower:
 
     def __init__(self, mouse_pos, kind, counter, dt):
-        self.rect = pygame.Rect(mouse_pos[0] - 10, mouse_pos[1] - 10, 20, 20)
+        self.rect = pygame_Rect(mouse_pos[0] - 10, mouse_pos[1] - 10, 20, 20)
         self.center = mouse_pos
 
         self.kind = kind

@@ -1,6 +1,5 @@
-import sys
+from _CONSTANTS import *
 
-from _STALE import *
 from player import Player
 from opponent import Opponent
 from tower import Tower
@@ -21,14 +20,14 @@ class Gra:
             self.draw()
 
     def initialize_attributes(self):
-        self.game_window = pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
-        self.player = Player()
+        self.opponents_counter = pygame_time_get_ticks()
+        self.game_window = pygame_display_set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
+        self.player = Player(self.opponents_counter)
 
         self.opponents = []
         self.bullets = []
         self.towers = []
 
-        self.opponents_counter = pygame.time.get_ticks()
         self.counter = 0
 
         self.start = False
@@ -48,7 +47,7 @@ class Gra:
         #self.change_interface = False
         #self.previous = []
 
-        self.clock = pygame.time.Clock()
+        self.clock = pygame_time_Clock()
         self.mouse_pos = STARTING_MOUSE_POSITION
 
 
@@ -77,29 +76,29 @@ class Gra:
                     self.len_wave = len(WAVES[-1])
 
     def events(self):
-        self.mouse_pos = pygame.mouse.get_pos()
+        self.mouse_pos = pygame_mouse_get_pos()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                sys.exit()
+        for event in pygame_event_get():
+            if event.type == QUIT:
+                exit()
 
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
+            elif event.type == KEYDOWN:
+                if event.key == K_ESCAPE:
                     if self.tower_buying or self.tower_is_selected:
                         self.tower_flags_to_False()
                     else:
-                        sys.exit()
+                        exit()
 
-                elif event.key == pygame.K_p:
+                elif event.key == K_p:
                     self.pause_loop()
 
                 elif event.key in PYGAME_K1_K2_K3:
                     self.tower_to_buy(event.key - 49)
 
-                elif event.key == pygame.K_SPACE:
+                elif event.key == K_SPACE:
                     self.new_round()
 
-            elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
+            elif event.type == MOUSEBUTTONUP and event.button == 1:
 
                 if self.mouse_pos[0] < MAP_WIDTH and self.mouse_pos[1] < MAP_HEIGHT:
                     if self.tower_buying:
@@ -121,7 +120,7 @@ class Gra:
                     self.new_round()
 
                 elif TEXTURES[1][1].collidepoint(self.mouse_pos):
-                    sys.exit()
+                    exit()
 
                 else:
                     for i, texture in enumerate(TEXTURES[2:5]):
@@ -155,7 +154,7 @@ class Gra:
                 self.opponents.remove(opponent)
 
                 if self.base_health <= 0:
-                    sys.exit()
+                    exit()
 
                 continue
 
@@ -163,7 +162,7 @@ class Gra:
                 self.player.health -= opponent.damage * self.dt * 60
 
                 if self.player.health <= 0:
-                    sys.exit()
+                    exit()
             # for drawing
             opponent.is_electrified = False
 
@@ -259,14 +258,14 @@ class Gra:
         for opponent in self.opponents:
             window.blit(opponent.kind, opponent.rect)
 
-            pygame.draw.rect(window, WHITE, opponent.hp_bar)
+            pygame_draw_rect(window, WHITE, opponent.hp_bar)
             if opponent.max_health > opponent.health:
-                pygame.draw.rect(window, RED, opponent.hp_bar_lost)
+                pygame_draw_rect(window, RED, opponent.hp_bar_lost)
 
             if opponent.is_electrified:
                 window.blit(ELECTRO, (opponent.rect.x - ((opponent.size - 15) / 2), opponent.rect.y - ((opponent.size - 15) / 2)))
 
-        pygame.draw.rect(window, (0,0,0), (MAP_WIDTH, 0, MENUSIZE, MAP_HEIGHT))
+        pygame_draw_rect(window, (0,0,0), (MAP_WIDTH, 0, MENUSIZE, MAP_HEIGHT))
 
         window.blits((
             (FONT30.render(f'Round:{self.round + self.start}', True, WHITE), (W_57, H_105_)),
@@ -310,43 +309,43 @@ class Gra:
                 (FONT30.render(f'{tower.level_special}'  , True, PURPLE), (TOWER_TEXTURES[2][1][0], TOWER_TEXTURES[2][1][1])),
             ))
 
-            pygame.draw.circle(window, tower.color, tower.center, tower.range, 2)
+            pygame_draw_circle(window, tower.color, tower.center, tower.range, 2)
 
         for bullet in self.bullets:
             if bullet.kind == 'player':
                 window.blit(MAGIC_BALL, bullet.rect)
             else:
-                pygame.draw.rect(window, bullet.color, bullet.rect)
+                pygame_draw_rect(window, bullet.color, bullet.rect)
 
         if self.tower_buying:
-            pygame.draw.rect(window, self.tower_to_buy_color, (self.mouse_pos[0] - 10, self.mouse_pos[1] - 10, 20, 20))
-            pygame.draw.circle(window, self.tower_to_buy_color, self.mouse_pos, self.tower_to_buy_range, 2)
+            pygame_draw_rect(window, self.tower_to_buy_color, (self.mouse_pos[0] - 10, self.mouse_pos[1] - 10, 20, 20))
+            pygame_draw_circle(window, self.tower_to_buy_color, self.mouse_pos, self.tower_to_buy_range, 2)
 
-        pygame.display.update()
+        pygame_display_update()
 
     def draw_health_bar(self, player):
         state = int((player.health / (player.max_health + 1)) * 5)
-        bar_width = pygame.Rect((player.x, player.y - 5, player.health / player.max_health * DRUID_SIZE, 5))
+        bar_width = pygame_Rect((player.x, player.y - 5, player.health / player.max_health * DRUID_SIZE, 5))
 
         if state == 4:
             color = (player.max_health - player.health) / player.max_health
-            pygame.draw.rect(self.game_window, (0, int(1275 * color), 255), bar_width)
+            pygame_draw_rect(self.game_window, (0, int(1275 * color), 255), bar_width)
 
         elif state == 3:
             color = (player.health - (3 * player.max_health / 5)) / player.max_health
-            pygame.draw.rect(self.game_window, (0, 255, int(1275 * color)), bar_width)
+            pygame_draw_rect(self.game_window, (0, 255, int(1275 * color)), bar_width)
 
         elif state == 2:
             color = ((3 * player.max_health / 5) - player.health) / player.max_health
-            pygame.draw.rect(self.game_window, (int(1275 * color), 255, 0), bar_width)
+            pygame_draw_rect(self.game_window, (int(1275 * color), 255, 0), bar_width)
 
         elif state == 1:
             color = (player.health - (player.max_health / 5)) / player.max_health
-            pygame.draw.rect(self.game_window, (255, int(1275 * color), 0), bar_width)
+            pygame_draw_rect(self.game_window, (255, int(1275 * color), 0), bar_width)
 
         else:
             color = (player.health / player.max_health)
-            pygame.draw.rect(self.game_window, (int(1275 * color), 0, 0), bar_width)
+            pygame_draw_rect(self.game_window, (int(1275 * color), 0, 0), bar_width)
 
 
     def new_round(self):
@@ -362,10 +361,10 @@ class Gra:
             self.time = self.clock.tick(FRAMERATE)
             self.dt = self.time * GAME_SPEED
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-                elif event.type == pygame.KEYDOWN and (event.key == pygame.K_ESCAPE or event.key == pygame.K_p):
+            for event in pygame_event_get():
+                if event.type == QUIT:
+                    exit()
+                elif event.type == KEYDOWN and (event.key == K_ESCAPE or event.key == K_p):
                     pause = False
 
 
@@ -376,10 +375,10 @@ class Gra:
         self.tower_to_buy_color = TOWERS[i][1]
 
     def place_tower(self):
-        new_tower_rect = pygame.Rect(self.mouse_pos[0] - 10, self.mouse_pos[1] - 10, 20, 20)
+        new_tower_rect = pygame_Rect(self.mouse_pos[0] - 10, self.mouse_pos[1] - 10, 20, 20)
 
         for tile in MAP_DRAW:
-            if (pygame.Rect(*tile[1], TILESIZE, TILESIZE).colliderect(new_tower_rect)
+            if (pygame_Rect(*tile[1], TILESIZE, TILESIZE).colliderect(new_tower_rect)
               or BASE_RECT.colliderect(new_tower_rect)
               or self.mouse_pos[0] < 10
               or self.mouse_pos[1] < 10

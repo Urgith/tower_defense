@@ -1,7 +1,6 @@
-import pygame
-import random
+from random import random
 
-from _STALE import *
+from _CONSTANTS import *
 
 
 class Pocisk:
@@ -14,13 +13,13 @@ class Pocisk:
             self.speed = tower.bullet_speed
 
             self.x, self.y, *_ = tower.rect
-            self.rect = pygame.Rect(self.x, self.y, 8, 8)
+            self.rect = pygame_Rect(self.x, self.y, 8, 8)
 
             (x, y) = (mouse_pos[0] - self.x, mouse_pos[1] - self.y)
 
         else:
             if self.kind == 1:
-                self.id = random.random()
+                self.id = random()
                 self.pierce = tower.pierce
 
             elif self.kind == 2:
@@ -31,7 +30,7 @@ class Pocisk:
             self.speed = tower.speed
 
             self.x, self.y = tower.rect.center
-            self.rect = pygame.Rect(self.x, self.y, tower.bullet_size, tower.bullet_size)
+            self.rect = pygame_Rect(self.x, self.y, tower.bullet_size, tower.bullet_size)
             self.color = tower.color
 
             (x, y) = (opponent.x + (opponent.size / 2) - self.x,

@@ -7,8 +7,8 @@ RED = (255, 0, 0)
 
 TILESIZE_BY_2 = (TILESIZE / 2)
 
-BASE_RECT = pygame.Rect(BASE_X, BASE_Y, (3 * TILESIZE), (3 * TILESIZE))
-BASE_HP_STRING = pygame.Rect(BASE_X + TILESIZE_BY_2 + 5, BASE_Y + TILESIZE + 3, 44, 20)
+BASE_RECT = pygame_Rect(BASE_X, BASE_Y, (3 * TILESIZE), (3 * TILESIZE))
+BASE_HP_STRING = pygame_Rect(BASE_X + TILESIZE_BY_2 + 5, BASE_Y + TILESIZE + 3, 44, 20)
 
 #      DMG     RANGE
 TOWER_UPGRADES = (
@@ -18,7 +18,7 @@ TOWER_UPGRADES = (
 )
 
 '''
-INTERFACE_LOW_HEIGHT = pygame.Rect(MAP_WIDTH, MAP_HEIGHT - 123, MENUSIZE, 123)
+INTERFACE_LOW_HEIGHT = pygame_Rect(MAP_WIDTH, MAP_HEIGHT - 123, MENUSIZE, 123)
 
 TRASA = (
     (0, 0), (1, 2), (3, 2), (2, 16), (1, 16), (2, 19), (3, 21), (4, 23), (5, 19), (6, 19),
@@ -62,8 +62,8 @@ WAVES = (
 
 LEN_WAVES = len(WAVES)
 
-pygame.font.init()
-FONT30 = pygame.font.SysFont(None, 30)
-FONT40 = pygame.font.SysFont(None, 40)
+pygame_font_init()
+FONT30 = pygame_font_SysFont(None, 30)
+FONT40 = pygame_font_SysFont(None, 40)
 
-PYGAME_K1_K2_K3 = {pygame.K_1, pygame.K_2, pygame.K_3}
+PYGAME_K1_K2_K3 = {K_1, K_2, K_3}

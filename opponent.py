@@ -1,6 +1,4 @@
-import pygame
-
-from _STALE import *
+from _CONSTANTS import *
 
 
 class Opponent:
@@ -15,9 +13,9 @@ class Opponent:
         self.hp_bar_x, self.hp_bar_y = (0, -5)
         self.mov_x, self.mov_y = (0, 0)
 
-        self.rect = pygame.Rect(self.x, self.y, self.size, self.size)
-        self.hp_bar = pygame.Rect(self.hp_bar_x, self.y - 5, TILESIZE, 2)
-        self.hp_bar_lost = pygame.Rect(TILESIZE, self.hp_bar_y, TILESIZE, 2)
+        self.rect = pygame_Rect(self.x, self.y, self.size, self.size)
+        self.hp_bar = pygame_Rect(self.hp_bar_x, self.y - 5, TILESIZE, 2)
+        self.hp_bar_lost = pygame_Rect(TILESIZE, self.hp_bar_y, TILESIZE, 2)
 
         self.health = int(self.health * (1.1**round))
         self.max_health = self.health

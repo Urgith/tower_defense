@@ -1,17 +1,15 @@
-import pygame
-
-from _STALE import *
+from _CONSTANTS import *
 from pocisk import Pocisk
 
 
 class Player:
 
-    def __init__(self):
-        self.shooting_counter = pygame.time.get_ticks()
+    def __init__(self, opponents_counter):
+        self.shooting_counter = opponents_counter
 
         self.x, self.y = (DRUID_X, DRUID_Y)
-        self.rect = pygame.Rect(self.x, self.y, DRUID_SIZE, DRUID_SIZE)
-        #self.previous_obiekt = pygame.Rect(self.x, self.y, DRUID_SIZE, DRUID_SIZE)
+        self.rect = pygame_Rect(self.x, self.y, DRUID_SIZE, DRUID_SIZE)
+        #self.previous_obiekt = pygame_Rect(self.x, self.y, DRUID_SIZE, DRUID_SIZE)
 
         self.experience = 0
         self.level = 0
@@ -31,22 +29,22 @@ class Player:
     def move(self, dt):
         #self.previous_obiekt.x, self.previous_obiekt.y = (self.x, self.y)
 
-        pressed = pygame.key.get_pressed()
+        pressed = pygame_key_get_pressed()
         x, y = (0, 0)
 
-        if pressed[pygame.K_w]:
+        if pressed[K_w]:
             self.y -= self.speed * dt
             y = -1
 
-        if pressed[pygame.K_a]:
+        if pressed[K_a]:
             self.x -= self.speed * dt
             x = -1
 
-        if pressed[pygame.K_s]:
+        if pressed[K_s]:
             self.y += self.speed * dt
             y = 1
 
-        if pressed[pygame.K_d]:
+        if pressed[K_d]:
             self.x += self.speed * dt
             x = 1
         # 0.4 ~= 2**0.5 - 1

@@ -1,7 +1,5 @@
 from _CHANGEABLE import *
-from funkcje import *
-
-import os
+from imports_and_functions import *
 
 
 MENUSIZE = 5 * TILESIZE  # 5 *
@@ -35,8 +33,9 @@ H_8_ = MAP_HEIGHT - 8
 W_MINUS_DRUID = (MAP_WIDTH - DRUID_SIZE)
 H_MINUS_DRUID = (MAP_HEIGHT - DRUID_SIZE)
 
+import os
 os.environ['SDL_VIDEO_CENTERED'] = '1'
-pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
+pygame_display_set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
 
 GRASS = image_load('data/trawa.jpg')
 FOREST = image_load('data/trace/las.jpg', scale=(3 * TILESIZE, 3 * TILESIZE))
@@ -95,11 +94,11 @@ SPIDER = image_load('data/enemies/pajak.png', (0, 0), scale=(24, 24))
 SNAKE = image_load('data/enemies/waz.png', (0, 0), scale=(26, 26))
 
 TEXTURES = (
-    (image_load('data/zacznij.jpg'), pygame.Rect(W_3, MAP_HEIGHT - 125, 50, 50)),
-    (image_load('data/domek.jpg'), pygame.Rect(W_3, MAP_HEIGHT - 72, 70, 70)),
-    (green, pygame.Rect(W_93, MAP_HEIGHT - 74, 20, 20)),
-    (blue, pygame.Rect(W_93, MAP_HEIGHT - 49, 20, 20)),
-    (yellow, pygame.Rect(W_93, MAP_HEIGHT - 24, 20, 20)),
+    (image_load('data/zacznij.jpg'), pygame_Rect(W_3, MAP_HEIGHT - 125, 50, 50)),
+    (image_load('data/domek.jpg'), pygame_Rect(W_3, MAP_HEIGHT - 72, 70, 70)),
+    (green, pygame_Rect(W_93, MAP_HEIGHT - 74, 20, 20)),
+    (blue, pygame_Rect(W_93, MAP_HEIGHT - 49, 20, 20)),
+    (yellow, pygame_Rect(W_93, MAP_HEIGHT - 24, 20, 20)),
     (image_load('data/stats_icons/_arrow.png', (0, 0)), (MAP_WIDTH + 5, 2)),
     (image_load('data/stats_icons/_kula_mocy.png', (0, 0)), (MAP_WIDTH + 6, 25)),
     (image_load('data/stats_icons/_boots.png', (0, 0)), (MAP_WIDTH + 4, 43)),
@@ -107,10 +106,10 @@ TEXTURES = (
     (image_load('data/stats_icons/_coin.png', (0, 0)), (MAP_WIDTH + 5, 82))
 )
 
-RECT3 = pygame.Rect(W_3, 119, 70, 70)
-RECT78 = pygame.Rect(MAP_WIDTH + 78, 119, 70, 70)
-RECT_3 = pygame.Rect(W_3, 194, 70, 70)
-RECT_78 = pygame.Rect(MAP_WIDTH + 78, 194, 70, 70)
+RECT3 = pygame_Rect(W_3, 119, 70, 70)
+RECT78 = pygame_Rect(MAP_WIDTH + 78, 119, 70, 70)
+RECT_3 = pygame_Rect(W_3, 194, 70, 70)
+RECT_78 = pygame_Rect(MAP_WIDTH + 78, 194, 70, 70)
 
 TOWER_TEXTURES = (
     (image_load('data/upgrades/atak_zielony.jpg'), RECT3),
