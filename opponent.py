@@ -6,9 +6,9 @@ from _STALE import *
 class Opponent:
 
     def __init__(self, round, opponent_number):
-        self.type = WAVES[min(round, LEN_WAVES - 1)][opponent_number]
+        self.kind = WAVES[min(round, LEN_WAVES - 1)][opponent_number]
         (self.health, self.speed, self.damage, self.points,
-            self.money, self.size) = ENEMIES[self.type]
+            self.money, self.size) = ENEMIES[self.kind]
 
         self.TILESIZE_SIZE_BY_2 = (TILESIZE - self.size) // 2
         self.x, self.y = (self.TILESIZE_SIZE_BY_2, 0)
@@ -22,13 +22,13 @@ class Opponent:
         self.health = int(self.health * (1.1**round))
         self.max_health = self.health
 
-        self.tile = MAPA[0][0]
+        self.tile = AREA[0][0]
         self.ids = []
 
         self.is_electrified = False
 
     def move(self, dt):
-        tile = MAPA[int((self.rect.centery + self.mov_y) / TILESIZE)][int((self.rect.centerx + self.mov_x) / TILESIZE)]
+        tile = AREA[int((self.rect.centery + self.mov_y) / TILESIZE)][int((self.rect.centerx + self.mov_x) / TILESIZE)]
 
         if tile != self.tile and tile not in {0, 1, 10}:
             self.tile = tile

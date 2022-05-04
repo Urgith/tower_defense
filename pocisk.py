@@ -7,9 +7,9 @@ from _STALE import *
 class Pocisk:
 
     def __init__(self, tower, mouse_pos, counter, opponent=None):
-        self.type = tower.type
+        self.kind = tower.kind
 
-        if self.type == 'player':
+        if self.kind == 'player':
             self.damage = tower.damage
             self.speed = tower.bullet_speed
 
@@ -19,11 +19,11 @@ class Pocisk:
             (x, y) = (mouse_pos[0] - self.x, mouse_pos[1] - self.y)
 
         else:
-            if self.type == 1:
+            if self.kind == 1:
                 self.id = random.random()
                 self.pierce = tower.pierce
 
-            elif self.type == 2:
+            elif self.kind == 2:
                 self.electro = tower.electro
 
             self.end_date = tower.lifespan + counter

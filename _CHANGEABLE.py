@@ -8,7 +8,7 @@ GAME_SPEED = 0.001  # 0.001
 OPPONENTS_GAP = 250  # 250
 STARTING_MOUSE_POSITION = (500, 750)  # (500, 750)
 
-MAPA = (
+AREA = (
     ( 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
     (10, 1, 1, 1, 1, 1, 1, 5, 0, 0, 8, 1, 1, 1, 5, 0, 8, 1, 1, 1, 1, 1, 1, 1, 1, 5, 0, 0, 8, 1, 1, 1, 1, 1, 1),
     (50, 0, 0, 8, 1, 1, 1,10, 1, 1,10, 1, 1, 5, 7, 1,10, 1, 1, 5, 0, 0, 0, 0, 0, 7, 1, 1,10, 1,80, 0, 0, 6, 1),
@@ -37,9 +37,9 @@ MAPA = (
 )
 
 STARTING_MONEY = 50  # 50
-STARTING_FIRE_RATE = 1  # 250
-START_FIRING = True  # False
+STARTING_FIRE_RATE = 250  # 250
+START_FIRING = False  # False
 
 # TO COMMENT
-OPPONENTS_GAP = 1
-FRAMERATE = 2000
+#OPPONENTS_GAP = 1
+#FRAMERATE = 2000

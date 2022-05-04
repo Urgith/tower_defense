@@ -35,29 +35,29 @@ MAP_DRAW.reverse()
 MAP_DRAW = []
 for row in range(MAP_TILES_H):
     for column in range(MAP_TILES_W):
-        if MAPA[row][column] not in  {1, 3}:
-            MAP_DRAW.append((TEREN[MAPA[row][column]], (column * TILESIZE, row * TILESIZE)))
+        if AREA[row][column] not in  {1, 3}:
+            MAP_DRAW.append((TERRAIN[AREA[row][column]], (column * TILESIZE, row * TILESIZE)))
 
         # health, speed, damage, points, money, size
 ENEMIES = { # hp,  sp, d,  p, m, si
-    MYSZ:   ( 80, 100, 1,  2, 1, 20),
-    SZCZUR: (150,  90, 2,  4, 2, 22),
-    PAJAK:  (300, 110, 3,  8, 3, 24),
-    WAZ:    (500, 120, 5, 12, 4, 26)
+    MOUSE:  ( 80, 100, 1,  2, 1, 20),
+    RAT:    (150,  90, 2,  4, 2, 22),
+    SPIDER: (300, 110, 3,  8, 3, 24),
+    SNAKE:  (500, 120, 5, 12, 4, 26)
 }
 
 WAVES = (
-    (MYSZ,) * 6,
-    (MYSZ,) * 15,
-    (MYSZ,) * 25 + (SZCZUR,) * 5,
-    (MYSZ,) * 20 + (SZCZUR,) * 10,
-    (MYSZ,) * 18 + (SZCZUR,) * 15,
-    (MYSZ,) * 15 + (SZCZUR,) * 20 + (PAJAK,) * 3,
-    (MYSZ,) * 12 + (SZCZUR,) * 20 + (PAJAK,) * 8,
-    (MYSZ,) * 10 + (SZCZUR,) * 18 + (PAJAK,) * 15,
-    (MYSZ,) * 8  + (SZCZUR,) * 15 + (PAJAK,) * 15 + (WAZ,) * 3,
-    (MYSZ,) * 5  + (SZCZUR,) * 12 + (PAJAK,) * 20 + (WAZ,) * 8,
-    (MYSZ,) * 3  + (SZCZUR,) * 10 + (PAJAK,) * 20 + (WAZ,) * 15
+    (MOUSE,) * 6,
+    (MOUSE,) * 15,
+    (MOUSE,) * 25 + (RAT,) * 5,
+    (MOUSE,) * 20 + (RAT,) * 10,
+    (MOUSE,) * 18 + (RAT,) * 15,
+    (MOUSE,) * 15 + (RAT,) * 20 + (SPIDER,) * 3,
+    (MOUSE,) * 12 + (RAT,) * 20 + (SPIDER,) * 8,
+    (MOUSE,) * 10 + (RAT,) * 18 + (SPIDER,) * 15,
+    (MOUSE,) * 8  + (RAT,) * 15 + (SPIDER,) * 15 + (SNAKE,) * 3,
+    (MOUSE,) * 5  + (RAT,) * 12 + (SPIDER,) * 20 + (SNAKE,) * 8,
+    (MOUSE,) * 3  + (RAT,) * 10 + (SPIDER,) * 20 + (SNAKE,) * 15
 )
 
 LEN_WAVES = len(WAVES)

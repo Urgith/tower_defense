@@ -9,8 +9,8 @@ BASE_X = 18 * TILESIZE  # 18 *
 BASE_Y = 21 * TILESIZE  # 21 *
 DRUID_SIZE = 2 * TILESIZE  # 2 *
 
-MAP_TILES_W = len(MAPA[0])
-MAP_TILES_H = len(MAPA)
+MAP_TILES_W = len(AREA[0])
+MAP_TILES_H = len(AREA)
 
 MAP_WIDTH = (TILESIZE * MAP_TILES_W)
 MAP_HEIGHT = (TILESIZE * MAP_TILES_H)
@@ -32,8 +32,8 @@ H_23_ = MAP_HEIGHT - 23
 H_10_ = MAP_HEIGHT - 10
 H_8_ = MAP_HEIGHT - 8
 
-W_MINUS_DRUID = MAP_WIDTH - DRUID_SIZE
-H_MINUS_DRUID = MAP_HEIGHT - DRUID_SIZE
+W_MINUS_DRUID = (MAP_WIDTH - DRUID_SIZE)
+H_MINUS_DRUID = (MAP_HEIGHT - DRUID_SIZE)
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.display.set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
@@ -45,15 +45,15 @@ MAGIC_BALL = image_load('data/kula_mocy.png')
 DRUID = image_load('data/druid.png', (0, 0), scale=(DRUID_SIZE, DRUID_SIZE))
 ELECTRO = image_load('data/prad.png', (0, 0))
 
-zielony = image_load('data/towers/zielony.jpg')
-niebieski = image_load('data/towers/niebieski.jpg')
-zolty = image_load('data/towers/zolty.jpg')
+green = image_load('data/towers/zielony.jpg')
+blue = image_load('data/towers/niebieski.jpg')
+yellow = image_load('data/towers/zolty.jpg')
                         # cost, damage, speed, range, reload, size
                         #   c,  d,  sp,  ra,  re, s
-WIEZE = (
-    (zielony, (0,255,0),   10, 10, 200, 150, 200, 4),
-    (niebieski, (0,0,255), 30, 20, 100, 100, 400, 6),
-    (zolty, (255,255,0),   50,  5, 300,  80, 100, 3),
+TOWERS = (
+    (green, (0,255,0),   10, 10, 200, 150, 200, 4),
+    (blue, (0,0,255), 30, 20, 100, 100, 400, 6),
+    (yellow, (255,255,0),   50,  5, 300,  80, 100, 3),
     (image_load('data/towers/zielony2.jpg'), 0),
     (image_load('data/towers/niebieski2.jpg'), 0),
     (image_load('data/towers/zolty2.jpg'), 0),
@@ -71,35 +71,35 @@ WIEZE = (
     (image_load('data/towers/zolty6.jpg'), 0)
 )
 
-lg = image_load('data/trace/lg.jpg', scale=(TILESIZE, TILESIZE))
-ld = image_load('data/trace/ld.jpg', scale=(TILESIZE, TILESIZE))
-pg = image_load('data/trace/pg.jpg', scale=(TILESIZE, TILESIZE))
-pd = image_load('data/trace/pd.jpg', scale=(TILESIZE, TILESIZE))
+l_up = image_load('data/trace/lg.jpg', scale=(TILESIZE, TILESIZE))
+l_down = image_load('data/trace/ld.jpg', scale=(TILESIZE, TILESIZE))
+r_up = image_load('data/trace/pg.jpg', scale=(TILESIZE, TILESIZE))
+r_down = image_load('data/trace/pd.jpg', scale=(TILESIZE, TILESIZE))
 
-TEREN = {
+TERRAIN = {
     0:  image_load('data/trace/poziomo.jpg', scale=(TILESIZE, TILESIZE)),
     10: image_load('data/trace/pionowo.jpg', scale=(TILESIZE, TILESIZE)),
-    5:  lg,
-    50: ld,
-    6:  pg,
-    60: pd,
-    7:  pd,
-    70: ld,
-    8:  pg,
-    80: lg
+    5:  l_up,
+    50: l_down,
+    6:  r_up,
+    60: r_down,
+    7:  r_down,
+    70: l_down,
+    8:  r_up,
+    80: l_up
 }
 
-MYSZ = image_load('data/enemies/mysz.png', (0, 0), scale=(20, 20))
-SZCZUR = image_load('data/enemies/szczur.png', (0, 0), scale=(22, 22))
-PAJAK = image_load('data/enemies/pajak.png', (0, 0), scale=(24, 24))
-WAZ = image_load('data/enemies/waz.png', (0, 0), scale=(26, 26))
+MOUSE = image_load('data/enemies/mysz.png', (0, 0), scale=(20, 20))
+RAT = image_load('data/enemies/szczur.png', (0, 0), scale=(22, 22))
+SPIDER = image_load('data/enemies/pajak.png', (0, 0), scale=(24, 24))
+SNAKE = image_load('data/enemies/waz.png', (0, 0), scale=(26, 26))
 
 TEXTURES = (
     (image_load('data/zacznij.jpg'), pygame.Rect(W_3, MAP_HEIGHT - 125, 50, 50)),
     (image_load('data/domek.jpg'), pygame.Rect(W_3, MAP_HEIGHT - 72, 70, 70)),
-    (zielony, pygame.Rect(W_93, MAP_HEIGHT - 74, 20, 20)),
-    (niebieski, pygame.Rect(W_93, MAP_HEIGHT - 49, 20, 20)),
-    (zolty, pygame.Rect(W_93, MAP_HEIGHT - 24, 20, 20)),
+    (green, pygame.Rect(W_93, MAP_HEIGHT - 74, 20, 20)),
+    (blue, pygame.Rect(W_93, MAP_HEIGHT - 49, 20, 20)),
+    (yellow, pygame.Rect(W_93, MAP_HEIGHT - 24, 20, 20)),
     (image_load('data/stats_icons/_arrow.png', (0, 0)), (MAP_WIDTH + 5, 2)),
     (image_load('data/stats_icons/_kula_mocy.png', (0, 0)), (MAP_WIDTH + 6, 25)),
     (image_load('data/stats_icons/_boots.png', (0, 0)), (MAP_WIDTH + 4, 43)),

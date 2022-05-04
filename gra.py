@@ -53,11 +53,11 @@ class Gra:
 
 
     def rounds(self):
-        self.counter += self.time
-        self.next_round = True
-        if self.round < LEN_WAVES:
-        #if self.start:
-        #    self.counter += self.time
+        #self.counter += self.time
+        #self.next_round = True
+        #if self.round < LEN_WAVES:
+        if self.start:
+            self.counter += self.time
 
             if (self.counter - self.opponents_counter > OPPONENTS_GAP
               and self.opponent_number < self.len_wave):
@@ -130,7 +130,7 @@ class Gra:
                             break
 
                     if self.tower_is_selected:
-                        choosen_4 = (self.choosen_tower.type * 4)
+                        choosen_4 = (self.choosen_tower.kind * 4)
 
                         for i in range(choosen_4, choosen_4 + 4):
                             if TOWER_TEXTURES[i][1].collidepoint(self.mouse_pos):
@@ -173,7 +173,7 @@ class Gra:
         for i, bullet in enumerate(self.bullets):
             bullet.move(self.dt)
 
-            if bullet.type != 'player' and (bullet.end_date < self.counter):
+            if bullet.kind != 'player' and (bullet.end_date < self.counter):
                 self.bullets.pop(i)
                 continue
 
@@ -185,7 +185,7 @@ class Gra:
             if collided_opponent_index != -1:
                 opponent = self.opponents[collided_opponent_index]
 
-                if bullet.type == 1 and (bullet.id not in opponent.ids):
+                if bullet.kind == 1 and (bullet.id not in opponent.ids):
                     opponent.lose_hp(bullet.damage)
                     opponent.ids.append(bullet.id)
                     bullet.pierce -= 1
@@ -193,7 +193,7 @@ class Gra:
                     if bullet.pierce == 0:
                         self.bullets.pop(i)
 
-                elif bullet.type != 1:
+                elif bullet.kind != 1:
                     opponent.lose_hp(bullet.damage)
                     self.bullets.pop(i)
 
@@ -204,7 +204,7 @@ class Gra:
                     self.opponents.pop(collided_opponent_index)
                     opponents_rects_list.pop(collided_opponent_index)
 
-                    if bullet.type == 'player':
+                    if bullet.kind == 'player':
                         self.player.experience += opponent.points
                         self.player.check_level_up()
 
@@ -213,7 +213,7 @@ class Gra:
             shooted_opponents = 0
             tower.can_shoot = False
 
-            if tower.type == 2:
+            if tower.kind == 2:
                 for i, opponent in enumerate(self.opponents):
                     x, y, size, _ = opponent.rect
 
@@ -243,7 +243,7 @@ class Gra:
                     tower.shoot(self, opponent)
                     shooted_opponents += 1
 
-                    if tower.type != 2 or shooted_opponents == tower.multishot:
+                    if tower.kind != 2 or shooted_opponents == tower.multishot:
                         break
 
 
@@ -257,7 +257,7 @@ class Gra:
             window.blit(tower.image, tower.rect)
 
         for opponent in self.opponents:
-            window.blit(opponent.type, opponent.rect)
+            window.blit(opponent.kind, opponent.rect)
 
             pygame.draw.rect(window, WHITE, opponent.hp_bar)
             if opponent.max_health > opponent.health:
@@ -296,13 +296,15 @@ class Gra:
 
         if self.tower_is_selected:
             tower = self.choosen_tower
-            window.blits((
-                *TOWER_TEXTURES[tower.type * 4 : (tower.type * 4) + 4],
+            tower4 = (tower.kind * 4)
 
-                (FONT30.render(f'{TOWER_UPGRADES[tower.type][0][0]}$'    , True, RED), (TOWER_TEXTURES[0][1][0], TOWER_TEXTURES[0][1][1] + 50)),
-                (FONT30.render(f'{TOWER_UPGRADES[tower.type][1][0]}$'  , True, RED), (TOWER_TEXTURES[1][1][0], TOWER_TEXTURES[1][1][1] + 50)),
-                (FONT30.render(f'{TOWER_UPGRADES[tower.type][2]}$'  , True, RED), (TOWER_TEXTURES[2][1][0], TOWER_TEXTURES[2][1][1] + 50)),
-                (FONT30.render(f'{tower.full_price}$', True, RED), (TOWER_TEXTURES[3][1][0], TOWER_TEXTURES[3][1][1] + 50)),
+            window.blits((
+                *TOWER_TEXTURES[tower4 : (tower4 + 4)],
+
+                (FONT30.render(f'{TOWER_UPGRADES[tower.kind][0][0]}$'    , True, RED), (TOWER_TEXTURES[0][1][0], TOWER_TEXTURES[0][1][1] + 50)),
+                (FONT30.render(f'{TOWER_UPGRADES[tower.kind][1][0]}$'  , True, RED), (TOWER_TEXTURES[1][1][0], TOWER_TEXTURES[1][1][1] + 50)),
+                (FONT30.render(f'{TOWER_UPGRADES[tower.kind][2]}$'  , True, RED), (TOWER_TEXTURES[2][1][0], TOWER_TEXTURES[2][1][1] + 50)),
+                (FONT30.render(f'{tower.total_cost}$', True, RED), (TOWER_TEXTURES[3][1][0], TOWER_TEXTURES[3][1][1] + 50)),
                 (FONT30.render(f'{tower.level_damage}'    , True, PURPLE), (TOWER_TEXTURES[0][1][0], TOWER_TEXTURES[0][1][1])),
                 (FONT30.render(f'{tower.level_range}'  , True, PURPLE), (TOWER_TEXTURES[1][1][0], TOWER_TEXTURES[1][1][1])),
                 (FONT30.render(f'{tower.level_special}'  , True, PURPLE), (TOWER_TEXTURES[2][1][0], TOWER_TEXTURES[2][1][1])),
@@ -311,7 +313,7 @@ class Gra:
             pygame.draw.circle(window, tower.color, tower.center, tower.range, 2)
 
         for bullet in self.bullets:
-            if bullet.type == 'player':
+            if bullet.kind == 'player':
                 window.blit(MAGIC_BALL, bullet.rect)
             else:
                 pygame.draw.rect(window, bullet.color, bullet.rect)
@@ -370,8 +372,8 @@ class Gra:
     def tower_to_buy(self, i):
         self.tower_buying = True
         self.tower_to_buy_type = i
-        self.tower_to_buy_range = WIEZE[i][5]
-        self.tower_to_buy_color = WIEZE[i][1]
+        self.tower_to_buy_range = TOWERS[i][5]
+        self.tower_to_buy_color = TOWERS[i][1]
 
     def place_tower(self):
         new_tower_rect = pygame.Rect(self.mouse_pos[0] - 10, self.mouse_pos[1] - 10, 20, 20)
@@ -394,17 +396,17 @@ class Gra:
 
         self.choosen_tower = Tower(self.mouse_pos, self.tower_to_buy_type, self.counter, self.dt)
         self.towers.append(self.choosen_tower)
-        self.money -= self.towers[-1].full_price
+        self.money -= self.towers[-1].total_cost
         if (not self.tower_buying) or (self.money < 0):
-            self.sell_tower(self.towers[-1].full_price)
+            self.sell_tower(self.towers[-1].total_cost)
         else:
             self.tower_is_selected = True
 
         self.tower_buying = False
 
-    def sell_tower(self, full_price):
+    def sell_tower(self, total_cost):
         self.tower_flags_to_False()
-        self.money += full_price
+        self.money += total_cost
         self.towers.remove(self.choosen_tower)
 
     def tower_flags_to_False(self):
