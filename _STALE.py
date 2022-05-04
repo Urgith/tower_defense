@@ -11,7 +11,7 @@ BASE_RECT = pygame.Rect(BASE_X, BASE_Y, (3 * TILESIZE), (3 * TILESIZE))
 BASE_HP_STRING = pygame.Rect(BASE_X + TILESIZE_BY_2 + 5, BASE_Y + TILESIZE + 3, 44, 20)
 
 #      DMG     RANGE
-WIEZE_POLEPSZENIA = (
+TOWER_UPGRADES = (
     ((5, 10), (1, 25), 4),
     ((5, 20), (2, 15), 15),
     ((25, 4), (5, 10), 50)

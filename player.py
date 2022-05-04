@@ -26,7 +26,7 @@ class Player:
         self.bullet_speed = 200
         self.shooting = START_FIRING
 
-        self.rodzaj = 'gracz'
+        self.rodzaj = 'player'
 
     def move(self, dt):
         #self.previous_obiekt.x, self.previous_obiekt.y = (self.x, self.y)
@@ -68,7 +68,7 @@ class Player:
 
     def shoot(self, game):
         if self.shooting and (game.counter - self.shooting_counter > self.reload):
-            game.bullets.append(Pocisk(self, game))
+            game.bullets.append(Pocisk(self, game.mouse_pos, game.counter))
             self.shooting_counter = game.counter
 
     def check_level_up(self):
