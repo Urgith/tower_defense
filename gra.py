@@ -2,7 +2,7 @@ import sys
 
 from _STALE import *
 from player import Player
-from przeciwnik import Przeciwnik
+from opponent import Opponent
 from tower import Tower
 
 
@@ -62,7 +62,7 @@ class Gra:
             if (self.counter - self.opponents_counter > OPPONENTS_GAP
               and self.opponent_number < self.len_wave):
 
-                self.opponents.append(Przeciwnik(self.round, self.opponent_number))
+                self.opponents.append(Opponent(self.round, self.opponent_number))
                 self.opponent_number += 1
                 self.opponents_counter = self.counter
 
@@ -130,9 +130,9 @@ class Gra:
                             break
 
                     if self.tower_is_selected:
-                        choosen_4 = (self.choosen_tower.rodzaj * 4)
+                        choosen_4 = (self.choosen_tower.type * 4)
 
-                        for i in range(choosen_4 - 4, choosen_4):
+                        for i in range(choosen_4, choosen_4 + 4):
                             if TOWER_TEXTURES[i][1].collidepoint(self.mouse_pos):
                                 self.choosen_tower.upgrade(self, i)
                                 break
@@ -150,8 +150,8 @@ class Gra:
         for opponent in self.opponents:
             opponent.move(self.dt)
 
-            if opponent.obiekt.colliderect(BASE_RECT):
-                self.base_health -= opponent.atak
+            if opponent.rect.colliderect(BASE_RECT):
+                self.base_health -= opponent.damage
                 self.opponents.remove(opponent)
 
                 if self.base_health <= 0:
@@ -159,8 +159,8 @@ class Gra:
 
                 continue
 
-            elif opponent.obiekt.colliderect(self.player.rect):
-                self.player.health -= opponent.atak * self.dt * 60
+            elif opponent.rect.colliderect(self.player.rect):
+                self.player.health -= opponent.damage * self.dt * 60
 
                 if self.player.health <= 0:
                     sys.exit()
@@ -168,24 +168,24 @@ class Gra:
             opponent.is_electrified = False
 
     def update_bullets(self):
-        opponents_rects_list = [opponent.obiekt for opponent in self.opponents]
+        opponents_rects_list = [opponent.rect for opponent in self.opponents]
 
         for i, bullet in enumerate(self.bullets):
             bullet.move(self.dt)
 
-            if bullet.rodzaj != 'player' and (bullet.data_konca < self.counter):
+            if bullet.type != 'player' and (bullet.end_date < self.counter):
                 self.bullets.pop(i)
                 continue
 
-            if bullet.obiekt.x < 0 or bullet.obiekt.y < 0 or bullet.obiekt.x > W_8_ or bullet.obiekt.y > H_8_:
+            if bullet.rect.x < 0 or bullet.rect.y < 0 or bullet.rect.x > W_8_ or bullet.rect.y > H_8_:
                 self.bullets.pop(i)
                 continue
 
-            collided_opponent_index = bullet.obiekt.collidelist(opponents_rects_list)
+            collided_opponent_index = bullet.rect.collidelist(opponents_rects_list)
             if collided_opponent_index != -1:
                 opponent = self.opponents[collided_opponent_index]
 
-                if bullet.rodzaj == 2 and (bullet.id not in opponent.ids):
+                if bullet.type == 1 and (bullet.id not in opponent.ids):
                     opponent.lose_hp(bullet.damage)
                     opponent.ids.append(bullet.id)
                     bullet.pierce -= 1
@@ -193,18 +193,18 @@ class Gra:
                     if bullet.pierce == 0:
                         self.bullets.pop(i)
 
-                elif bullet.rodzaj != 2:
+                elif bullet.type != 1:
                     opponent.lose_hp(bullet.damage)
                     self.bullets.pop(i)
 
-                if opponent.zdrowie <= 0:
+                if opponent.health <= 0:
                     self.points += opponent.points
-                    self.money += opponent.monety
+                    self.money += opponent.money
 
                     self.opponents.pop(collided_opponent_index)
                     opponents_rects_list.pop(collided_opponent_index)
 
-                    if bullet.rodzaj == 'player':
+                    if bullet.type == 'player':
                         self.player.experience += opponent.points
                         self.player.check_level_up()
 
@@ -213,37 +213,37 @@ class Gra:
             shooted_opponents = 0
             tower.can_shoot = False
 
-            if tower.rodzaj == 3:
+            if tower.type == 2:
                 for i, opponent in enumerate(self.opponents):
-                    x, y, rozmiar, _ = opponent.obiekt
+                    x, y, size, _ = opponent.rect
 
                     if (
                       (x - tower.center[0])**2 + (y - tower.center[1])**2)**0.5 <= tower.range \
-                      or ((x + rozmiar - tower.center[0])**2 + (y - tower.center[1])**2)**0.5 <= tower.range \
-                      or ((x - tower.center[0])**2 + (y + rozmiar - tower.center[1])**2)**0.5 <= tower.range \
-                      or ((x + rozmiar - tower.center[0])**2 + (y + rozmiar - tower.center[1])**2)**0.5 <= tower.range:
+                      or ((x + size - tower.center[0])**2 + (y - tower.center[1])**2)**0.5 <= tower.range \
+                      or ((x - tower.center[0])**2 + (y + size - tower.center[1])**2)**0.5 <= tower.range \
+                      or ((x + size - tower.center[0])**2 + (y + size - tower.center[1])**2)**0.5 <= tower.range:
 
                         if tower.electro > 0:
                             opponent.lose_hp(tower.electro)
 
-                            if opponent.zdrowie <= 0:
+                            if opponent.health <= 0:
                                 self.opponents.pop(i)
 
                             opponent.is_electrified = True
 
             for opponent in self.opponents:
-                x, y, rozmiar, _ = opponent.obiekt
+                x, y, size, _ = opponent.rect
 
                 if (
                   (x - tower.center[0])**2 + (y - tower.center[1])**2)**0.5 <= tower.range \
-                  or ((x + rozmiar - tower.center[0])**2 + (y - tower.center[1])**2)**0.5 <= tower.range \
-                  or ((x - tower.center[0])**2 + (y + rozmiar - tower.center[1])**2)**0.5 <= tower.range \
-                  or ((x + rozmiar - tower.center[0])**2 + (y + rozmiar - tower.center[1])**2)**0.5 <= tower.range:
+                  or ((x + size - tower.center[0])**2 + (y - tower.center[1])**2)**0.5 <= tower.range \
+                  or ((x - tower.center[0])**2 + (y + size - tower.center[1])**2)**0.5 <= tower.range \
+                  or ((x + size - tower.center[0])**2 + (y + size - tower.center[1])**2)**0.5 <= tower.range:
 
                     tower.shoot(self, opponent)
                     shooted_opponents += 1
 
-                    if tower.rodzaj != 3 or shooted_opponents == tower.multishot:
+                    if tower.type != 2 or shooted_opponents == tower.multishot:
                         break
 
 
@@ -257,14 +257,14 @@ class Gra:
             window.blit(tower.image, tower.rect)
 
         for opponent in self.opponents:
-            window.blit(opponent.rodzaj, opponent.obiekt)
+            window.blit(opponent.type, opponent.rect)
 
             pygame.draw.rect(window, WHITE, opponent.hp_bar)
-            if opponent.startowe_zdrowie > opponent.zdrowie:
+            if opponent.max_health > opponent.health:
                 pygame.draw.rect(window, RED, opponent.hp_bar_lost)
 
             if opponent.is_electrified:
-                window.blit(ELECTRO, (opponent.obiekt.x - ((opponent.rozmiar - 15) / 2), opponent.obiekt.y - ((opponent.rozmiar - 15) / 2)))
+                window.blit(ELECTRO, (opponent.rect.x - ((opponent.size - 15) / 2), opponent.rect.y - ((opponent.size - 15) / 2)))
 
         pygame.draw.rect(window, (0,0,0), (MAP_WIDTH, 0, MENUSIZE, MAP_HEIGHT))
 
@@ -297,11 +297,11 @@ class Gra:
         if self.tower_is_selected:
             tower = self.choosen_tower
             window.blits((
-                *TOWER_TEXTURES[(tower.rodzaj - 1) * 4 : tower.rodzaj * 4],
+                *TOWER_TEXTURES[tower.type * 4 : (tower.type * 4) + 4],
 
-                (FONT30.render(f'{TOWER_UPGRADES[tower.rodzaj - 1][0][0]}$'    , True, RED), (TOWER_TEXTURES[0][1][0], TOWER_TEXTURES[0][1][1] + 50)),
-                (FONT30.render(f'{TOWER_UPGRADES[tower.rodzaj - 1][1][0]}$'  , True, RED), (TOWER_TEXTURES[1][1][0], TOWER_TEXTURES[1][1][1] + 50)),
-                (FONT30.render(f'{TOWER_UPGRADES[tower.rodzaj - 1][2]}$'  , True, RED), (TOWER_TEXTURES[2][1][0], TOWER_TEXTURES[2][1][1] + 50)),
+                (FONT30.render(f'{TOWER_UPGRADES[tower.type][0][0]}$'    , True, RED), (TOWER_TEXTURES[0][1][0], TOWER_TEXTURES[0][1][1] + 50)),
+                (FONT30.render(f'{TOWER_UPGRADES[tower.type][1][0]}$'  , True, RED), (TOWER_TEXTURES[1][1][0], TOWER_TEXTURES[1][1][1] + 50)),
+                (FONT30.render(f'{TOWER_UPGRADES[tower.type][2]}$'  , True, RED), (TOWER_TEXTURES[2][1][0], TOWER_TEXTURES[2][1][1] + 50)),
                 (FONT30.render(f'{tower.full_price}$', True, RED), (TOWER_TEXTURES[3][1][0], TOWER_TEXTURES[3][1][1] + 50)),
                 (FONT30.render(f'{tower.level_damage}'    , True, PURPLE), (TOWER_TEXTURES[0][1][0], TOWER_TEXTURES[0][1][1])),
                 (FONT30.render(f'{tower.level_range}'  , True, PURPLE), (TOWER_TEXTURES[1][1][0], TOWER_TEXTURES[1][1][1])),
@@ -311,10 +311,10 @@ class Gra:
             pygame.draw.circle(window, tower.color, tower.center, tower.range, 2)
 
         for bullet in self.bullets:
-            if bullet.rodzaj == 'player':
-                window.blit(MAGIC_BALL, bullet.obiekt)
+            if bullet.type == 'player':
+                window.blit(MAGIC_BALL, bullet.rect)
             else:
-                pygame.draw.rect(window, bullet.color, bullet.obiekt)
+                pygame.draw.rect(window, bullet.color, bullet.rect)
 
         if self.tower_buying:
             pygame.draw.rect(window, self.tower_to_buy_color, (self.mouse_pos[0] - 10, self.mouse_pos[1] - 10, 20, 20))
@@ -369,7 +369,7 @@ class Gra:
 
     def tower_to_buy(self, i):
         self.tower_buying = True
-        self.tower_to_buy_type = (i + 1)
+        self.tower_to_buy_type = i
         self.tower_to_buy_range = WIEZE[i][5]
         self.tower_to_buy_color = WIEZE[i][1]
 

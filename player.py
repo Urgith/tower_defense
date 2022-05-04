@@ -26,7 +26,7 @@ class Player:
         self.bullet_speed = 200
         self.shooting = START_FIRING
 
-        self.rodzaj = 'player'
+        self.type = 'player'
 
     def move(self, dt):
         #self.previous_obiekt.x, self.previous_obiekt.y = (self.x, self.y)
