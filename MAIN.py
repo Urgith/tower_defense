@@ -273,7 +273,7 @@ class Gra:
             *TEXTURES,
 
             (FONT30.render(f'{player.level} | {round(100 * (player.experience - player.to_previous) / (player.to_next - player.to_previous), 2)}%', True, WHITE), (W_23, 2)),
-            (FONT30.render(f'{player.damage} | {1000 / player.reload}', True, WHITE), (W_23, 23)),
+            (FONT30.render(f'{player.damage} | {round(1000 / player.reload, 2)}', True, WHITE), (W_23, 23)),
             (FONT30.render(f'{player.speed}', True, WHITE), (W_23, 41)),
             (FONT30.render(f'{int(player.health)}', True, WHITE), (W_23, 59)),
             (FONT30.render(f'{self.money}', True, WHITE), (W_23, 81)),
