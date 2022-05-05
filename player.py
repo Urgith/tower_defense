@@ -1,6 +1,8 @@
 from _CONSTANTS import *
 from pocisk import Pocisk
 
+from math import log
+
 
 class Player:
 
@@ -71,8 +73,8 @@ class Player:
 
     def check_level_up(self):
         if self.experience >= self.to_next:
-            level = int((self.experience // 10) ** 0.5)
-            self.level = level
+            self.level += 1
+            level = self.level
 
             self.speed = 100 + (10 * level)
             self.damage = 10 + int(((level + 1) * level) / 2)
@@ -84,4 +86,4 @@ class Player:
             self.bullet_speed = 200 + (20 * level)
 
             self.to_previous = self.to_next
-            self.to_next += 10 + (20 * level)
+            self.to_next = 20 * (1 + level) ** log(1 + level, 4)

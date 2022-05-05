@@ -5,16 +5,16 @@ PURPLE = (255, 0, 255)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
-TILESIZE_BY_2 = (TILESIZE / 2)
+TILESIZE_BY_2 = (TILESIZE // 2)
 
 BASE_RECT = pygame_Rect(BASE_X, BASE_Y, (3 * TILESIZE), (3 * TILESIZE))
 BASE_HP_STRING = pygame_Rect(BASE_X + TILESIZE_BY_2 + 5, BASE_Y + TILESIZE + 3, 44, 20)
 
 #      DMG     RANGE
 TOWER_UPGRADES = (
-    ((5, 10), (1, 25), 4),
-    ((5, 20), (2, 15), 15),
-    ((25, 4), (5, 10), 50)
+    ((3, 8),  (1, 20),  5),
+    ((10, 5), (3, 25),  10),
+    ((15, 3), (10, 10), 50)
 )
 
 '''
@@ -47,17 +47,17 @@ ENEMIES = { # hp,  sp, d,  p, m, si
 }
 
 WAVES = (
-    (MOUSE,) * 6,
-    (MOUSE,) * 15,
-    (MOUSE,) * 25 + (RAT,) * 5,
-    (MOUSE,) * 20 + (RAT,) * 10,
-    (MOUSE,) * 18 + (RAT,) * 15,
-    (MOUSE,) * 15 + (RAT,) * 20 + (SPIDER,) * 3,
-    (MOUSE,) * 12 + (RAT,) * 20 + (SPIDER,) * 8,
-    (MOUSE,) * 10 + (RAT,) * 18 + (SPIDER,) * 15,
-    (MOUSE,) * 8  + (RAT,) * 15 + (SPIDER,) * 15 + (SNAKE,) * 3,
-    (MOUSE,) * 5  + (RAT,) * 12 + (SPIDER,) * 20 + (SNAKE,) * 8,
-    (MOUSE,) * 3  + (RAT,) * 10 + (SPIDER,) * 20 + (SNAKE,) * 15
+    (MOUSE,) * 5,
+    (MOUSE,) * 10,
+    (MOUSE,) * 13 + (RAT,) * 2,
+    (MOUSE,) * 16 + (RAT,) * 5,
+    (MOUSE,) * 18 + (RAT,) * 10,
+    (MOUSE,) * 15 + (RAT,) * 15 + (SPIDER,) * 3,
+    (MOUSE,) * 12 + (RAT,) * 18 + (SPIDER,) * 6,
+    (MOUSE,) * 10 + (RAT,) * 18 + (SPIDER,) * 12,
+    (MOUSE,) * 8  + (RAT,) * 15 + (SPIDER,) * 15 + (SNAKE,) * 2,
+    (MOUSE,) * 5  + (RAT,) * 12 + (SPIDER,) * 18 + (SNAKE,) * 6,
+    (MOUSE,) * 3  + (RAT,) * 10 + (SPIDER,) * 20 + (SNAKE,) * 12
 )
 
 LEN_WAVES = len(WAVES)

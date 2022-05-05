@@ -21,7 +21,7 @@ class Gra:
 
     def initialize_attributes(self):
         self.opponents_counter = pygame_time_get_ticks()
-        self.game_window = pygame_display_set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
+        self.game_window = pygame_display_set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT), FULLSCREEN)
         self.player = Player(self.opponents_counter)
 
         self.opponents = []
@@ -220,15 +220,15 @@ class Gra:
                       (x - tower.center[0])**2 + (y - tower.center[1])**2)**0.5 <= tower.range \
                       or ((x + size - tower.center[0])**2 + (y - tower.center[1])**2)**0.5 <= tower.range \
                       or ((x - tower.center[0])**2 + (y + size - tower.center[1])**2)**0.5 <= tower.range \
-                      or ((x + size - tower.center[0])**2 + (y + size - tower.center[1])**2)**0.5 <= tower.range:
+                      or ((x + size - tower.center[0])**2 + (y + size - tower.center[1])**2)**0.5 <= tower.range \
+                      and tower.electro > 0:
 
-                        if tower.electro > 0:
-                            opponent.lose_hp(tower.electro)
+                        opponent.lose_hp(tower.electro)
 
-                            if opponent.health <= 0:
-                                self.opponents.pop(i)
+                        if opponent.health <= 0:
+                            self.opponents.pop(i)
 
-                            opponent.is_electrified = True
+                        opponent.is_electrified = True
 
             for opponent in self.opponents:
                 x, y, size, _ = opponent.rect
@@ -300,13 +300,13 @@ class Gra:
             window.blits((
                 *TOWER_TEXTURES[tower4 : (tower4 + 4)],
 
-                (FONT30.render(f'{TOWER_UPGRADES[tower.kind][0][0]}$'    , True, RED), (TOWER_TEXTURES[0][1][0], TOWER_TEXTURES[0][1][1] + 50)),
-                (FONT30.render(f'{TOWER_UPGRADES[tower.kind][1][0]}$'  , True, RED), (TOWER_TEXTURES[1][1][0], TOWER_TEXTURES[1][1][1] + 50)),
-                (FONT30.render(f'{TOWER_UPGRADES[tower.kind][2]}$'  , True, RED), (TOWER_TEXTURES[2][1][0], TOWER_TEXTURES[2][1][1] + 50)),
-                (FONT30.render(f'{tower.total_cost}$', True, RED), (TOWER_TEXTURES[3][1][0], TOWER_TEXTURES[3][1][1] + 50)),
-                (FONT30.render(f'{tower.level_damage}'    , True, PURPLE), (TOWER_TEXTURES[0][1][0], TOWER_TEXTURES[0][1][1])),
-                (FONT30.render(f'{tower.level_range}'  , True, PURPLE), (TOWER_TEXTURES[1][1][0], TOWER_TEXTURES[1][1][1])),
-                (FONT30.render(f'{tower.level_special}'  , True, PURPLE), (TOWER_TEXTURES[2][1][0], TOWER_TEXTURES[2][1][1])),
+                (FONT30.render(f'{TOWER_UPGRADES[tower.kind][0][0]}$'    , True, RED), TOWER_TEXTURES[0][1].move(0, 50)),
+                (FONT30.render(f'{TOWER_UPGRADES[tower.kind][1][0]}$'  , True, RED), TOWER_TEXTURES[1][1].move(0, 50)),
+                (FONT30.render(f'{TOWER_UPGRADES[tower.kind][2]}$'  , True, RED), TOWER_TEXTURES[2][1].move(0, 50)),
+                (FONT30.render(f'{tower.total_cost}$', True, RED), TOWER_TEXTURES[3][1].move(0, 50)),
+                (FONT30.render(f'{tower.level_damage}', True, PURPLE), TOWER_TEXTURES[0][1]),
+                (FONT30.render(f'{tower.level_range}', True, PURPLE), TOWER_TEXTURES[1][1]),
+                (FONT30.render(f'{tower.level_special}', True, PURPLE), TOWER_TEXTURES[2][1]),
             ))
 
             pygame_draw_circle(window, tower.color, tower.center, tower.range, 2)
@@ -321,7 +321,7 @@ class Gra:
             pygame_draw_rect(window, self.tower_to_buy_color, (self.mouse_pos[0] - 10, self.mouse_pos[1] - 10, 20, 20))
             pygame_draw_circle(window, self.tower_to_buy_color, self.mouse_pos, self.tower_to_buy_range, 2)
 
-        pygame_display_update()
+        pygame_display_update(GAME_RECT)
 
     def draw_health_bar(self, player):
         state = int((player.health / (player.max_health + 1)) * 5)

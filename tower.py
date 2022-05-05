@@ -43,7 +43,9 @@ class Tower:
             self.increase_damage(TOWER_UPGRADES[self.kind][0][1])
             self.increase_cost(game, TOWER_UPGRADES[self.kind][0][0])
 
-            if self.kind == 2:
+            if self.kind == 1:
+                self.damage *= 1.5
+            elif self.kind == 2:
                 self.multishot += 1
 
         elif (upgrade_id % 4) == 1 and (game.money >= TOWER_UPGRADES[self.kind][1][0]) and (self.level_range <= 4):

@@ -20,7 +20,7 @@ from pygame.event import get as pygame_event_get
 from pygame.key import get_pressed as pygame_key_get_pressed
 
 from pygame.locals import K_1, K_2, K_3, K_w, K_a, K_s, K_d, K_p, \
-    K_SPACE, K_ESCAPE, QUIT, KEYDOWN, MOUSEBUTTONUP
+    K_SPACE, K_ESCAPE, QUIT, KEYDOWN, MOUSEBUTTONUP, FULLSCREEN
 
 
 def image_load(name, location=None, scale=None):

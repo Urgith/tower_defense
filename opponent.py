@@ -14,19 +14,23 @@ class Opponent:
         self.mov_x, self.mov_y = (0, 0)
 
         self.rect = pygame_Rect(self.x, self.y, self.size, self.size)
-        self.hp_bar = pygame_Rect(self.hp_bar_x, self.y - 5, TILESIZE, 2)
+        self.hp_bar = pygame_Rect(self.hp_bar_x, self.hp_bar_y, TILESIZE, 2)
         self.hp_bar_lost = pygame_Rect(TILESIZE, self.hp_bar_y, TILESIZE, 2)
 
         self.health = int(self.health * (1.1**round))
         self.max_health = self.health
 
-        self.tile = AREA[0][0]
+        self.tile_x, self.tile_y = (0, TILESIZE_BY_2)
+        self.tile = AREA[self.tile_y][self.tile_x]
         self.ids = []
 
         self.is_electrified = False
 
     def move(self, dt):
-        tile = AREA[int((self.rect.centery + self.mov_y) / TILESIZE)][int((self.rect.centerx + self.mov_x) / TILESIZE)]
+        if self.mov_x == 0:
+            tile = AREA[int((self.rect.centery + self.mov_y) / TILESIZE)][self.tile_x]
+        else:
+            tile = AREA[self.tile_y][int((self.rect.centerx + self.mov_x) / TILESIZE)]
 
         if tile != self.tile and tile not in {0, 1, 10}:
             self.tile = tile
@@ -43,6 +47,9 @@ class Opponent:
             else:
                 self.mov_y = -TILESIZE_BY_2
                 self.mov_x = 0
+
+            self.tile_x = int((self.rect.centerx + self.mov_x) / TILESIZE)
+            self.tile_y = int((self.rect.centery + self.mov_y) / TILESIZE)
 
         if self.tile in {5, 50}:
             self.x += self.speed * dt

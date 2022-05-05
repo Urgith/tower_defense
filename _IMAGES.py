@@ -2,16 +2,18 @@ from _CHANGEABLE import *
 from imports_and_functions import *
 
 
-MENUSIZE = 5 * TILESIZE  # 5 *
-BASE_X = 18 * TILESIZE  # 18 *
-BASE_Y = 21 * TILESIZE  # 21 *
-DRUID_SIZE = 2 * TILESIZE  # 2 *
+MENUSIZE = 150
+BASE_X = 18 * TILESIZE
+BASE_Y = 21 * TILESIZE
+DRUID_SIZE = 2 * TILESIZE
 
 MAP_TILES_W = len(AREA[0])
 MAP_TILES_H = len(AREA)
 
 MAP_WIDTH = (TILESIZE * MAP_TILES_W)
 MAP_HEIGHT = (TILESIZE * MAP_TILES_H)
+
+GAME_RECT = pygame_Rect(0, 0, MAP_WIDTH + MENUSIZE, MAP_HEIGHT)
 
 W_10_ = MAP_WIDTH - 10
 W_8_ = MAP_WIDTH - 8
@@ -35,9 +37,9 @@ H_MINUS_DRUID = (MAP_HEIGHT - DRUID_SIZE)
 
 import os
 os.environ['SDL_VIDEO_CENTERED'] = '1'
-pygame_display_set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT))
+pygame_display_set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT), FULLSCREEN)
 
-GRASS = image_load('data/trawa.jpg')
+GRASS = image_load('data/trawa.jpg', scale=(MAP_WIDTH, MAP_HEIGHT))
 FOREST = image_load('data/trace/las.jpg', scale=(3 * TILESIZE, 3 * TILESIZE))
 
 MAGIC_BALL = image_load('data/kula_mocy.png')
@@ -50,9 +52,9 @@ yellow = image_load('data/towers/zolty.jpg')
                         # cost, damage, speed, range, reload, size
                         #   c,  d,  sp,  ra,  re, s
 TOWERS = (
-    (green, (0,255,0),   10, 10, 200, 150, 200, 4),
-    (blue, (0,0,255), 30, 20, 100, 100, 400, 6),
-    (yellow, (255,255,0),   50,  5, 300,  80, 100, 3),
+    (green, (0,255,0),     10, 10, 250, 130, 200, 4),
+    (blue, (0,0,255),      30, 15, 150, 100, 300, 6),
+    (yellow, (255,255,0),  50,  5, 350,  80, 100, 3),
     (image_load('data/towers/zielony2.jpg'), 0),
     (image_load('data/towers/niebieski2.jpg'), 0),
     (image_load('data/towers/zolty2.jpg'), 0),
