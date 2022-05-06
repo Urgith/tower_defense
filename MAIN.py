@@ -31,7 +31,7 @@ class Gra:
 
         self.opponents = []
         self.bullets = []
-        self.towers = []
+        self.towers = {}
 
         self.counter = 0
 
@@ -120,7 +120,7 @@ class Gra:
                         self.place_tower()
 
                     else:
-                        for tower in self.towers:
+                        for tower in self.towers.values():
                             if tower.rect.collidepoint(self.mouse_pos):
                                 #self.change_interface = True
                                 self.tower_is_selected = True
@@ -182,6 +182,7 @@ class Gra:
             opponent.is_electrified = False
 
     def update_bullets(self):
+        '''MESS TO CLEAN'''
         opponents_rects_list = [opponent.rect for opponent in self.opponents]
 
         for i, bullet in enumerate(self.bullets):
@@ -200,7 +201,7 @@ class Gra:
                 opponent = self.opponents[collided_opponent_index]
 
                 if bullet.kind == 1 and (bullet.id not in opponent.ids):
-                    opponent.lose_hp(bullet.damage)
+                    opponent.lose_hp(bullet.damage, self.towers.get(bullet.tower_id))
                     opponent.ids.append(bullet.id)
                     bullet.pierce -= 1
 
@@ -208,7 +209,7 @@ class Gra:
                         self.bullets.pop(i)
 
                 elif bullet.kind != 1:
-                    opponent.lose_hp(bullet.damage)
+                    opponent.lose_hp(bullet.damage, self.towers.get(bullet.tower_id))
                     self.bullets.pop(i)
 
                 if opponent.health <= 0:
@@ -223,7 +224,7 @@ class Gra:
                         self.player.check_level_up()
 
     def update_towers(self):
-        for tower in self.towers:
+        for tower in self.towers.values():
             shooted_opponents = 0
             tower.can_shoot = False
 
@@ -238,7 +239,7 @@ class Gra:
                       or ((x + size - tower.center[0])**2 + (y + size - tower.center[1])**2)**0.5 <= tower.range \
                       and tower.electro > 0:
 
-                        opponent.lose_hp(tower.electro)
+                        opponent.lose_hp(tower.electro, tower)
 
                         if opponent.health <= 0:
                             self.opponents.pop(i)
@@ -267,7 +268,7 @@ class Gra:
 
         window.blits(((GRASS, (0, 0)), *MAP_DRAW, (FOREST, BASE_RECT)))
 
-        for tower in self.towers:
+        for tower in self.towers.values():
             window.blit(tower.image, tower.rect)
 
         for opponent in self.opponents:
@@ -322,6 +323,8 @@ class Gra:
                 (FONT30.render(f'{tower.level_damage}', True, PURPLE), TOWER_TEXTURES[0][1]),
                 (FONT30.render(f'{tower.level_range}', True, PURPLE), TOWER_TEXTURES[1][1]),
                 (FONT30.render(f'{tower.level_special}', True, PURPLE), TOWER_TEXTURES[2][1]),
+                (FONT30.render('Damage dealt:', True, WHITE), TOWER_TEXTURES[2][1].move(0, 75)),
+                (FONT30.render(f'{int(tower.damage_dealt)}', True, WHITE), TOWER_TEXTURES[2][1].move(0, 95))
             ))
 
             pygame_draw_circle(window, tower.color, tower.center, tower.range, 2)
@@ -391,6 +394,7 @@ class Gra:
 
     def place_tower(self):
         new_tower_rect = pygame_Rect(self.mouse_pos[0] - 10, self.mouse_pos[1] - 10, 20, 20)
+        new_tower_id = pygame_time_get_ticks()
 
         for tile in MAP_DRAW:
             if (pygame_Rect(*tile[1], TILESIZE, TILESIZE).colliderect(new_tower_rect)
@@ -403,30 +407,29 @@ class Gra:
                 self.tower_buying = False
                 return
 
-        for tower in self.towers:
+        for tower in self.towers.values():
             if tower.rect.colliderect(new_tower_rect):
                 self.tower_buying = False
                 return
 
-        self.choosen_tower = Tower(self.mouse_pos, self.tower_to_buy_type, self.counter, self.dt)
-        self.towers.append(self.choosen_tower)
-        self.money -= self.towers[-1].total_cost
-        if (not self.tower_buying) or (self.money < 0):
-            self.sell_tower(self.towers[-1].total_cost)
-        else:
-            self.tower_is_selected = True
+        self.choosen_tower = Tower(self.mouse_pos, self.tower_to_buy_type, self.counter, self.dt, new_tower_id)
+        if self.choosen_tower.total_cost <= self.money:
+            self.towers[new_tower_id] = self.choosen_tower
+            self.money -= self.choosen_tower.total_cost
+            self.tower_flags_to_False(is_selected=True)
+            return
 
-        self.tower_buying = False
-
-    def sell_tower(self, total_cost):
         self.tower_flags_to_False()
-        self.money += total_cost
-        self.towers.remove(self.choosen_tower)
 
-    def tower_flags_to_False(self):
+    def sell_tower(self, tower):
+        self.tower_flags_to_False()
+        self.money += tower.total_cost
+        del self.towers[tower.id]
+
+    def tower_flags_to_False(self, is_selected=False):
         #self.change_interface = False
         self.tower_buying = False
-        self.tower_is_selected = False
+        self.tower_is_selected = is_selected
 
 
 if __name__ == '__main__':

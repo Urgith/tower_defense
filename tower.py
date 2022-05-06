@@ -4,12 +4,14 @@ from pocisk import Pocisk
 
 class Tower:
 
-    def __init__(self, mouse_pos, kind, counter, dt):
+    def __init__(self, mouse_pos, kind, counter, dt, tower_id):
         self.rect = pygame_Rect(mouse_pos[0] - 10, mouse_pos[1] - 10, 20, 20)
         self.center = mouse_pos
+        self.id = tower_id
 
         self.kind = kind
         self.counter = counter
+        self.damage_dealt = 0
         self.level_damage, self.level_range, self.level_special, self.level = (0, 0, 0, 0)
 
         (self.image, self.color, self.total_cost, self.damage, self.speed, self.range,
@@ -32,12 +34,12 @@ class Tower:
                 self.can_shoot = True
 
         if self.kind == 2:
-            opponent.lose_hp(self.electro)
+            opponent.lose_hp(self.electro, game.towers[self.id])
 
     def upgrade(self, game, upgrade_id):
 
         if (upgrade_id % 4) == 3:
-            game.sell_tower(self.total_cost)
+            game.sell_tower(self)
 
         if (upgrade_id % 4) == 0 and (game.money >= TOWER_UPGRADES[self.kind][0][0]) and (self.level_damage <= 4):
             self.increase_damage(TOWER_UPGRADES[self.kind][0][1])

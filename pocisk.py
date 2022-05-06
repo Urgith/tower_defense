@@ -1,5 +1,3 @@
-from random import random
-
 from _CONSTANTS import *
 
 
@@ -11,6 +9,7 @@ class Pocisk:
         if self.kind == 'player':
             self.damage = tower.damage
             self.speed = tower.bullet_speed
+            self.tower_id = self.kind
 
             self.x, self.y, *_ = tower.rect
             self.rect = pygame_Rect(self.x, self.y, 8, 8)
@@ -28,6 +27,7 @@ class Pocisk:
             self.end_date = tower.lifespan + counter
             self.damage = tower.damage
             self.speed = tower.speed
+            self.tower_id = tower.id
 
             self.x, self.y = tower.rect.center
             self.rect = pygame_Rect(self.x, self.y, tower.bullet_size, tower.bullet_size)

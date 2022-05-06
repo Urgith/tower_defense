@@ -73,9 +73,14 @@ class Opponent:
             self.y += self.speed * dt
             self.rect.y = self.hp_bar.y = self.hp_bar_lost.y = self.y
 
-    def lose_hp(self, damage):
+    def lose_hp(self, damage, tower=None):
+        damage = min(self.health, damage)
+
         self.health -= damage
         self.update_hp_bar()
+
+        if tower is not None:
+            tower.damage_dealt += damage
 
     def update_hp_bar(self):
         self.hp_bar.w = TILESIZE * (self.health / self.max_health)
