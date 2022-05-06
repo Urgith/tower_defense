@@ -1,7 +1,7 @@
 from _CONSTANTS import *
 
-from player import Player
 from opponent import Opponent
+from player import Player
 from tower import Tower
 
 
@@ -35,13 +35,13 @@ class Gra:
 
         self.counter = 0
 
-        self.start = False
-        self.round = 0
-        self.opponent_number = 0
+        self.start = START
+        self.round = 0  # MESS 1
+        self.opponent_number = 0  # MESS 1
 
-        self.len_wave = len(WAVES[self.round])
-        self.round_gaps = OPPONENTS_GAPS[self.round]
-        self.gap = self.round_gaps[self.opponent_number]
+        self.len_wave = len(WAVES[self.round])  # MESS 1
+        self.round_gaps = OPPONENTS_GAPS[self.round]  # MESS 1
+        self.gap = self.round_gaps[self.opponent_number]  # MESS 1
 
         self.next_round = False
         self.tower_buying = False
@@ -51,19 +51,13 @@ class Gra:
         self.points = 0
         self.money = STARTING_MONEY
 
-        #self.interface_up_height = 117
-        #self.change_interface = False
-        #self.previous = []
-
         self.clock = pygame_time_Clock()
         self.mouse_pos = STARTING_MOUSE_POSITION
 
 
     def rounds(self):
-        '''MESS TO CLEAN, it should have like 5 lines or code, not 20...'''
-        #self.counter += self.time
+        '''MESS TO CLEAN, it should have like 5 lines or code, not 25...'''
         #self.next_round = True
-        #if self.round < LEN_WAVES:
         if self.start:
             self.counter += self.time
 
@@ -101,7 +95,6 @@ class Gra:
                     if self.tower_buying or self.tower_is_selected:
                         self.tower_flags_to_False()
                     else:
-                        print(self)
                         exit()
 
                 elif event.key == K_p:
@@ -122,7 +115,6 @@ class Gra:
                     else:
                         for tower in self.towers.values():
                             if tower.rect.collidepoint(self.mouse_pos):
-                                #self.change_interface = True
                                 self.tower_is_selected = True
                                 self.choosen_tower = tower
                                 break
@@ -178,7 +170,7 @@ class Gra:
 
                 if self.player.health <= 0:
                     exit()
-            # for drawing
+
             opponent.is_electrified = False
 
     def update_bullets(self):
@@ -224,6 +216,7 @@ class Gra:
                         self.player.check_level_up()
 
     def update_towers(self):
+        '''MESS TO CLEAN'''
         for tower in self.towers.values():
             shooted_opponents = 0
             tower.can_shoot = False
@@ -272,6 +265,7 @@ class Gra:
             window.blit(tower.image, tower.rect)
 
         for opponent in self.opponents:
+            # blits
             window.blit(opponent.kind, opponent.rect)
 
             pygame_draw_rect(window, WHITE, opponent.hp_bar)
@@ -393,6 +387,7 @@ class Gra:
         self.tower_to_buy_color = TOWERS[i][1]
 
     def place_tower(self):
+        # optimize
         new_tower_rect = pygame_Rect(self.mouse_pos[0] - 10, self.mouse_pos[1] - 10, 20, 20)
         new_tower_id = pygame_time_get_ticks()
 
@@ -427,7 +422,6 @@ class Gra:
         del self.towers[tower.id]
 
     def tower_flags_to_False(self, is_selected=False):
-        #self.change_interface = False
         self.tower_buying = False
         self.tower_is_selected = is_selected
 

@@ -14,7 +14,7 @@ class Pocisk:
             self.x, self.y, *_ = tower.rect
             self.rect = pygame_Rect(self.x, self.y, 8, 8)
 
-            (x, y) = (mouse_pos[0] - self.x, mouse_pos[1] - self.y)
+            (x, y) = (mouse_pos[0] - 4 - self.x, mouse_pos[1] - 4 - self.y)
 
         else:
             if self.kind == 1:

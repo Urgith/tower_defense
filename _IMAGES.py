@@ -90,10 +90,10 @@ TERRAIN = {
     80: l_up
 }
 
-MOUSE = image_load('data/enemies/mysz.png', (0, 0), scale=(20, 20))
-RAT = image_load('data/enemies/szczur.png', (0, 0), scale=(22, 22))
-SPIDER = image_load('data/enemies/pajak.png', (0, 0), scale=(24, 24))
-SNAKE = image_load('data/enemies/waz.png', (0, 0), scale=(26, 26))
+MOUSE = image_load('data/enemies/mouse_r.png', (0, 0), scale=(20, 20))
+RAT = image_load('data/enemies/rat_r.png', (0, 0), scale=(22, 22))
+SPIDER = image_load('data/enemies/spider_r.png', (0, 0), scale=(24, 24))
+SNAKE = image_load('data/enemies/snake_r.png', (0, 0), scale=(26, 26))
 
 TEXTURES = (
     (image_load('data/zacznij.jpg'), pygame_Rect(W_3, MAP_HEIGHT - 125, 50, 50)),
