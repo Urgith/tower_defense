@@ -41,6 +41,8 @@ FIRING = False  # False
 
 ROUND = 1  # 1
 MONEY = 50  # 50
+POINTS = 0  # 0
+OPPONENT = 0  # 0
 FIRE_RATE = 250  # 250
 BASE_HEALTH = 100  # 100
 

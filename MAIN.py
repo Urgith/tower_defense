@@ -18,34 +18,36 @@ class Game:
             self.draw()
 
     def initialize_attributes(self, round):
-        self.opponents_counter = pygame_time_get_ticks()
         self.game_window = pygame_display_set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT), FULLSCREEN)
+        self.opponents_counter = pygame_time_get_ticks()
+
         self.player = Player(self.opponents_counter)
 
         self.opponents = []
         self.bullets = []
         self.towers = {}
 
+        self.start = START
         self.counter = 0
 
-        self.start = START
+        self.opponent_number = OPPONENT  # MESS 1
         self.round = (round - 1)  # MESS 1
-        self.opponent_number = 0  # MESS 1
 
-        self.len_wave = len(WAVES[min(LEN_WAVES_1, self.round)])  # MESS 1
-        self.round_gaps = OPPONENTS_GAPS[min(LEN_WAVES_1, self.round)]  # MESS 1
+        round = min(LEN_WAVES_1, self.round)
+        self.len_wave = len(WAVES[round])  # MESS 1
+        self.round_gaps = OPPONENTS_GAPS[round]  # MESS 1
         self.gap = self.round_gaps[self.opponent_number]  # MESS 1
 
-        self.next_round = False
-        self.tower_buying = False
         self.tower_is_selected = False
+        self.tower_buying = False
+        self.next_round = False
 
         self.base_health = BASE_HEALTH
+        self.points = POINTS
         self.money = MONEY
-        self.points = 0
 
-        self.mouse_pos = MOUSE_POSITION
         self.clock = pygame_time_Clock()
+        self.mouse_pos = MOUSE_POSITION
         self.playing = True
 
 
@@ -54,7 +56,6 @@ class Game:
         self.dt = (self.time * GAME_SPEED)
 
     def rounds(self):
-        '''MESS TO CLEAN, it should have like 5 lines or code, not 25...'''
         #self.next_round = True
         if self.start:
             self.counter += self.time
@@ -63,63 +64,32 @@ class Game:
               and self.opponent_number < self.len_wave):
 
                 self.opponents.append(Opponent(self.round, self.opponent_number))
-                self.opponent_number += 1
+                self.gap = self.round_gaps[self.opponent_number]
                 self.opponents_counter = self.counter
-
-                if self.opponent_number < self.len_wave:
-                    self.gap = self.round_gaps[self.opponent_number]
+                self.opponent_number += 1
 
             elif self.opponent_number == self.len_wave and self.next_round:
-                self.next_round = False
                 self.opponent_number = 0
+                self.next_round = False
                 self.round += 1
 
-                if self.round <= LEN_WAVES_1:
-                    self.len_wave = len(WAVES[self.round])
-                    self.round_gaps = OPPONENTS_GAPS[self.round]
-                else:
-                    self.len_wave = len(WAVES[-1])
-                    self.round_gaps = OPPONENTS_GAPS[min(self.round, LEN_WAVES_1)]
+                round = min(LEN_WAVES_1, self.round)
+                self.round_gaps = OPPONENTS_GAPS[round]
+                self.len_wave = len(WAVES[round])
+
 
     def events(self):
         self.mouse_pos = pygame_mouse_get_pos()
 
         for event in pygame_event_get():
-            if event.type == QUIT:
-                self.exit()
-
-            elif event.type == KEYDOWN:
-                if event.key == K_ESCAPE:
-                    if self.tower_buying or self.tower_is_selected:
-                        self.tower_flags_to_False()
-                    else:
-                        self.exit()
-
-                elif event.key == K_p:
-                    self.pause_loop()
-
-                elif event.key in PYGAME_K1_K2_K3:
-                    self.tower_to_buy(event.key - 49)
-
-                elif event.key == K_SPACE:
-                    self.new_round()
-
-            elif event.type == MOUSEBUTTONUP and event.button == 1:
-
+            # MOUSE
+            if event.type == MOUSEBUTTONUP and event.button == 1:
                 if self.mouse_pos[0] < MAP_WIDTH and self.mouse_pos[1] < MAP_HEIGHT:
+
                     if self.tower_buying:
                         self.place_tower()
-
                     else:
-                        for tower in self.towers.values():
-                            if tower.rect.collidepoint(self.mouse_pos):
-                                self.tower_is_selected = True
-                                self.choosen_tower = tower
-                                break
-
-                        else:
-                            self.player.shooting = not self.player.shooting
-                            self.tower_flags_to_False()
+                        self.check_tower_selection()
 
                 elif TEXTURES[0][1].collidepoint(self.mouse_pos):
                     self.new_round()
@@ -127,19 +97,59 @@ class Game:
                 elif TEXTURES[1][1].collidepoint(self.mouse_pos):
                     self.exit()
 
-                else:
-                    for i, texture in enumerate(TEXTURES[2:5]):
-                        if texture[1].collidepoint(self.mouse_pos):
-                            self.tower_to_buy(i)
-                            break
-
+                elif not self.check_tower_to_buy():
                     if self.tower_is_selected:
-                        choosen_4 = (self.choosen_tower.kind * 4)
+                        self.check_tower_upgrade()
 
-                        for i in range(choosen_4, choosen_4 + 4):
-                            if TOWER_TEXTURES[i][1].collidepoint(self.mouse_pos):
-                                self.choosen_tower.upgrade(self, i)
-                                break
+                    else:
+                        self.player.shooting = False
+            # KEYBOARD
+            elif event.type == KEYDOWN:
+                if event.key == K_SPACE:
+                    self.new_round()
+
+                elif event.key in PYGAME_K1_K2_K3:
+                    self.tower_to_buy(event.key - 49)
+
+                elif event.key == K_ESCAPE:
+                    if self.tower_is_selected or self.tower_buying:
+                        self.tower_flags_to_False()
+                    else:
+                        self.exit()
+
+                elif event.key == K_p:
+                    self.pause_loop()
+            # EXIT
+            elif event.type == QUIT:
+                self.exit()
+
+    def check_tower_selection(self):
+        for tower in self.towers.values():
+            if tower.rect.collidepoint(self.mouse_pos):
+                self.tower_is_selected = True
+                self.choosen_tower = tower
+                return
+
+        self.player.shooting = not self.player.shooting
+        self.tower_flags_to_False()
+
+    def check_tower_to_buy(self):
+        for i, texture in enumerate(TEXTURES[2:5]):
+            if texture[1].collidepoint(self.mouse_pos):
+                self.tower_to_buy(i)
+                return True
+
+        return False
+
+    def check_tower_upgrade(self):
+        choosen_4 = (self.choosen_tower.kind * 4)
+
+        for i in range(choosen_4, choosen_4 + 4):
+            if TOWER_TEXTURES[i][1].collidepoint(self.mouse_pos):
+                self.choosen_tower.upgrade(self, i)
+                return
+
+        self.tower_flags_to_False()
 
 
     def update(self):
@@ -152,27 +162,28 @@ class Game:
 
     def update_opponents(self):
         for opponent in self.opponents:
+            opponent.is_electrified = False
             opponent.move(self.dt)
 
-            if opponent.rect.colliderect(BASE_RECT):
-                self.base_health -= opponent.damage
-                self.opponents.remove(opponent)
+        self.opponents_rects_list = [opponent.rect for opponent in self.opponents]
 
-                if self.base_health <= 0:
-                    self.exit()
+        collided_opponent_index = BASE_RECT.collidelist(self.opponents_rects_list)
+        if collided_opponent_index != -1:
+            self.base_health -= self.opponents[collided_opponent_index].damage
+            self.opponents_rects_list.pop(collided_opponent_index)
+            self.opponents.pop(collided_opponent_index)
 
-                continue
+            if self.base_health <= 0:
+                self.exit()
 
-            elif opponent.rect.colliderect(self.player.rect):
-                self.player.health -= (opponent.damage * self.dt * 60)
+        collided_opponent_index = self.player.rect.collidelist(self.opponents_rects_list)
+        if collided_opponent_index != -1:
+            self.player.health -= (self.opponents[collided_opponent_index].damage * self.dt * 60)
 
-                if self.player.health <= 0:
-                    self.exit()
-
-            opponent.is_electrified = False
+            if self.player.health <= 0:
+                self.exit()
 
     def update_bullets(self):
-        opponents_rects_list = [opponent.rect for opponent in self.opponents]
 
         for i, bullet in enumerate(self.bullets):
             bullet.move(self.dt)
@@ -185,7 +196,7 @@ class Game:
                 self.bullets.pop(i)
                 continue
 
-            collided_opponent_index = bullet.rect.collidelist(opponents_rects_list)
+            collided_opponent_index = bullet.rect.collidelist(self.opponents_rects_list)
             if collided_opponent_index != -1:
                 '''MESS TO CLEAN'''
                 opponent = self.opponents[collided_opponent_index]
@@ -207,7 +218,7 @@ class Game:
                     self.money += opponent.money
 
                     self.opponents.pop(collided_opponent_index)
-                    opponents_rects_list.pop(collided_opponent_index)
+                    self.opponents_rects_list.pop(collided_opponent_index)
 
                     if bullet.kind == 'player':
                         self.player.experience += opponent.points
@@ -376,6 +387,9 @@ class Game:
                 elif event.type == KEYDOWN and (event.key == K_ESCAPE or event.key == K_p):
                     pause = False
 
+    def exit(self):
+        self.playing = False
+
 
     def tower_to_buy(self, i):
         self.tower_to_buy_color = TOWERS[i][1]
@@ -422,9 +436,6 @@ class Game:
         self.tower_is_selected = is_selected
         self.tower_buying = False
 
-    def exit(self):
-        self.playing = False
-
 
     def __str__(self):
         return (f'Number of opponents: {len(self.opponents)}\n'
@@ -437,6 +448,3 @@ class Game:
 
 if __name__ == '__main__':
     game = Game(round=ROUND)
-
-    print(game, '\n')
-    print(repr(game))
