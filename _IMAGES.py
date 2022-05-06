@@ -42,7 +42,7 @@ pygame_display_set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT), FULLSCREEN)
 GRASS = image_load('data/trawa.jpg', scale=(MAP_WIDTH, MAP_HEIGHT))
 FOREST = image_load('data/trace/las.jpg', scale=(3 * TILESIZE, 3 * TILESIZE))
 
-MAGIC_BALL = image_load('data/kula_mocy.png')
+MAGIC_BALL = image_load('data/kula_mocy.png', (0, 0))
 DRUID = image_load('data/druid.png', (0, 0), scale=(DRUID_SIZE, DRUID_SIZE))
 ELECTRO = image_load('data/prad.png', (0, 0))
 
@@ -101,11 +101,11 @@ TEXTURES = (
     (green, pygame_Rect(W_93, MAP_HEIGHT - 74, 20, 20)),
     (blue, pygame_Rect(W_93, MAP_HEIGHT - 49, 20, 20)),
     (yellow, pygame_Rect(W_93, MAP_HEIGHT - 24, 20, 20)),
-    (image_load('data/stats_icons/_arrow.png', (0, 0)), (MAP_WIDTH + 5, 2)),
-    (image_load('data/stats_icons/_kula_mocy.png', (0, 0)), (MAP_WIDTH + 6, 25)),
-    (image_load('data/stats_icons/_boots.png', (0, 0)), (MAP_WIDTH + 4, 43)),
-    (image_load('data/stats_icons/_heart.png', (0, 0)), (MAP_WIDTH + 2, 60)),   
-    (image_load('data/stats_icons/_coin.png', (0, 0)), (MAP_WIDTH + 5, 82))
+    (image_load('data/interface_icons/arrow.png', (0, 0)), (MAP_WIDTH + 5, 2)),
+    (image_load('data/interface_icons/kula_mocy.png', (0, 0)), (MAP_WIDTH + 6, 25)),
+    (image_load('data/interface_icons/boots.png', (0, 0)), (MAP_WIDTH + 4, 43)),
+    (image_load('data/interface_icons/heart.png', (0, 0)), (MAP_WIDTH + 2, 60)),   
+    (image_load('data/interface_icons/coin.png', (0, 0)), (MAP_WIDTH + 5, 82))
 )
 
 RECT3 = pygame_Rect(W_3, 119, 70, 70)

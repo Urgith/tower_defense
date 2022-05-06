@@ -47,17 +47,21 @@ ENEMIES = { # hp,  sp, d,  p, m, si
 }
 
 WAVES = (
-    (MOUSE,) * 5,
-    (MOUSE,) * 10,
-    (MOUSE,) * 13 + (RAT,) * 2,
-    (MOUSE,) * 16 + (RAT,) * 5,
-    (MOUSE,) * 18 + (RAT,) * 10,
-    (MOUSE,) * 15 + (RAT,) * 15 + (SPIDER,) * 3,
-    (MOUSE,) * 12 + (RAT,) * 18 + (SPIDER,) * 6,
-    (MOUSE,) * 10 + (RAT,) * 18 + (SPIDER,) * 12,
-    (MOUSE,) * 8  + (RAT,) * 15 + (SPIDER,) * 15 + (SNAKE,) * 2,
-    (MOUSE,) * 5  + (RAT,) * 12 + (SPIDER,) * 18 + (SNAKE,) * 6,
-    (MOUSE,) * 3  + (RAT,) * 10 + (SPIDER,) * 20 + (SNAKE,) * 12
+    [(MOUSE, GAP) for _ in range(5)],
+    [(MOUSE, GAP)  for _ in range(10)],
+    [(MOUSE, GAP) for _ in range(13)] + [(RAT, GAP) for _ in range(2)],
+    [(MOUSE, GAP) for _ in range(16)] + [(RAT, GAP) for _ in range(5)],
+    [(MOUSE, GAP) for _ in range(18)] + [(RAT, GAP) for _ in range(10)],
+    [(MOUSE, GAP) for _ in range(15)] + [(RAT, GAP) for _ in range(15)] + [(SPIDER, GAP) for _ in range(3)],
+    [(MOUSE, GAP) for _ in range(12)] + [(RAT, GAP) for _ in range(18)] + [(SPIDER, GAP) for _ in range(6)],
+    [(MOUSE, GAP) for _ in range(10)] + [(RAT, GAP) for _ in range(18)] + [(SPIDER, GAP) for _ in range(12)],
+    [(MOUSE, GAP) for _ in range(8)]  + [(RAT, GAP) for _ in range(15)] + [(SPIDER, GAP) for _ in range(15)] + [(SNAKE, GAP) for _ in range(2)],
+    [(MOUSE, GAP) for _ in range(5)]  + [(RAT, GAP) for _ in range(12)] + [(SPIDER, GAP) for _ in range(18)] + [(SNAKE, GAP) for _ in range(6)],
+    [(MOUSE, GAP) for _ in range(3)]  + [(RAT, GAP) for _ in range(10)] + [(SPIDER, GAP) for _ in range(20)] + [(SNAKE, GAP) for _ in range(12)]
+)
+
+OPPONENTS_GAPS = (
+    [[opponent[1] for opponent in wave] for wave in WAVES]
 )
 
 LEN_WAVES = len(WAVES)

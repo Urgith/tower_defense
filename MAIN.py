@@ -19,6 +19,11 @@ class Gra:
             self.update()
             self.draw()
 
+    def __str__(self):
+        return (f'Number of opponents: {len(self.opponents)}\n'
+                + f'Number of bullets: {len(self.bullets)}\n'
+                + f'Number of towers: {len(self.towers)}')
+
     def initialize_attributes(self):
         self.opponents_counter = pygame_time_get_ticks()
         self.game_window = pygame_display_set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT), FULLSCREEN)
@@ -32,8 +37,11 @@ class Gra:
 
         self.start = False
         self.round = 0
-        self.len_wave = len(WAVES[0])
         self.opponent_number = 0
+
+        self.len_wave = len(WAVES[self.round])
+        self.round_gaps = OPPONENTS_GAPS[self.round]
+        self.gap = self.round_gaps[self.opponent_number]
 
         self.next_round = False
         self.tower_buying = False
@@ -52,18 +60,22 @@ class Gra:
 
 
     def rounds(self):
+        '''MESS TO CLEAN, it should have like 5 lines or code, not 20...'''
         #self.counter += self.time
         #self.next_round = True
         #if self.round < LEN_WAVES:
         if self.start:
             self.counter += self.time
 
-            if (self.counter - self.opponents_counter > OPPONENTS_GAP
+            if (self.counter - self.opponents_counter > self.gap
               and self.opponent_number < self.len_wave):
 
                 self.opponents.append(Opponent(self.round, self.opponent_number))
                 self.opponent_number += 1
                 self.opponents_counter = self.counter
+
+                if self.opponent_number < self.len_wave:
+                    self.gap = self.round_gaps[self.opponent_number]
 
             elif self.opponent_number == self.len_wave and self.next_round:
                 self.next_round = False
@@ -72,8 +84,10 @@ class Gra:
 
                 if self.round < LEN_WAVES:
                     self.len_wave = len(WAVES[self.round])
+                    self.round_gaps = OPPONENTS_GAPS[self.round]
                 else:
                     self.len_wave = len(WAVES[-1])
+                    self.round_gaps = OPPONENTS_GAPS[min(self.round, LEN_WAVES - 1)]
 
     def events(self):
         self.mouse_pos = pygame_mouse_get_pos()
@@ -87,6 +101,7 @@ class Gra:
                     if self.tower_buying or self.tower_is_selected:
                         self.tower_flags_to_False()
                     else:
+                        print(self)
                         exit()
 
                 elif event.key == K_p:
