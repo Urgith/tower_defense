@@ -5,26 +5,19 @@ from player import Player
 from tower import Tower
 
 
-class Gra:
+class Game:
 
-    def __init__(self):
-        self.initialize_attributes()
+    def __init__(self, round):
+        self.initialize_attributes(round)
 
-        while True:
-            self.time = self.clock.tick(FRAMERATE)
-            self.dt = (self.time * GAME_SPEED)
-
+        while self.playing:
+            self.game_time()
             self.rounds()
             self.events()
             self.update()
             self.draw()
 
-    def __str__(self):
-        return (f'Number of opponents: {len(self.opponents)}\n'
-                + f'Number of bullets: {len(self.bullets)}\n'
-                + f'Number of towers: {len(self.towers)}')
-
-    def initialize_attributes(self):
+    def initialize_attributes(self, round):
         self.opponents_counter = pygame_time_get_ticks()
         self.game_window = pygame_display_set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT), FULLSCREEN)
         self.player = Player(self.opponents_counter)
@@ -36,24 +29,29 @@ class Gra:
         self.counter = 0
 
         self.start = START
-        self.round = 0  # MESS 1
+        self.round = (round - 1)  # MESS 1
         self.opponent_number = 0  # MESS 1
 
-        self.len_wave = len(WAVES[self.round])  # MESS 1
-        self.round_gaps = OPPONENTS_GAPS[self.round]  # MESS 1
+        self.len_wave = len(WAVES[min(LEN_WAVES_1, self.round)])  # MESS 1
+        self.round_gaps = OPPONENTS_GAPS[min(LEN_WAVES_1, self.round)]  # MESS 1
         self.gap = self.round_gaps[self.opponent_number]  # MESS 1
 
         self.next_round = False
         self.tower_buying = False
         self.tower_is_selected = False
 
-        self.base_health = 100
+        self.base_health = BASE_HEALTH
+        self.money = MONEY
         self.points = 0
-        self.money = STARTING_MONEY
 
+        self.mouse_pos = MOUSE_POSITION
         self.clock = pygame_time_Clock()
-        self.mouse_pos = STARTING_MOUSE_POSITION
+        self.playing = True
 
+
+    def game_time(self):
+        self.time = self.clock.tick(FRAMERATE)
+        self.dt = (self.time * GAME_SPEED)
 
     def rounds(self):
         '''MESS TO CLEAN, it should have like 5 lines or code, not 25...'''
@@ -76,26 +74,26 @@ class Gra:
                 self.opponent_number = 0
                 self.round += 1
 
-                if self.round < LEN_WAVES:
+                if self.round <= LEN_WAVES_1:
                     self.len_wave = len(WAVES[self.round])
                     self.round_gaps = OPPONENTS_GAPS[self.round]
                 else:
                     self.len_wave = len(WAVES[-1])
-                    self.round_gaps = OPPONENTS_GAPS[min(self.round, LEN_WAVES - 1)]
+                    self.round_gaps = OPPONENTS_GAPS[min(self.round, LEN_WAVES_1)]
 
     def events(self):
         self.mouse_pos = pygame_mouse_get_pos()
 
         for event in pygame_event_get():
             if event.type == QUIT:
-                exit()
+                self.exit()
 
             elif event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     if self.tower_buying or self.tower_is_selected:
                         self.tower_flags_to_False()
                     else:
-                        exit()
+                        self.exit()
 
                 elif event.key == K_p:
                     self.pause_loop()
@@ -127,7 +125,7 @@ class Gra:
                     self.new_round()
 
                 elif TEXTURES[1][1].collidepoint(self.mouse_pos):
-                    exit()
+                    self.exit()
 
                 else:
                     for i, texture in enumerate(TEXTURES[2:5]):
@@ -161,20 +159,19 @@ class Gra:
                 self.opponents.remove(opponent)
 
                 if self.base_health <= 0:
-                    exit()
+                    self.exit()
 
                 continue
 
             elif opponent.rect.colliderect(self.player.rect):
-                self.player.health -= opponent.damage * self.dt * 60
+                self.player.health -= (opponent.damage * self.dt * 60)
 
                 if self.player.health <= 0:
-                    exit()
+                    self.exit()
 
             opponent.is_electrified = False
 
     def update_bullets(self):
-        '''MESS TO CLEAN'''
         opponents_rects_list = [opponent.rect for opponent in self.opponents]
 
         for i, bullet in enumerate(self.bullets):
@@ -190,6 +187,7 @@ class Gra:
 
             collided_opponent_index = bullet.rect.collidelist(opponents_rects_list)
             if collided_opponent_index != -1:
+                '''MESS TO CLEAN'''
                 opponent = self.opponents[collided_opponent_index]
 
                 if bullet.kind == 1 and (bullet.id not in opponent.ids):
@@ -367,24 +365,23 @@ class Gra:
             self.next_round = True
 
     def pause_loop(self):
-
         pause = True
+
         while pause:
-            self.time = self.clock.tick(FRAMERATE)
-            self.dt = self.time * GAME_SPEED
+            self.game_time()
 
             for event in pygame_event_get():
                 if event.type == QUIT:
-                    exit()
+                    self.exit()
                 elif event.type == KEYDOWN and (event.key == K_ESCAPE or event.key == K_p):
                     pause = False
 
 
     def tower_to_buy(self, i):
-        self.tower_buying = True
-        self.tower_to_buy_type = i
-        self.tower_to_buy_range = TOWERS[i][5]
         self.tower_to_buy_color = TOWERS[i][1]
+        self.tower_to_buy_range = TOWERS[i][5]
+        self.tower_to_buy_type = i
+        self.tower_buying = True
 
     def place_tower(self):
         # optimize
@@ -417,14 +414,29 @@ class Gra:
         self.tower_flags_to_False()
 
     def sell_tower(self, tower):
-        self.tower_flags_to_False()
         self.money += tower.total_cost
+        self.tower_flags_to_False()
         del self.towers[tower.id]
 
     def tower_flags_to_False(self, is_selected=False):
-        self.tower_buying = False
         self.tower_is_selected = is_selected
+        self.tower_buying = False
+
+    def exit(self):
+        self.playing = False
+
+
+    def __str__(self):
+        return (f'Number of opponents: {len(self.opponents)}\n'
+                + f'Number of bullets: {len(self.bullets)}\n'
+                + f'Number of towers: {len(self.towers)}')
+
+    def __repr__(self):
+        return f'Game({self.round + 1})'
 
 
 if __name__ == '__main__':
-    Gra()
+    game = Game(round=ROUND)
+
+    print(game, '\n')
+    print(repr(game))

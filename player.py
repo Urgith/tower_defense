@@ -1,7 +1,5 @@
 from _CONSTANTS import *
-from pocisk import Pocisk
-
-from math import log
+from bullet import Bullet
 
 
 class Player:
@@ -19,12 +17,12 @@ class Player:
         self.to_next = 10
 
         self.health = self.max_health = 1000
-        self.reload = STARTING_FIRE_RATE
+        self.reload = FIRE_RATE
         self.damage = 10
         self.speed = 100
 
         self.bullet_speed = 200
-        self.shooting = START_FIRING
+        self.shooting = FIRING
 
         self.kind = 'player'
 
@@ -68,7 +66,7 @@ class Player:
 
     def shoot(self, game):
         if self.shooting and (game.counter - self.shooting_counter > self.reload):
-            game.bullets.append(Pocisk(self, game.mouse_pos, game.counter))
+            game.bullets.append(Bullet(self, game.mouse_pos, game.counter))
             self.shooting_counter = game.counter
 
     def check_level_up(self):
@@ -86,4 +84,4 @@ class Player:
             self.bullet_speed = 200 + (20 * level)
 
             self.to_previous = self.to_next
-            self.to_next = 20 * (1 + level) ** log(1 + level, 4)
+            self.to_next = 20 * (1 + level) ** math_log(1 + level, 4)

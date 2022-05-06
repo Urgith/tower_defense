@@ -1,7 +1,7 @@
 from _CONSTANTS import *
 
 
-class Pocisk:
+class Bullet:
 
     def __init__(self, tower, mouse_pos, counter, opponent=None):
         self.kind = tower.kind
@@ -18,7 +18,7 @@ class Pocisk:
 
         else:
             if self.kind == 1:
-                self.id = random()
+                self.id = random_random()
                 self.pierce = tower.pierce
 
             elif self.kind == 2:

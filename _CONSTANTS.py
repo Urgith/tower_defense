@@ -62,7 +62,7 @@ OPPONENTS_GAPS = (
     [[opponent[1] for opponent in wave] for wave in WAVES]
 )
 
-LEN_WAVES = len(WAVES)
+LEN_WAVES_1 = len(WAVES) - 1
 
 pygame_font_init()
 FONT30 = pygame_font_SysFont(None, 30)

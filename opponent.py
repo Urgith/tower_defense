@@ -4,7 +4,7 @@ from _CONSTANTS import *
 class Opponent:
 
     def __init__(self, round, opponent_number):
-        self.kind = WAVES[min(round, LEN_WAVES - 1)][opponent_number][0]
+        self.kind = WAVES[min(round, LEN_WAVES_1)][opponent_number][0]
         (self.health, self.speed, self.damage, self.points,
             self.money, self.size) = ENEMIES[self.kind]
 

@@ -1,5 +1,5 @@
 from _CONSTANTS import *
-from pocisk import Pocisk
+from bullet import Bullet
 
 
 class Tower:
@@ -27,7 +27,7 @@ class Tower:
 
     def shoot(self, game, opponent):
         if (game.counter - self.counter > self.reload) or self.can_shoot:
-            game.bullets.append(Pocisk(self, game.mouse_pos, game.counter, opponent))
+            game.bullets.append(Bullet(self, game.mouse_pos, game.counter, opponent))
             self.counter = game.counter
 
             if self.kind == 2:
