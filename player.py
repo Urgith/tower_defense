@@ -9,7 +9,6 @@ class Player:
 
         self.x, self.y = (DRUID_X, DRUID_Y)
         self.rect = pygame_Rect(self.x, self.y, DRUID_SIZE, DRUID_SIZE)
-        #self.previous_obiekt = pygame_Rect(self.x, self.y, DRUID_SIZE, DRUID_SIZE)
 
         self.experience = 0
         self.level = 0
@@ -17,7 +16,7 @@ class Player:
         self.to_next = 10
 
         self.health = self.max_health = 1000
-        self.reload = FIRE_RATE
+        self.reload = SHOOT_GAP
         self.damage = 10
         self.speed = 100
 
@@ -27,8 +26,6 @@ class Player:
         self.kind = 'player'
 
     def move(self, dt):
-        #self.previous_obiekt.x, self.previous_obiekt.y = (self.x, self.y)
-
         pressed = pygame_key_get_pressed()
         x, y = (0, 0)
 

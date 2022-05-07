@@ -30,13 +30,13 @@ class Game:
         self.start = START
         self.counter = 0
 
-        self.opponent_number = OPPONENT  # MESS 1
-        self.round = (round - 1)  # MESS 1
+        self.opponent_number = OPPONENT
+        self.round = (round - 1)
 
         round = min(LEN_WAVES_1, self.round)
-        self.len_wave = len(WAVES[round])  # MESS 1
-        self.round_gaps = OPPONENTS_GAPS[round]  # MESS 1
-        self.gap = self.round_gaps[self.opponent_number]  # MESS 1
+        self.len_wave = len(WAVES[round])
+        self.round_gaps = OPPONENTS_GAPS[round]
+        self.gap = self.round_gaps[self.opponent_number]
 
         self.tower_is_selected = False
         self.tower_buying = False
@@ -56,7 +56,10 @@ class Game:
         self.dt = (self.time * GAME_SPEED)
 
     def rounds(self):
-        #self.next_round = True
+        #if self.round <= LEN_WAVES_1:
+        #    self.next_round = True
+        #else:
+        #    self.next_round = False
         if self.start:
             self.counter += self.time
 
@@ -97,7 +100,7 @@ class Game:
                 elif TEXTURES[1][1].collidepoint(self.mouse_pos):
                     self.exit()
 
-                elif not self.check_tower_to_buy():
+                elif not self.check_tower_texture():
                     if self.tower_is_selected:
                         self.check_tower_upgrade()
 
@@ -133,7 +136,7 @@ class Game:
         self.player.shooting = not self.player.shooting
         self.tower_flags_to_False()
 
-    def check_tower_to_buy(self):
+    def check_tower_texture(self):
         for i, texture in enumerate(TEXTURES[2:5]):
             if texture[1].collidepoint(self.mouse_pos):
                 self.tower_to_buy(i)
@@ -187,20 +190,19 @@ class Game:
 
         for i, bullet in enumerate(self.bullets):
             bullet.move(self.dt)
-
+            # BULLET TERMINATION
             if bullet.kind != 'player' and (bullet.end_date < self.counter):
                 self.bullets.pop(i)
                 continue
-
+            # BULLET OUTSIDE THE MAP
             if bullet.rect.x < 0 or bullet.rect.y < 0 or bullet.rect.x > W_8_ or bullet.rect.y > H_8_:
                 self.bullets.pop(i)
                 continue
 
             collided_opponent_index = bullet.rect.collidelist(self.opponents_rects_list)
             if collided_opponent_index != -1:
-                '''MESS TO CLEAN'''
                 opponent = self.opponents[collided_opponent_index]
-
+                '''MESS TO CLEAN'''
                 if bullet.kind == 1 and (bullet.id not in opponent.ids):
                     opponent.lose_hp(bullet.damage, self.towers.get(bullet.tower_id))
                     opponent.ids.append(bullet.id)
