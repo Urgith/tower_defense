@@ -11,10 +11,12 @@ class Bullet:
             self.speed = tower.bullet_speed
             self.tower_id = self.kind
 
-            self.x, self.y, *_ = tower.rect
-            self.rect = pygame_Rect(self.x, self.y, 8, 8)
+            tower_rect = tower.rect
+            tower_rect.move_ip(DRUID_BY_10_PLUS_1, DRUID_BY_20)
+            self.position = pygame_math_Vector2(tower_rect.x, tower_rect.y)
+            self.rect = pygame_Rect(self.position.x, self.position.y, 8, 8)
 
-            (x, y) = (mouse_pos[0] - 4 - self.x, mouse_pos[1] - 4 - self.y)
+            (x, y) = (mouse_pos - self.position)
 
         else:
             if self.kind == 1:
@@ -29,17 +31,15 @@ class Bullet:
             self.speed = tower.speed
             self.tower_id = tower.id
 
-            self.x, self.y = tower.rect.center
-            self.rect = pygame_Rect(self.x, self.y, tower.bullet_size, tower.bullet_size)
-            self.color = tower.color
+            self.position = pygame_math_Vector2(tower.rect.centerx - (tower.bullet_size // 2), tower.rect.centery - (tower.bullet_size // 2))
+            self.rect = pygame_Rect(self.position.x, self.position.y, tower.bullet_size, tower.bullet_size)
+            self.color = BULLET_COLORS[self.kind]
 
-            (x, y) = (opponent.x + (opponent.size / 2) - self.x,
-                   opponent.y + (opponent.size / 2) - self.y)
+            (x, y) = (opponent.x + (opponent.size / 2) - self.position.x,
+                   opponent.y + (opponent.size / 2) - self.position.y)
 
-        self.speed_x = x / ((x**2 + y**2) ** 0.5) * self.speed
-        self.speed_y = y / ((x**2 + y**2) ** 0.5) * self.speed
+        self.direction = pygame_math_Vector2(x, y) * self.speed / ((x**2 + y**2) ** 0.5)
 
     def move(self, dt):
-        self.x += self.speed_x * dt
-        self.y += self.speed_y * dt
-        self.rect.x, self.rect.y = (self.x, self.y)
+        self.position += (self.direction * dt)
+        self.rect.topleft = self.position

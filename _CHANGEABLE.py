@@ -1,8 +1,8 @@
-TILESIZE = 30  # 30
-
-DRUID_X = 25 * TILESIZE
-DRUID_Y = 13 * TILESIZE
+TILESIZE = 32  # 32
 MOUSE_POSITION = (16.5 * TILESIZE, 25 * TILESIZE)  # (16.5 *, 25 *)
+
+DRUID_X = 25 * TILESIZE  # 25 *
+DRUID_Y = 13 * TILESIZE  # 13 *
 
 AREA = (
     ( 8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
@@ -46,9 +46,9 @@ OPPONENT = 0  # 0
 SHOOT_GAP = 250  # 250
 BASE_HEALTH = 100  # 100
 
-# TO COMMENT
+# TO COMMENT OUT
 #FRAMERATE = 2000
 #GAP = 0
 #START = True
 #FIRING = True
-#SHOOT_GAP = 1
+#SHOOT_GAP = 4

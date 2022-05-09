@@ -9,21 +9,27 @@ class Game:
 
     def __init__(self, round):
         self.initialize_attributes(round)
+        self.draw()
+        pygame_display_update()
 
-        while self.playing:
+        while self.running:
             self.game_time()
             self.rounds()
+
             self.events()
             self.update()
+
             self.draw()
+            self.display_update()
 
     def initialize_attributes(self, round):
-        self.game_window = pygame_display_set_mode((MAP_WIDTH + MENUSIZE, MAP_HEIGHT), FULLSCREEN)
         self.opponents_counter = pygame_time_get_ticks()
-
         self.player = Player(self.opponents_counter)
 
+        self.opponents_rects = []
+        self.opponents_images = []
         self.opponents = []
+
         self.bullets = []
         self.towers = {}
 
@@ -48,7 +54,7 @@ class Game:
 
         self.clock = pygame_time_Clock()
         self.mouse_pos = MOUSE_POSITION
-        self.playing = True
+        self.running = True
 
 
     def game_time(self):
@@ -56,7 +62,7 @@ class Game:
         self.dt = (self.time * GAME_SPEED)
 
     def rounds(self):
-        #if self.round <= LEN_WAVES_1:
+        #if self.round < LEN_WAVES_1:
         #    self.next_round = True
         #else:
         #    self.next_round = False
@@ -66,7 +72,8 @@ class Game:
             if (self.counter - self.opponents_counter > self.gap
               and self.opponent_number < self.len_wave):
 
-                self.opponents.append(Opponent(self.round, self.opponent_number))
+                self.opponents.append(Opponent(self.round, self.opponent_number, self.opponents_images))
+
                 self.gap = self.round_gaps[self.opponent_number]
                 self.opponents_counter = self.counter
                 self.opponent_number += 1
@@ -83,29 +90,31 @@ class Game:
 
     def events(self):
         self.mouse_pos = pygame_mouse_get_pos()
+        self.interface_changed = False
 
         for event in pygame_event_get():
-            # MOUSE
             if event.type == MOUSEBUTTONUP and event.button == 1:
-                if self.mouse_pos[0] < MAP_WIDTH and self.mouse_pos[1] < MAP_HEIGHT:
-
+                # MOUSE INSIDE MAP
+                if self.mouse_pos[0] < MAP_WIDTH:
                     if self.tower_buying:
                         self.place_tower()
                     else:
                         self.check_tower_selection()
+                # MOUSE OUTSIDE MAP
+                else:
+                    if not self.check_tower_texture():
+                        if self.tower_buying:
+                            self.place_tower()
+                        elif self.tower_is_selected:
+                            self.check_tower_upgrade()
+                        else:
+                            self.player.shooting = False
 
-                elif TEXTURES[0][1].collidepoint(self.mouse_pos):
-                    self.new_round()
+                    if TEXTURES[0][1].collidepoint(self.mouse_pos):
+                        self.new_round()
 
-                elif TEXTURES[1][1].collidepoint(self.mouse_pos):
-                    self.exit()
-
-                elif not self.check_tower_texture():
-                    if self.tower_is_selected:
-                        self.check_tower_upgrade()
-
-                    else:
-                        self.player.shooting = False
+                    elif TEXTURES[1][1].collidepoint(self.mouse_pos):
+                        self.exit()
             # KEYBOARD
             elif event.type == KEYDOWN:
                 if event.key == K_SPACE:
@@ -168,18 +177,17 @@ class Game:
             opponent.is_electrified = False
             opponent.move(self.dt)
 
-        self.opponents_rects_list = [opponent.rect for opponent in self.opponents]
+        self.opponents_rects = [opponent.rect for opponent in self.opponents]
 
-        collided_opponent_index = BASE_RECT.collidelist(self.opponents_rects_list)
+        collided_opponent_index = BASE_RECT.collidelist(self.opponents_rects)
         if collided_opponent_index != -1:
             self.base_health -= self.opponents[collided_opponent_index].damage
-            self.opponents_rects_list.pop(collided_opponent_index)
-            self.opponents.pop(collided_opponent_index)
+            self.kill_opponent(collided_opponent_index)
 
             if self.base_health <= 0:
                 self.exit()
 
-        collided_opponent_index = self.player.rect.collidelist(self.opponents_rects_list)
+        collided_opponent_index = self.player.rect.collidelist(self.opponents_rects)
         if collided_opponent_index != -1:
             self.player.health -= (self.opponents[collided_opponent_index].damage * self.dt * 60)
 
@@ -199,7 +207,7 @@ class Game:
                 self.bullets.pop(i)
                 continue
 
-            collided_opponent_index = bullet.rect.collidelist(self.opponents_rects_list)
+            collided_opponent_index = bullet.rect.collidelist(self.opponents_rects)
             if collided_opponent_index != -1:
                 opponent = self.opponents[collided_opponent_index]
                 '''MESS TO CLEAN'''
@@ -219,8 +227,7 @@ class Game:
                     self.points += opponent.points
                     self.money += opponent.money
 
-                    self.opponents.pop(collided_opponent_index)
-                    self.opponents_rects_list.pop(collided_opponent_index)
+                    self.kill_opponent(collided_opponent_index)
 
                     if bullet.kind == 'player':
                         self.player.experience += opponent.points
@@ -246,7 +253,7 @@ class Game:
                         opponent.lose_hp(tower.electro, tower)
 
                         if opponent.health <= 0:
-                            self.opponents.pop(i)
+                            self.kill_opponent(i)
 
                         opponent.is_electrified = True
 
@@ -265,49 +272,58 @@ class Game:
                     if tower.kind != 2 or shooted_opponents == tower.multishot:
                         break
 
+    def kill_opponent(self, index):
+        self.opponents_rects.pop(index)
+        self.opponents_images.pop(index)
+        self.opponents.pop(index)
+
 
     def draw(self):
-        window = self.game_window
         player = self.player
 
-        window.blits(((GRASS, (0, 0)), *MAP_DRAW, (FOREST, BASE_RECT)))
+        WINDOW_blits((GRASS, *TRACE_TILES, FOREST))
 
         for tower in self.towers.values():
-            window.blit(tower.image, tower.rect)
+            WINDOW_blit(tower.image, tower.rect)
 
+        WINDOW_blits(tuple(zip(self.opponents_images, self.opponents_rects)))
         for opponent in self.opponents:
-            # blits
-            window.blit(opponent.kind, opponent.rect)
-
-            pygame_draw_rect(window, WHITE, opponent.hp_bar)
+            pygame_draw_rect(WINDOW, WHITE, opponent.hp_bar)
             if opponent.max_health > opponent.health:
-                pygame_draw_rect(window, RED, opponent.hp_bar_lost)
+                pygame_draw_rect(WINDOW, RED, opponent.hp_bar_lost)
 
             if opponent.is_electrified:
-                window.blit(ELECTRO, (opponent.rect.x - ((opponent.size - 15) / 2), opponent.rect.y - ((opponent.size - 15) / 2)))
+                WINDOW_blit(ELECTRO, (opponent.rect.x - ((opponent.size - 15) / 2), opponent.rect.y - ((opponent.size - 15) / 2)))
 
-        pygame_draw_rect(window, (0,0,0), (MAP_WIDTH, 0, MENUSIZE, MAP_HEIGHT))
+        if self.tower_is_selected:
+            pygame_draw_circle(WINDOW, self.choosen_tower.color, self.choosen_tower.center, self.choosen_tower.range, 2)
 
-        window.blits((
-            (FONT30.render(f'Round:{self.round + self.start}', True, WHITE), (W_57, H_105_)),
+        if self.tower_buying:
+            pygame_draw_rect(WINDOW, self.tower_to_buy_color, (max(0, min(MAP_WIDTH - 20, self.mouse_pos[0] - 10)), max(0, min(MAP_HEIGHT - 20, self.mouse_pos[1] - 10)), 20, 20))
+            pygame_draw_circle(WINDOW, self.tower_to_buy_color, (max(0, min(MAP_WIDTH - 20, self.mouse_pos[0] - 10)) + 10, max(0, min(MAP_HEIGHT - 20, self.mouse_pos[1] - 10)) + 10), self.tower_to_buy_range, 2)
+
+        pygame_draw_rect(WINDOW, (64, 64, 64), (MAP_WIDTH, 0, MENUSIZE, MAP_HEIGHT))
+
+        WINDOW_blits((
+            (FONT30_render(f'Round:{self.round + self.start}', True, WHITE), (W_57, H_105_)),
 
             *TEXTURES,
 
-            (FONT30.render(f'{player.level} | {round(100 * (player.experience - player.to_previous) / (player.to_next - player.to_previous), 2)}%', True, WHITE), (W_23, 2)),
-            (FONT30.render(f'{player.damage} | {round(1000 / player.reload, 2)}', True, WHITE), (W_23, 23)),
-            (FONT30.render(f'{player.speed}', True, WHITE), (W_23, 41)),
-            (FONT30.render(f'{int(player.health)}', True, WHITE), (W_23, 59)),
-            (FONT30.render(f'{self.money}', True, WHITE), (W_23, 81)),
-            (FONT30.render(f'Points: {self.points}', True, WHITE), (W_10, 100)),
+            (FONT30_render(f'{player.level} | {round(100 * (player.experience - player.to_previous) / (player.to_next - player.to_previous), 2)}%', True, WHITE), PLAYER_LEVEL_RECT),
+            (FONT30_render(f'{player.damage} | {round(1000 / player.reload, 2)}', True, WHITE), PLAYER_DAMAGE_RECT),
+            (FONT30_render(f'{player.speed}', True, WHITE), PLAYER_SPEED_RECT),
+            (FONT30_render(f'{int(player.health)}', True, WHITE), PLAYER_HEALTH_RECT),
+            (FONT30_render(f'{self.money}', True, WHITE), PLAYER_MONEY_RECT),
+            (FONT30_render(f'Points: {self.points}', True, WHITE), POINTS_RECT),
 
-            (FONT30.render('10$', True, WHITE), (W_115, H_73_)),
-            (FONT30.render('30$', True, WHITE), (W_115, H_48_)),
-            (FONT30.render('50$', True, WHITE), (W_115, H_23_)),
-            (FONT30.render('1.', True, WHITE), (W_75, H_73_)),
-            (FONT30.render('2.', True, WHITE), (W_75, H_48_)),
-            (FONT30.render('3.', True, WHITE), (W_75, H_23_)),
+            (FONT30_render('10$', True, WHITE), RECT_10_DOL),
+            (FONT30_render('30$', True, WHITE), RECT_30_DOL),
+            (FONT30_render('50$', True, WHITE), RECT_50_DOL),
+            (FONT30_render('1.', True, WHITE), DOT_1),
+            (FONT30_render('2.', True, WHITE), DOT_2),
+            (FONT30_render('3.', True, WHITE), DOT_3),
 
-            (FONT40.render(f'{self.base_health}', True, WHITE), BASE_HP_STRING),
+            (FONT40_render(f'{self.base_health}', True, WHITE), BASE_HP_STRING),
 
             (DRUID, player.rect)
         ))
@@ -315,36 +331,13 @@ class Game:
         self.draw_health_bar(player)
 
         if self.tower_is_selected:
-            tower = self.choosen_tower
-            tower4 = (tower.kind * 4)
-
-            window.blits((
-                *TOWER_TEXTURES[tower4 : (tower4 + 4)],
-
-                (FONT30.render(f'{TOWER_UPGRADES[tower.kind][0][0]}$'    , True, RED), TOWER_TEXTURES[0][1].move(0, 50)),
-                (FONT30.render(f'{TOWER_UPGRADES[tower.kind][1][0]}$'  , True, RED), TOWER_TEXTURES[1][1].move(0, 50)),
-                (FONT30.render(f'{TOWER_UPGRADES[tower.kind][2]}$'  , True, RED), TOWER_TEXTURES[2][1].move(0, 50)),
-                (FONT30.render(f'{tower.total_cost}$', True, RED), TOWER_TEXTURES[3][1].move(0, 50)),
-                (FONT30.render(f'{tower.level_damage}', True, PURPLE), TOWER_TEXTURES[0][1]),
-                (FONT30.render(f'{tower.level_range}', True, PURPLE), TOWER_TEXTURES[1][1]),
-                (FONT30.render(f'{tower.level_special}', True, PURPLE), TOWER_TEXTURES[2][1]),
-                (FONT30.render('Damage dealt:', True, WHITE), TOWER_TEXTURES[2][1].move(0, 75)),
-                (FONT30.render(f'{int(tower.damage_dealt)}', True, WHITE), TOWER_TEXTURES[2][1].move(0, 95))
-            ))
-
-            pygame_draw_circle(window, tower.color, tower.center, tower.range, 2)
+            self.blit_tower_textures()
 
         for bullet in self.bullets:
             if bullet.kind == 'player':
-                window.blit(MAGIC_BALL, bullet.rect)
+                WINDOW_blit(MAGIC_BALL, bullet.rect)
             else:
-                pygame_draw_rect(window, bullet.color, bullet.rect)
-
-        if self.tower_buying:
-            pygame_draw_rect(window, self.tower_to_buy_color, (self.mouse_pos[0] - 10, self.mouse_pos[1] - 10, 20, 20))
-            pygame_draw_circle(window, self.tower_to_buy_color, self.mouse_pos, self.tower_to_buy_range, 2)
-
-        pygame_display_update(GAME_RECT)
+                pygame_draw_rect(WINDOW, bullet.color, bullet.rect)
 
     def draw_health_bar(self, player):
         state = int((player.health / (player.max_health + 1)) * 5)
@@ -352,23 +345,49 @@ class Game:
 
         if state == 4:
             color = (player.max_health - player.health) / player.max_health
-            pygame_draw_rect(self.game_window, (0, int(1275 * color), 255), bar_width)
+            pygame_draw_rect(WINDOW, (0, int(1275 * color), 255), bar_width)
 
         elif state == 3:
             color = (player.health - (3 * player.max_health / 5)) / player.max_health
-            pygame_draw_rect(self.game_window, (0, 255, int(1275 * color)), bar_width)
+            pygame_draw_rect(WINDOW, (0, 255, int(1275 * color)), bar_width)
 
         elif state == 2:
             color = ((3 * player.max_health / 5) - player.health) / player.max_health
-            pygame_draw_rect(self.game_window, (int(1275 * color), 255, 0), bar_width)
+            pygame_draw_rect(WINDOW, (int(1275 * color), 255, 0), bar_width)
 
         elif state == 1:
             color = (player.health - (player.max_health / 5)) / player.max_health
-            pygame_draw_rect(self.game_window, (255, int(1275 * color), 0), bar_width)
+            pygame_draw_rect(WINDOW, (255, int(1275 * color), 0), bar_width)
 
         else:
             color = (player.health / player.max_health)
-            pygame_draw_rect(self.game_window, (int(1275 * color), 0, 0), bar_width)
+            pygame_draw_rect(WINDOW, (int(1275 * color), 0, 0), bar_width)
+
+    def blit_tower_textures(self):
+        tower = self.choosen_tower
+        tower4 = (tower.kind * 4)
+
+        WINDOW_blits((
+            *TOWER_TEXTURES[tower4 : (tower4 + 4)],
+
+            (FONT30_render(f'{TOWER_UPGRADES[tower.kind][0][0]}$', True, RED), TOWER_TEXTURES[0][1].move(0, 50)),
+            (FONT30_render(f'{TOWER_UPGRADES[tower.kind][1][0]}$', True, RED), TOWER_TEXTURES[1][1].move(0, 50)),
+            (FONT30_render(f'{TOWER_UPGRADES[tower.kind][2]}$', True, RED), TOWER_TEXTURES[2][1].move(0, 50)),
+            (FONT30_render(f'{tower.total_cost}$', True, RED), TOWER_TEXTURES[3][1].move(0, 50)),
+            (FONT30_render(f'{tower.level_damage}', True, PURPLE), TOWER_TEXTURES[0][1]),
+            (FONT30_render(f'{tower.level_range}', True, PURPLE), TOWER_TEXTURES[1][1]),
+            (FONT30_render(f'{tower.level_special}', True, PURPLE), TOWER_TEXTURES[2][1]),
+            (FONT30_render('Damage dealt:', True, WHITE), TOWER_TEXTURES[2][1].move(0, 75)),
+            (FONT30_render(f'{int(tower.damage_dealt)}', True, WHITE), TOWER_TEXTURES[2][1].move(0, 95))
+        ))
+
+    def display_update(self):
+        if self.tower_is_selected or self.interface_changed:
+            update_rects[1] = TOWER_INTERFACE_RECT
+        else:
+            update_rects[1] = INTERFACE_RECT
+
+        pygame_display_update(update_rects)
 
 
     def new_round(self):
@@ -390,27 +409,22 @@ class Game:
                     pause = False
 
     def exit(self):
-        self.playing = False
+        self.running = False
 
 
-    def tower_to_buy(self, i):
-        self.tower_to_buy_color = TOWERS[i][1]
-        self.tower_to_buy_range = TOWERS[i][5]
-        self.tower_to_buy_type = i
+    def tower_to_buy(self, index):
+        self.tower_to_buy_color = TOWERS[index][1]
+        self.tower_to_buy_range = TOWERS[index][5]
+        self.tower_to_buy_type = index
         self.tower_buying = True
 
     def place_tower(self):
-        # optimize
-        new_tower_rect = pygame_Rect(self.mouse_pos[0] - 10, self.mouse_pos[1] - 10, 20, 20)
+        new_tower_rect = pygame_Rect(max(0, min(MAP_WIDTH - 20, self.mouse_pos[0] - 10)), max(0, min(MAP_HEIGHT - 20, self.mouse_pos[1] - 10)), 20, 20)
         new_tower_id = pygame_time_get_ticks()
 
-        for tile in MAP_DRAW:
-            if (pygame_Rect(*tile[1], TILESIZE, TILESIZE).colliderect(new_tower_rect)
-              or BASE_RECT.colliderect(new_tower_rect)
-              or self.mouse_pos[0] < 10
-              or self.mouse_pos[1] < 10
-              or self.mouse_pos[0] > W_10_
-              or self.mouse_pos[1] > H_10_):
+        for tile in TRACE_TILES:
+            if (tile[1].colliderect(new_tower_rect)
+              or BASE_RECT.colliderect(new_tower_rect)):
 
                 self.tower_buying = False
                 return
@@ -420,7 +434,7 @@ class Game:
                 self.tower_buying = False
                 return
 
-        self.choosen_tower = Tower(self.mouse_pos, self.tower_to_buy_type, self.counter, self.dt, new_tower_id)
+        self.choosen_tower = Tower(new_tower_rect, self.tower_to_buy_type, self.counter, self.dt, new_tower_id)
         if self.choosen_tower.total_cost <= self.money:
             self.towers[new_tower_id] = self.choosen_tower
             self.money -= self.choosen_tower.total_cost
@@ -437,6 +451,8 @@ class Game:
     def tower_flags_to_False(self, is_selected=False):
         self.tower_is_selected = is_selected
         self.tower_buying = False
+
+        self.interface_changed = True
 
 
     def __str__(self):

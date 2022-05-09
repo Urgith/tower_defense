@@ -19,6 +19,8 @@ from pygame.mouse import get_pos as pygame_mouse_get_pos
 from pygame.event import get as pygame_event_get
 from pygame.key import get_pressed as pygame_key_get_pressed
 
+from pygame.math import Vector2 as pygame_math_Vector2
+
 from pygame.locals import K_1, K_2, K_3, K_w, K_a, K_s, K_d, K_p, \
     K_SPACE, K_ESCAPE, QUIT, KEYDOWN, MOUSEBUTTONUP, FULLSCREEN
 

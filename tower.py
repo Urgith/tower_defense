@@ -4,9 +4,9 @@ from bullet import Bullet
 
 class Tower:
 
-    def __init__(self, mouse_pos, kind, counter, dt, tower_id):
-        self.rect = pygame_Rect(mouse_pos[0] - 10, mouse_pos[1] - 10, 20, 20)
-        self.center = mouse_pos
+    def __init__(self, rect, kind, counter, dt, tower_id):
+        self.rect = rect
+        self.center = rect.center
         self.id = tower_id
 
         self.kind = kind

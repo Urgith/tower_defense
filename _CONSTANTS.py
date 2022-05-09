@@ -6,9 +6,16 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 
 TILESIZE_BY_2 = (TILESIZE // 2)
+DRUID_BY_20 = (DRUID_SIZE // 20)
+DRUID_BY_10_PLUS_1 = 1 + (DRUID_SIZE // 10)
 
-BASE_RECT = pygame_Rect(BASE_X, BASE_Y, (3 * TILESIZE), (3 * TILESIZE))
 BASE_HP_STRING = pygame_Rect(BASE_X + TILESIZE_BY_2 + 5, BASE_Y + TILESIZE + 3, 44, 20)
+
+BULLET_COLORS = (
+    (0, 255, 255),
+    (0, 0, 64),
+    (255, 192, 0)
+)
 
 #      DMG     RANGE
 TOWER_UPGRADES = (
@@ -17,24 +24,7 @@ TOWER_UPGRADES = (
     ((15, 3), (10, 10), 50)
 )
 
-'''
-TRASA = (
-    (0, 0), (1, 2), (3, 2), (2, 16), (1, 16), (2, 19), (3, 21), (4, 23), (5, 19), (6, 19),
-    (9, 19), (10, 22), (12, 18), (13, 18), (14, 18), (15, 23), (16, 16), (8, 16), (7, 10), (6, 8),
-    (7, 1), (8, 1), (10, 1), (11, 10), (13, 2), (14, 1), (15, 1), (16, 1), (17, 9), (19, 2),
-    (20, 2), (25, 1), (26, 1), (28, 1), (29, 5), (33, 2), (31, 2), (30, 2), (31, 9), (32, 18),
-    (33, 18), (31, 22), (30, 20), (29, 14), (30, 14), (33, 12), (6, 12), (5, 12), (6, 14), (21, 6),
-    (2, 6), (1, 4), (2, 4), (25, 4), (24, 10), (23, 7), (24, 7), (27, 7), (21, 22)
-)
-MAP_DRAW = list((image_load('dane/unused/trasa/{}.jpg'.format(i + 1)), (TRASA[i][0] * TILESIZE, TRASA[i][1] * TILESIZE)) for i in range(len(TRASA)))
-MAP_DRAW.reverse()
-'''
-
-MAP_DRAW = []
-for row in range(MAP_TILES_H):
-    for column in range(MAP_TILES_W):
-        if AREA[row][column] not in  {1, 3}:
-            MAP_DRAW.append((TERRAIN[AREA[row][column]], (column * TILESIZE, row * TILESIZE)))
+TRACE_TILES = [(image, pygame_Rect(TRACE[i][0] * TILESIZE, TRACE[i][1] * TILESIZE, *(image.get_size()))) for i, image in enumerate(TRACE_IMAGES)]
 
         # health, speed, damage, points, money, size
 ENEMIES = { # hp,  sp, d,  p, m, si
@@ -67,5 +57,24 @@ LEN_WAVES_1 = len(WAVES) - 1
 pygame_font_init()
 FONT30 = pygame_font_SysFont(None, 30)
 FONT40 = pygame_font_SysFont(None, 40)
+FONT30_render = FONT30.render
+FONT40_render = FONT40.render
+
+WINDOW_blits = WINDOW.blits
+WINDOW_blit = WINDOW.blit
 
 PYGAME_K1_K2_K3 = {K_1, K_2, K_3}
+
+PLAYER_LEVEL_RECT = pygame_Rect(W_23, 2, 1, 1)
+PLAYER_DAMAGE_RECT = pygame_Rect(W_23, 23, 1, 1)
+PLAYER_SPEED_RECT = pygame_Rect(W_23, 41, 1, 1)
+PLAYER_HEALTH_RECT = pygame_Rect(W_23, 59, 1, 1)
+PLAYER_MONEY_RECT = pygame_Rect(W_23, 81, 1, 1)
+POINTS_RECT = pygame_Rect(W_10, 100, 1, 1)
+
+RECT_10_DOL = pygame_Rect(W_115, H_73_, 1, 1)
+RECT_30_DOL = pygame_Rect(W_115, H_48_, 1, 1)
+RECT_50_DOL = pygame_Rect(W_115, H_23_, 1, 1)
+DOT_1 = pygame_Rect(W_75, H_73_, 1, 1)
+DOT_2 = pygame_Rect(W_75, H_48_, 1, 1)
+DOT_3 = pygame_Rect(W_75, H_23_, 1, 1)

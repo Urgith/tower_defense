@@ -26,6 +26,7 @@ class Player:
         self.kind = 'player'
 
     def move(self, dt):
+        '''MESS TO CLEAN'''
         pressed = pygame_key_get_pressed()
         x, y = (0, 0)
 
@@ -44,7 +45,7 @@ class Player:
         if pressed[K_d]:
             self.x += self.speed * dt
             x = 1
-        # 0.4 ~= 2**0.5 - 1
+        # 0.414 ~= 2**0.5 - 1
         if x and y:
             self.x -= 0.414 * x * self.speed * dt
             self.y -= 0.414 * y * self.speed * dt

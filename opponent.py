@@ -3,8 +3,10 @@ from _CONSTANTS import *
 
 class Opponent:
 
-    def __init__(self, round, opponent_number):
+    def __init__(self, round, opponent_number, opponents_images):
         self.kind = WAVES[min(round, LEN_WAVES_1)][opponent_number][0]
+        opponents_images.append(self.kind)
+
         (self.health, self.speed, self.damage, self.points,
             self.money, self.size) = ENEMIES[self.kind]
 
