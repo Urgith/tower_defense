@@ -26,6 +26,7 @@ class Game:
         self.opponents_counter = pygame_time_get_ticks()
         self.player = Player(self.opponents_counter)
 
+        self.len_opponents = 0
         self.opponents_rects = []
         self.opponents_images = []
         self.opponents = []
@@ -73,6 +74,7 @@ class Game:
               and self.opponent_number < self.len_wave):
 
                 self.opponents.append(Opponent(self.round, self.opponent_number, self.opponents_images))
+                self.len_opponents += 1
 
                 self.gap = self.round_gaps[self.opponent_number]
                 self.opponents_counter = self.counter
@@ -177,22 +179,25 @@ class Game:
             opponent.is_electrified = False
             opponent.move(self.dt)
 
-        self.opponents_rects = [opponent.rect for opponent in self.opponents]
+        if self.len_opponents:
+            self.opponents_rects = numpy_array([(opponent.rect.left, opponent.rect.top, opponent.rect.bottom, opponent.rect.right) for opponent in self.opponents], dtype=int)
 
-        collided_opponent_index = BASE_RECT.collidelist(self.opponents_rects)
-        if collided_opponent_index != -1:
-            self.base_health -= self.opponents[collided_opponent_index].damage
-            self.kill_opponent(collided_opponent_index)
+            collided_opponent_index = cython_collidelist(BASE_RECT.left, BASE_RECT.top, BASE_RECT.bottom, BASE_RECT.right, self.opponents_rects)
+            if collided_opponent_index != -1:
+                self.base_health -= self.opponents[collided_opponent_index].damage
+                self.kill_opponent(collided_opponent_index)
 
-            if self.base_health <= 0:
-                self.exit()
+                if self.base_health <= 0:
+                    self.exit()
 
-        collided_opponent_index = self.player.rect.collidelist(self.opponents_rects)
-        if collided_opponent_index != -1:
-            self.player.health -= (self.opponents[collided_opponent_index].damage * self.dt * 60)
+        if self.len_opponents:
+            collided_opponent_index = cython_collidelist(self.player.rect.left, self.player.rect.top, self.player.rect.bottom, self.player.rect.right, self.opponents_rects)
 
-            if self.player.health <= 0:
-                self.exit()
+            if collided_opponent_index != -1:
+                self.player.health -= (self.opponents[collided_opponent_index].damage * self.dt * 60)
+
+                if self.player.health <= 0:
+                    self.exit()
 
     def update_bullets(self):
 
@@ -207,31 +212,33 @@ class Game:
                 self.bullets.pop(i)
                 continue
 
-            collided_opponent_index = bullet.rect.collidelist(self.opponents_rects)
-            if collided_opponent_index != -1:
-                opponent = self.opponents[collided_opponent_index]
-                '''MESS TO CLEAN'''
-                if bullet.kind == 1 and (bullet.id not in opponent.ids):
-                    opponent.lose_hp(bullet.damage, self.towers.get(bullet.tower_id))
-                    opponent.ids.append(bullet.id)
-                    bullet.pierce -= 1
+            if self.len_opponents:
+                collided_opponent_index = cython_collidelist(bullet.rect.left, bullet.rect.top, bullet.rect.bottom, bullet.rect.right, self.opponents_rects)
 
-                    if bullet.pierce == 0:
+                if collided_opponent_index != -1:
+                    opponent = self.opponents[collided_opponent_index]
+                    '''MESS TO CLEAN'''
+                    if bullet.kind == 1 and (bullet.id not in opponent.ids):
+                        opponent.lose_hp(bullet.damage, self.towers.get(bullet.tower_id))
+                        opponent.ids.append(bullet.id)
+                        bullet.pierce -= 1
+
+                        if bullet.pierce == 0:
+                            self.bullets.pop(i)
+
+                    elif bullet.kind != 1:
+                        opponent.lose_hp(bullet.damage, self.towers.get(bullet.tower_id))
                         self.bullets.pop(i)
 
-                elif bullet.kind != 1:
-                    opponent.lose_hp(bullet.damage, self.towers.get(bullet.tower_id))
-                    self.bullets.pop(i)
+                    if opponent.health <= 0:
+                        self.points += opponent.points
+                        self.money += opponent.money
 
-                if opponent.health <= 0:
-                    self.points += opponent.points
-                    self.money += opponent.money
+                        self.kill_opponent(collided_opponent_index)
 
-                    self.kill_opponent(collided_opponent_index)
-
-                    if bullet.kind == 'player':
-                        self.player.experience += opponent.points
-                        self.player.check_level_up()
+                        if bullet.kind == 'player':
+                            self.player.experience += opponent.points
+                            self.player.check_level_up()
 
     def update_towers(self):
         '''MESS TO CLEAN'''
@@ -273,9 +280,11 @@ class Game:
                         break
 
     def kill_opponent(self, index):
-        self.opponents_rects.pop(index)
+        self.opponents_rects = numpy_delete(self.opponents_rects, index, 0)
         self.opponents_images.pop(index)
         self.opponents.pop(index)
+
+        self.len_opponents -= 1
 
 
     def draw(self):

@@ -24,8 +24,13 @@ from pygame.math import Vector2 as pygame_math_Vector2
 from pygame.locals import K_1, K_2, K_3, K_w, K_a, K_s, K_d, K_p, \
     K_SPACE, K_ESCAPE, QUIT, KEYDOWN, MOUSEBUTTONUP, FULLSCREEN
 
+from numpy import delete as numpy_delete
+from numpy import array as numpy_array
+
 from random import random as random_random
 from math import log as math_log
+
+from my_cython.collidelist import collidelist as cython_collidelist
 
 
 def image_load(name, location=None, scale=None):
