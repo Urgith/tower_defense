@@ -31,8 +31,32 @@ class Opponent:
     def move(self, dt):
         if self.mov_x == 0:
             tile = AREA[int((self.rect.centery + self.mov_y) / TILESIZE)][self.tile_x]
+
+            # 7, 70
+            if self.mov_y == TILESIZE_BY_2:
+                self.y -= self.speed * dt
+                self.rect.y = self.hp_bar.y = self.hp_bar_lost.y = self.y
+            # 8, 80
+            else:
+                self.y += self.speed * dt
+                self.rect.y = self.hp_bar.y = self.hp_bar_lost.y = self.y
         else:
             tile = AREA[self.tile_y][int((self.rect.centerx + self.mov_x) / TILESIZE)]
+
+            # 5, 50
+            if self.mov_x == -TILESIZE_BY_2:
+                self.x += self.speed * dt
+
+                self.rect.x = self.x
+                self.hp_bar.x = self.x - self.TILESIZE_SIZE_BY_2
+                self.hp_bar_lost.x = self.hp_bar.x + self.hp_bar.w
+            # 6, 60
+            else:
+                self.x -= self.speed * dt
+            
+                self.rect.x = self.x
+                self.hp_bar.x = self.x - self.TILESIZE_SIZE_BY_2
+                self.hp_bar_lost.x = self.hp_bar.x + self.hp_bar.w
 
         if tile != self.tile and tile not in {0, 1, 10}:
             self.tile = tile
@@ -52,28 +76,6 @@ class Opponent:
 
             self.tile_x = int((self.rect.centerx + self.mov_x) / TILESIZE)
             self.tile_y = int((self.rect.centery + self.mov_y) / TILESIZE)
-
-        if self.tile in {5, 50}:
-            self.x += self.speed * dt
-
-            self.rect.x = self.x
-            self.hp_bar.x = self.x - self.TILESIZE_SIZE_BY_2
-            self.hp_bar_lost.x = self.hp_bar.x + self.hp_bar.w
-
-        elif self.tile in {6, 60}:
-            self.x -= self.speed * dt
-            
-            self.rect.x = self.x
-            self.hp_bar.x = self.x - self.TILESIZE_SIZE_BY_2
-            self.hp_bar_lost.x = self.hp_bar.x + self.hp_bar.w
-
-        elif self.tile in {7, 70}:
-            self.y -= self.speed * dt
-            self.rect.y = self.hp_bar.y = self.hp_bar_lost.y = self.y
-
-        else:
-            self.y += self.speed * dt
-            self.rect.y = self.hp_bar.y = self.hp_bar_lost.y = self.y
 
     def lose_hp(self, damage, tower=None):
         damage = min(self.health, damage)
