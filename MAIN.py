@@ -31,7 +31,7 @@ class Check:
         for i in range(choosen_4, choosen_4 + 4):
             if TOWER_TEXTURES[i][1].collidepoint(self.mouse_pos):
                 self.choosen_tower.upgrade(self, i)
-                return
+                return True
 
         self.tower_flags_to_False()
 
@@ -257,24 +257,24 @@ class OperateTower:
                 self.tower_buying = False
                 return
 
-        self.choosen_tower = Tower(new_tower_rect, self.tower_to_buy_type, self.counter, self.dt, new_tower_id)
-        if self.choosen_tower.total_cost <= self.money:
+        if TOWERS[self.tower_to_buy_type][2] <= self.money:
+            self.choosen_tower = Tower(new_tower_rect, self.tower_to_buy_type, self.counter, self.dt, new_tower_id)
             self.towers[new_tower_id] = self.choosen_tower
             self.money -= self.choosen_tower.total_cost
             self.tower_flags_to_False(is_selected=True)
             return
 
-        self.tower_flags_to_False()
+        self.tower_flags_to_False(is_selected=self.tower_is_selected)
 
     def sell_tower(self, tower):
         self.money += tower.total_cost
-        self.tower_flags_to_False()
+        self.tower_flags_to_False(tower_buying=self.tower_buying)
         del self.towers[tower.id]
 
-    def tower_flags_to_False(self, is_selected=False):
+    def tower_flags_to_False(self, is_selected=False, tower_buying=False):
         self.tower_is_selected = is_selected
+        self.tower_buying = tower_buying
         self.interface_changed = True
-        self.tower_buying = False
 
 class Simple:
 
@@ -287,18 +287,6 @@ class Simple:
 
         if self.counter != 0:
             self.next_round = True
-
-    def pause_loop(self):
-        pause = True
-
-        while pause:
-            self.game_time()
-
-            for event in pygame_event_get():
-                if event.type == QUIT:
-                    self.exit()
-                elif event.type == KEYDOWN and (event.key == K_ESCAPE or event.key == K_p):
-                    pause = False
 
     def exit(self):
         self.running = False
@@ -323,10 +311,12 @@ class Game(Check, Update, Draw, OperateTower, Simple, Magic):
 
         while self.running:
             self.game_time()
-            self.rounds()
+            if not self.pause:
+                self.rounds()
 
             self.events()
-            self.update()
+            if not self.pause:
+                self.update()
 
             self.draw()
             self.display_update()
@@ -364,6 +354,7 @@ class Game(Check, Update, Draw, OperateTower, Simple, Magic):
         self.clock = pygame_time_Clock()
         self.mouse_pos = MOUSE_POSITION
         self.running = True
+        self.pause = False
 
 
     def rounds(self):
@@ -406,35 +397,43 @@ class Game(Check, Update, Draw, OperateTower, Simple, Magic):
                         self.check_tower_selection()
                 # MOUSE OUTSIDE MAP
                 else:
-                    if not self.check_tower_texture():
-                        if self.tower_buying:
-                            self.place_tower()
-                        elif self.tower_is_selected:
-                            self.check_tower_upgrade()
-                        else:
-                            self.player.shooting = False
-
                     if TEXTURES[0][1].collidepoint(self.mouse_pos):
                         self.new_round()
 
-                    elif TEXTURES[1][1].collidepoint(self.mouse_pos):
-                        self.exit()
+                    elif not self.check_tower_texture():
+                        if self.tower_is_selected:
+                            if not self.check_tower_upgrade():
+                                self.place_tower()
+                        elif self.tower_buying:
+                            self.place_tower()
+                        elif TEXTURES[1][1].collidepoint(self.mouse_pos):
+                            self.exit()
+                        else:
+                            self.player.shooting = False
+
             # KEYBOARD
             elif event.type == KEYDOWN:
                 if event.key == K_SPACE:
-                    self.new_round()
+                    if not self.pause:
+                        self.new_round()
+                    else:
+                        self.pause = False
 
                 elif event.key in PYGAME_K1_K2_K3:
                     self.tower_to_buy(event.key - 49)
 
                 elif event.key == K_ESCAPE:
-                    if self.tower_is_selected or self.tower_buying:
+                    if self.tower_buying:
+                        self.tower_buying = False
+                    elif self.tower_is_selected:
                         self.tower_flags_to_False()
+                    elif self.pause:
+                        self.pause = False
                     else:
                         self.exit()
 
                 elif event.key == K_p:
-                    self.pause_loop()
+                    self.pause = (not self.pause)
             # EXIT
             elif event.type == QUIT:
                 self.exit()
